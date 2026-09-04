@@ -7,6 +7,35 @@
   text-rendering: optimizeLegibility;
 }
 
+.player-market { margin-top: 24px; }
+.player-market h2 { margin-bottom: 6px; }
+.player-market-sources, .player-market-seller { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
+.player-market-sources { align-items: center; }
+.player-market-sources .settings-command { margin-top: 0; }
+.player-market-filters { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.player-market label { display: grid; gap: 6px; color: #b8c8d3; font-size: 0.85rem; }
+.player-market input, .player-market select { width: 100%; min-width: 0; padding: 9px; border: 1px solid #40505b; border-radius: 4px; background: #11181d; color: #eef4f8; }
+.player-market-note { color: #a4b5bf; font-size: 0.85rem; margin: 16px 0; }
+.player-market-list { border-top: 1px solid #35424a; margin-bottom: 18px; }
+.player-listing { border-bottom: 1px solid #35424a; }
+.player-listing summary { display: grid; grid-template-columns: 64px minmax(0, 1fr) minmax(160px, 220px); align-items: center; gap: 16px; padding: 16px 0; cursor: pointer; }
+.player-listing summary img { width: 64px; height: 64px; object-fit: contain; }
+.player-listing summary span, .player-listing summary small { display: block; color: #a4b5bf; margin-top: 5px; }
+.player-listing summary strong { overflow-wrap: anywhere; }
+.player-listing-price { text-align: right; }
+.player-listing-price strong { color: #80dfaf; }
+.player-listing-details { padding: 4px 0 22px 80px; }
+.player-listing-description { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; }
+.player-listing-photos { display: flex; flex-wrap: wrap; gap: 12px; }
+.player-listing-photos img { width: 180px; height: 160px; max-width: 100%; object-fit: contain; }
+@media (max-width: 760px) {
+  .player-market-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .player-listing summary { grid-template-columns: 48px minmax(0, 1fr); }
+  .player-listing summary img { width: 48px; height: 48px; }
+  .player-listing-price { grid-column: 2; text-align: left; }
+  .player-listing-details { padding-left: 0; }
+}
+
 * {
   box-sizing: border-box;
 }

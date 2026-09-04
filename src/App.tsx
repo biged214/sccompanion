@@ -37,6 +37,7 @@ import { DATA_SOURCE_CREDITS } from './dataSources';
 import { GameplayBrowser } from './gameplay/GameplayBrowser';
 import { useGameplayStatus } from './gameplay/useGameplayStatus';
 import { MarketBrowser } from './market/MarketBrowser';
+import { PlayerMarketplace } from './playerMarketplace/PlayerMarketplace';
 import { MyRsi } from './myRsi/MyRsi';
 import { fetchNewsDetails, RSI_NEWS_URL } from './news/newsService';
 import { useNews } from './news/useNews';
@@ -61,7 +62,7 @@ import { UpdateBanner } from './updates/UpdateBanner';
 import { useAppUpdater } from './updates/useAppUpdater';
 
 export function App() {
-  const [activeView, setActiveView] = useState<'home' | 'my-rsi' | 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay'>('home');
+  const [activeView, setActiveView] = useState<'home' | 'my-rsi' | 'player-marketplace' | 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay'>('home');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const appSettings = useAppSettings();
   const appUpdater = useAppUpdater(
@@ -93,9 +94,10 @@ export function App() {
   const isComponentsView = activeView === 'components';
   const isOrganizationsView = activeView === 'organizations';
   const isMarketView = activeView === 'market';
+  const isPlayerMarketplace = activeView === 'player-marketplace';
   const isTradeRoutesView = activeView === 'trade-routes';
   const isGameplayView = activeView === 'gameplay';
-  const activeFeed = isHomeView || isMyRsiView || isGameplayView || isMarketView || isTradeRoutesView || isOrganizationsView ? null : isAnnouncementsView ? announcements : isStatusView ? status : isPatchNotesView ? patchNotes : isShipsView ? ships : isComponentsView ? components : news;
+  const activeFeed = isHomeView || isMyRsiView || isPlayerMarketplace || isGameplayView || isMarketView || isTradeRoutesView || isOrganizationsView ? null : isAnnouncementsView ? announcements : isStatusView ? status : isPatchNotesView ? patchNotes : isShipsView ? ships : isComponentsView ? components : news;
   const sourceUrl = isAnnouncementsView ? RSI_ANNOUNCEMENTS_URL : isStatusView ? RSI_STATUS_FEED_URL : isPatchNotesView ? RSI_PATCH_NOTES_URL : isShipsView ? UEX_VEHICLES_URL : isComponentsView ? UEX_COMPONENTS_URL : RSI_NEWS_URL;
   const sourceLabel = isAnnouncementsView ? 'Spectrum Announcements' : isStatusView ? 'RSI status RSS' : isPatchNotesView ? 'Spectrum Patch Notes' : isShipsView || isComponentsView ? 'UEX + Star Citizen Wiki' : 'RSI Comm-Link';
 
@@ -183,7 +185,9 @@ export function App() {
               <LayoutGrid size={17} aria-hidden="true" />
               Categories
             </div>
-          ) : isMyRsiView ? null : isAnnouncementsView ? (
+          ) : isMyRsiView ? null : isPlayerMarketplace ? (
+            <div className="status-pill"><Store size={17} aria-hidden="true" />Player Marketplace</div>
+          ) : isAnnouncementsView ? (
             <div className="status-pill">
               <Megaphone size={17} aria-hidden="true" />
               Official Announcements
@@ -262,6 +266,8 @@ export function App() {
           statusUnreadCount={unreadUpdates.counts.status}
           onSelect={setActiveView}
         />
+      ) : isPlayerMarketplace ? (
+        <PlayerMarketplace />
       ) : isMyRsiView ? (
         <MyRsi />
       ) : isMarketView ? (
@@ -448,7 +454,7 @@ export function App() {
   );
 }
 
-type FeedView = 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay';
+type FeedView = 'player-marketplace' | 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay';
 
 function HomeDashboard({
   announcementsCount,
@@ -555,6 +561,13 @@ function HomeDashboard({
           meta={marketCommodityCount > 0 ? `${marketCommodityCount} commodities` : 'Live UEX market data'}
           icon={<Store size={25} aria-hidden="true" />}
           onClick={() => onSelect('market')}
+        />
+        <CategoryCard
+          title="Player Marketplace"
+          description="Player-listed items, seller asking prices, available stock, and pickup locations."
+          meta="UEX player listings"
+          icon={<Store size={25} aria-hidden="true" />}
+          onClick={() => onSelect('player-marketplace')}
         />
         <CategoryCard
           title="Trade Routes"

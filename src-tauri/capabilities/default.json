@@ -60,6 +60,9 @@
       "identifier": "opener:allow-open-url",
       "allow": [
         {
+          "url": "https://sc-market.space/*"
+        },
+        {
           "url": "https://robertsspaceindustries.com/*"
         },
         {

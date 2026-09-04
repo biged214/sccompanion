@@ -8,6 +8,12 @@ export interface DataSourceCredit {
 // Register every external data provider here when adding a new integration.
 export const DATA_SOURCE_CREDITS: readonly DataSourceCredit[] = [
   {
+    id: 'sc-market',
+    name: 'SC Market',
+    url: 'https://sc-market.space/',
+    contribution: 'External player marketplace link; listings are not imported'
+  },
+  {
     id: 'rsi',
     name: 'Roberts Space Industries / CIG',
     url: 'https://robertsspaceindustries.com/',
@@ -17,7 +23,7 @@ export const DATA_SOURCE_CREDITS: readonly DataSourceCredit[] = [
     id: 'uex',
     name: 'UEX Corp',
     url: 'https://uexcorp.space/',
-    contribution: 'Market prices, locations, ship availability, components, and trade data'
+    contribution: 'Market prices, player sale listings, locations, ship availability, components, and trade data'
   },
   {
     id: 'star-citizen-wiki',

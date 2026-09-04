@@ -1,5 +1,19 @@
 # SC Companion
 
+## Testing Downloads
+
+Push changes to `codex/testing` to build Windows and Linux testing installers in
+GitHub Actions. Open the **SC Companion testing builds** workflow, select a successful
+run, and download the platform ZIP from **Artifacts**. Sign into GitHub to download,
+extract the ZIP, then run the Windows setup EXE or install the Linux package.
+Artifacts expire after 14 days; another push builds fresh packages.
+
+These install as **SC Companion Testing**, with a separate application identifier,
+binary name, and app data. They do not publish a release or update the live app.
+Live auto-updates are disabled in testing builds. Settings and history start fresh.
+Windows may still display SmartScreen because these installers are not Authenticode signed.
+Only promote tested changes to `main` and publish a version tag when ready for live users.
+
 ## Data source attribution
 
 External providers used by the app are registered in `src/dataSources.ts` and displayed in the
@@ -38,6 +52,19 @@ A desktop companion for Star Citizen service status, patch notes, news, ships, s
 - Checks GitHub Releases for signed updates, notifies the user, and installs updates inside the app
 
 ## Project Structure
+
+### Player Marketplace
+
+Player Marketplace imports item sale listings from the public UEX marketplace API,
+with seller lookup, persistent filters, expandable descriptions/photos, price sorting,
+local caching, and refresh every five minutes while the section is open. Feed results
+are capped by UEX; search and Show more operate on the loaded snapshot, not the entire
+catalog. Seller asks and availability are not verified transaction prices or guarantees.
+Purchases and seller contact are handled on the source website.
+
+SC Market is currently an external link only. Add future supported listing feeds through
+the provider interface in `src/playerMarketplace/service.ts` and register attribution
+in `src/dataSources.ts`. Keep provider IDs, currencies, and source links distinct.
 
 ```text
 src/

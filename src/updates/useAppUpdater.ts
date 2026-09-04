@@ -40,6 +40,10 @@ export function useAppUpdater(notificationsEnabled: boolean) {
   });
 
   const checkForUpdates = useCallback(async (manual = true) => {
+    if (import.meta.env.VITE_TESTING_BUILD === 'true') {
+      if (manual) setState((current) => ({ ...current, status: 'error', error: 'Testing builds are downloaded from GitHub Actions. Live updates are disabled.' }));
+      return;
+    }
     if (!window.__TAURI_INTERNALS__ || checkInProgress.current) return;
     checkInProgress.current = true;
     setState((current) => ({
