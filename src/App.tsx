@@ -141,6 +141,27 @@ export function App() {
 
   return (
     <main className="app-shell">
+      <nav className="app-utility-nav" aria-label="Account and application controls">
+        <button
+          type="button"
+          className={`home-button${isMyRsiView ? ' home-button--active' : ''}`}
+          aria-current={isMyRsiView ? 'page' : undefined}
+          onClick={() => setActiveView('my-rsi')}
+        >
+          <UserRound size={18} aria-hidden="true" />
+          My RSI
+        </button>
+        <button
+          type="button"
+          className="icon-button"
+          aria-label="Open settings"
+          title="Settings"
+          onClick={() => setSettingsOpen(true)}
+        >
+          <SettingsIcon size={19} aria-hidden="true" />
+        </button>
+      </nav>
+
       <section className="status-hero">
         <div>
           <p className="eyebrow">Star Citizen Desktop Companion</p>
@@ -213,24 +234,6 @@ export function App() {
               Latest RSI News
             </div>
           )}
-          <button
-            type="button"
-            className={`home-button${isMyRsiView ? ' home-button--active' : ''}`}
-            aria-current={isMyRsiView ? 'page' : undefined}
-            onClick={() => setActiveView('my-rsi')}
-          >
-            <UserRound size={18} aria-hidden="true" />
-            My RSI
-          </button>
-          <button
-            type="button"
-            className="icon-button"
-            aria-label="Open settings"
-            title="Settings"
-            onClick={() => setSettingsOpen(true)}
-          >
-            <SettingsIcon size={19} aria-hidden="true" />
-          </button>
         </div>
       </section>
 

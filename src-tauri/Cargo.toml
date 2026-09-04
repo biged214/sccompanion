@@ -1,6 +1,6 @@
 [package]
 name = "sc-companion"
-version = "0.29.0"
+version = "0.29.1"
 description = "A desktop companion for Star Citizen news, reference data, trade planning, and local gameplay history."
 authors = ["SC Companion"]
 edition = "2021"

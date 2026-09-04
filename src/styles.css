@@ -34,7 +34,32 @@ select {
 .app-shell {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 32px 0 44px;
+  padding: 72px 0 44px;
+}
+
+.app-utility-nav {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  border: 1px solid rgba(152, 177, 196, 0.2);
+  border-radius: 7px;
+  background: rgba(9, 14, 18, 0.92);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.app-utility-nav .home-button {
+  min-height: 38px;
+}
+
+.app-utility-nav .icon-button {
+  width: 38px;
+  height: 38px;
 }
 
 .community-disclaimer {
@@ -105,6 +130,15 @@ select {
 
   .app-update-banner__actions {
     justify-content: flex-end;
+  }
+
+  .app-shell {
+    padding-top: 68px;
+  }
+
+  .app-utility-nav {
+    top: 10px;
+    right: 10px;
   }
 }
 
