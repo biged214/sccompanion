@@ -1,0 +1,12 @@
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/target-check/
+*.log
+.env
+.env.local
+.repo-inspect/
+sources/
+AGENTS.md
+*.key
+*.key.pub
