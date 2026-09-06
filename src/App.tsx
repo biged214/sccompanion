@@ -500,6 +500,8 @@ function HomeDashboard({
         </div>
       </div>
 
+      <section className="category-group" aria-labelledby="category-updates">
+      <h3 id="category-updates">Updates</h3>
       <div className="category-grid">
         <CategoryCard
           title="Announcements"
@@ -534,6 +536,11 @@ function HomeDashboard({
           unreadCount={statusUnreadCount}
           onClick={() => onSelect('status')}
         />
+      </div>
+      </section>
+      <section className="category-group" aria-labelledby="category-reference">
+      <h3 id="category-reference">Reference</h3>
+      <div className="category-grid">
         <CategoryCard
           title="Ships"
           description="Browse ship specifications, roles, cargo capacity, and in-game purchase or rental locations."
@@ -555,6 +562,11 @@ function HomeDashboard({
           icon={<Building2 size={25} aria-hidden="true" />}
           onClick={() => onSelect('organizations')}
         />
+      </div>
+      </section>
+      <section className="category-group" aria-labelledby="category-trading">
+      <h3 id="category-trading">Trading Tools</h3>
+      <div className="category-grid">
         <CategoryCard
           title="Market"
           description="Browse commodity prices, stock, demand, locations, container sizes, and cargo services."
@@ -576,6 +588,11 @@ function HomeDashboard({
           icon={<RouteIcon size={25} aria-hidden="true" />}
           onClick={() => onSelect('trade-routes')}
         />
+      </div>
+      </section>
+      <section className="category-group" aria-labelledby="category-tools">
+      <h3 id="category-tools">Tools</h3>
+      <div className="category-grid">
         <CategoryCard
           title="Live Sessions"
           description="Capture gameplay events from Game.log and review live activity, session history, and combined totals."
@@ -584,6 +601,7 @@ function HomeDashboard({
           onClick={() => onSelect('gameplay')}
         />
       </div>
+      </section>
     </section>
   );
 }
