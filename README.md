@@ -55,9 +55,9 @@ A desktop companion for Star Citizen service status, patch notes, news, ships, s
 
 ### Player Marketplace
 
-Player Marketplace imports item sale listings from the public UEX marketplace API,
+Player Marketplace imports item buy and sell listings from the public UEX marketplace API,
 with seller lookup, persistent filters, expandable descriptions/photos, price sorting,
-local caching, and refresh every five minutes while the section is open. Feed results
+local caching, WTS/WTB labels and transaction filtering, and refresh every five minutes while the section is open. Feed results
 are capped by UEX; search and Show more operate on the loaded snapshot, not the entire
 catalog. Seller asks and availability are not verified transaction prices or guarantees.
 Purchases and seller contact are handled on the source website.

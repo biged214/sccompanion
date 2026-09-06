@@ -12,7 +12,7 @@
 .player-market-sources, .player-market-seller { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
 .player-market-sources { align-items: center; }
 .player-market-sources .settings-command { margin-top: 0; }
-.player-market-filters { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.player-market-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .player-market label { display: grid; gap: 6px; color: #b8c8d3; font-size: 0.85rem; }
 .player-market input, .player-market select { width: 100%; min-width: 0; padding: 9px; border: 1px solid #40505b; border-radius: 4px; background: #11181d; color: #eef4f8; }
 .player-market-note { color: #a4b5bf; font-size: 0.85rem; margin: 16px 0; }
@@ -22,6 +22,9 @@
 .player-listing summary img { width: 64px; height: 64px; object-fit: contain; }
 .player-listing summary span, .player-listing summary small { display: block; color: #a4b5bf; margin-top: 5px; }
 .player-listing summary strong { overflow-wrap: anywhere; }
+.player-listing summary .player-transaction { font-size: 12px; font-weight: 700; margin: 0 0 6px; overflow-wrap: anywhere; }
+.player-listing summary .player-transaction[data-operation="sell"] { color: #80d9b2; }
+.player-listing summary .player-transaction[data-operation="buy"] { color: #f2cb77; }
 .player-listing-price { text-align: right; }
 .player-listing-price strong { color: #80dfaf; }
 .player-listing-details { padding: 4px 0 22px 80px; }

@@ -23,7 +23,7 @@ export const DATA_SOURCE_CREDITS: readonly DataSourceCredit[] = [
     id: 'uex',
     name: 'UEX Corp',
     url: 'https://uexcorp.space/',
-    contribution: 'Market prices, player sale listings, locations, ship availability, components, and trade data'
+    contribution: 'Market prices, player buy and sell listings, locations, ship availability, components, and trade data'
   },
   {
     id: 'star-citizen-wiki',

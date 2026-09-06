@@ -1,6 +1,7 @@
 export interface PlayerListing {
   id: string;
   provider: string;
+  transaction: string;
   title: string;
   description: string;
   seller: string;
@@ -40,16 +41,17 @@ async function request(path: string, signal: AbortSignal): Promise<Record<string
 }
 
 async function loadUex(seller: string, signal: AbortSignal): Promise<PlayerListing[]> {
-  const params = new URLSearchParams({ operation: 'sell' });
+  const params = new URLSearchParams();
   if (seller.trim()) params.set('username', seller.trim());
   const [rows, systems] = await Promise.all([
     request(`/marketplace_listings/?${params}`, signal),
     request('/star_systems', signal).catch(() => [])
   ]);
   const names = new Map(systems.map((system) => [Number(system.id), String(system.name)]));
-  return rows.filter((row) => row.operation === 'sell' && row.type === 'item' && Number(row.is_sold_out) !== 1)
+  return rows.filter((row) => row.type === 'item' && Number(row.is_sold_out) !== 1)
     .map((row) => ({
       id: `uex:${row.id}`, provider: 'uex', title: text(row.title), description: plainText(text(row.description)),
+      transaction: text(row.operation).trim().toLowerCase() || 'unspecified',
       seller: text(row.user_username) || text(row.user_name), location: text(row.location) || 'Unspecified',
       system: names.get(Number(row.id_star_system)) || 'Unspecified', price: numeric(row.price),
       currency: text(row.currency) || 'Unspecified', unit: text(row.unit), stock: numeric(row.in_stock),
@@ -59,6 +61,14 @@ async function loadUex(seller: string, signal: AbortSignal): Promise<PlayerListi
       photos: photos(row.photos),
       url: `https://uexcorp.space/marketplace/item/info/${encodeURIComponent(text(row.slug))}/`
     }));
+}
+
+export function transactionLabel(operation: string): string {
+  if (operation === 'sell') return 'WTS - Want to sell';
+  if (operation === 'buy') return 'WTB - Want to buy';
+  if (operation === 'trade') return 'WTT - Want to trade';
+  if (!operation || operation === 'unspecified') return 'Transaction unspecified';
+  return operation.replace(/_/g, ' ');
 }
 
 function text(value: unknown): string { return typeof value === 'string' ? value : ''; }
