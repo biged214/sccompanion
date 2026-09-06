@@ -1,7 +1,7 @@
 {
   "name": "sc-companion",
   "private": true,
-  "version": "0.29.1",
+  "version": "0.30.0",
   "type": "module",
   "scripts": {
     "dev:vite": "vite --host 127.0.0.1 --port 1420",
