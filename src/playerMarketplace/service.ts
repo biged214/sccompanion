@@ -23,7 +23,7 @@ interface Provider {
   id: string;
   name: string;
   url: string;
-  load: (seller: string, signal: AbortSignal) => Promise<PlayerListing[]>;
+  load: (seller: string, signal: AbortSignal, query?: string) => Promise<PlayerListing[]>;
 }
 
 export const listingProviders: Provider[] = [
@@ -40,7 +40,7 @@ async function request(path: string, signal: AbortSignal): Promise<Record<string
   return body.data;
 }
 
-async function loadUex(seller: string, signal: AbortSignal): Promise<PlayerListing[]> {
+async function loadUex(seller: string, signal: AbortSignal, query = ''): Promise<PlayerListing[]> {
   const params = new URLSearchParams();
   if (seller.trim()) params.set('username', seller.trim());
   const [rows, systems] = await Promise.all([
@@ -48,7 +48,24 @@ async function loadUex(seller: string, signal: AbortSignal): Promise<PlayerListi
     request('/star_systems', signal).catch(() => [])
   ]);
   const names = new Map(systems.map((system) => [Number(system.id), String(system.name)]));
-  return rows.filter((row) => row.type === 'item' && Number(row.is_sold_out) !== 1)
+  // The general feed is capped. Item + operation queries expose older listings.
+  const search = query.trim().toLowerCase();
+  if (search.length >= 2) {
+    const ids = [...new Set(rows.filter((row) => text(row.title).toLowerCase().includes(search))
+      .map((row) => Number(row.id_item)).filter((id) => Number.isSafeInteger(id) && id > 0))];
+    if (ids.length > 10) throw new Error('Search matches more than 10 item types. Enter a more specific item name.');
+    for (const id of ids) {
+      const pages = await Promise.all(['sell', 'buy'].map((operation) => {
+        const itemParams = new URLSearchParams(params);
+        itemParams.set('id_item', String(id));
+        itemParams.set('operation', operation);
+        return request(`/marketplace_listings/?${itemParams}`, signal);
+      }));
+      rows.push(...pages.flat());
+    }
+  }
+  return [...new Map(rows.map((row) => [row.id, row])).values()]
+    .filter((row) => row.type === 'item' && Number(row.is_sold_out) !== 1)
     .map((row) => ({
       id: `uex:${row.id}`, provider: 'uex', title: text(row.title), description: plainText(text(row.description)),
       transaction: text(row.operation).trim().toLowerCase() || 'unspecified',

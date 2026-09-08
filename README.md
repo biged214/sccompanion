@@ -58,8 +58,13 @@ A desktop companion for Star Citizen service status, patch notes, news, ships, s
 Player Marketplace imports item buy and sell listings from the public UEX marketplace API,
 with seller lookup, persistent filters, expandable descriptions/photos, price sorting,
 local caching, WTS/WTB labels and transaction filtering, and refresh every five minutes while the section is open. Feed results
-are capped by UEX; search and Show more operate on the loaded snapshot, not the entire
-catalog. Seller asks and availability are not verified transaction prices or guarantees.
+are capped by UEX; Show more displays additional rows from the loaded snapshot, not the entire
+catalog. Text searches expand matching recent titles through their UEX item IDs,
+requesting buy and sell listings separately. This still cannot discover items absent
+from the recent feed or all listings without an item ID. Search on UEX opens the same
+query on the provider website. Run `node tests/player-marketplace-search.mjs` to check
+expansion, deduplication, and seller scoping.
+Seller asks and availability are not verified transaction prices or guarantees.
 Purchases and seller contact are handled on the source website.
 
 SC Market is currently an external link only. Add future supported listing feeds through

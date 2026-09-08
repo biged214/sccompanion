@@ -5,9 +5,14 @@ import { usePersistentState } from '../state/usePersistentState';
 import { listingProviders, transactionLabel, type PlayerListing } from './service';
 
 interface Snapshot { listings: PlayerListing[]; fetchedAt: number }
-const CACHE = 'sc-companion:player-marketplace:v2:';
+const CACHE = 'sc-companion:player-marketplace:v3:';
 export function PlayerMarketplace() {
   const [query, setQuery] = usePersistentState('player-market.query', '');
+  const [searchQuery, setSearchQuery] = useState(query.trim().toLowerCase());
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSearchQuery(query.trim().toLowerCase()), 600);
+    return () => window.clearTimeout(timer);
+  }, [query]);
   const [transaction, setTransaction] = usePersistentState('player-market.transaction', '');
   const [seller, setSeller] = usePersistentState('player-market.seller', '');
   const [sellerDraft, setSellerDraft] = useState(seller);
@@ -36,15 +41,15 @@ export function PlayerMarketplace() {
     const abort = new AbortController();
     controller.current = abort;
     let disposed = false;
-    const key = CACHE + seller.toLowerCase();
+    const key = CACHE + JSON.stringify([seller.toLowerCase(), searchQuery]);
     setSnapshot(null);
     try {
       const cached = JSON.parse(localStorage.getItem(key) ?? 'null') as Snapshot | null;
       if (cached && Array.isArray(cached.listings) && Number.isFinite(cached.fetchedAt)) setSnapshot(cached);
     } catch { /* Cache is optional. */ }
     setLoading(true); setError('');
-    const timeout = window.setTimeout(() => abort.abort(), 30_000);
-    void Promise.allSettled(listingProviders.map((provider) => provider.load(seller, abort.signal))).then((results) => {
+    const timeout = window.setTimeout(() => abort.abort(), 60_000);
+    void Promise.allSettled(listingProviders.map((provider) => provider.load(seller, abort.signal, searchQuery))).then((results) => {
       if (disposed) return;
       const listings: PlayerListing[] = [];
       const errors: string[] = [];
@@ -60,7 +65,7 @@ export function PlayerMarketplace() {
       setError(errors.join(' ')); setLoading(false);
     }).finally(() => window.clearTimeout(timeout));
     return () => { disposed = true; abort.abort(); window.clearTimeout(timeout); };
-  }, [seller, refreshId]);
+  }, [seller, refreshId, searchQuery]);
 
   const rows = snapshot?.listings ?? [];
   const filtered = useMemo(() => rows.filter((row) =>
@@ -96,15 +101,16 @@ export function PlayerMarketplace() {
       <button className="refresh-button" disabled={loading}><Search size={16} />Find player</button>
     </form>
     <div className="player-market-filters">
-      <label>Search loaded listings<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Item or player" /></label>
+      <label>Search listings<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Item or player" /></label>
       <label>Transaction<select value={transaction} onChange={(event) => setTransaction(event.target.value)}><option value="">All transactions</option>{[...new Set(['sell', 'buy', ...rows.map((row) => row.transaction), ...(transaction ? [transaction] : [])])].map((operation) => <option key={operation} value={operation}>{transactionLabel(operation)}</option>)}</select></label>
       {([['System', system, setSystem, 'system'], ['Location', location, setLocation, 'location'], ['Currency', currency, setCurrency, 'currency']] as const).map(([label, value, setter, field]) =>
         <label key={label}>{label}<select value={value} onChange={(event) => setter(event.target.value)}><option value="">All</option>{[...new Set([...rows.map((row) => row[field]), ...(value ? [value] : [])])].sort().map((option) => <option key={option}>{option}</option>)}</select></label>)}
       <label>Sort<select value={sort} onChange={(event) => setSort(event.target.value)}><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
     </div>
-    <p className="player-market-note">{filtered.length} matching listings from {rows.length} loaded listings. UEX limits feed results; this is not its complete catalog. Prices are advertiser asks or offers, grouped by currency when sorting.</p>
+    <p className="player-market-note">{filtered.length} matching listings from {rows.length} loaded listings. Searches expand buy/sell results for item IDs found in matching recent titles. Items absent from the recent feed and unlinked listings may be missing; UEX also caps item results. Prices are advertiser asks or offers, grouped by currency when sorting.</p>
+    <button className="settings-command" onClick={() => void open(`https://uexcorp.space/marketplace/home/?search=${encodeURIComponent(query.trim())}`)}>Search on UEX <ExternalLink size={14} /></button>
     {(error || linkError) && <p role="alert" className="notice notice--error">{error || linkError}{error && snapshot ? ' Showing cached listings.' : ''}</p>}
-    {loading && !snapshot && <p role="status">Loading player listings...</p>}
+    {(loading || searchQuery !== query.trim().toLowerCase()) && <p role="status">Loading player listings...</p>}
     {!loading && !filtered.length && <p>No matching listings. Try another search, player, or transaction type.</p>}
     <div className="player-market-list">
       {filtered.slice(0, count).map((row) => <details className="player-listing" key={row.id}>
