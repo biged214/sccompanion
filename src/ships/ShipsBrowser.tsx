@@ -334,13 +334,17 @@ function bytesToBase64(bytes: Uint8Array): string {
 function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () => void }) {
   const [detail, setDetail] = useState<ShipDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'weapons' | 'systems' | 'propulsion' | 'availability'>('overview');
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const videoSearch = `Star Citizen ${ship.name} review tour`;
+  const videoUrl = `https://www.youtube.com/results?${new URLSearchParams({ search_query: videoSearch })}`;
+  const [activeTab, setActiveTab] = useState<'overview' | 'weapons' | 'systems' | 'propulsion' | 'availability' | 'videos'>('overview');
 
   useEffect(() => {
     let active = true;
     setDetail(null);
     setError(null);
     setActiveTab('overview');
+    setVideoError(null);
     void fetchShipDetail(ship)
       .then((result) => { if (active) setDetail(result); })
       .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : 'Could not load ship details.'); });
@@ -389,6 +393,7 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
             <DetailTab label="Systems" active={activeTab === 'systems'} onClick={() => setActiveTab('systems')} />
             <DetailTab label="Propulsion" active={activeTab === 'propulsion'} onClick={() => setActiveTab('propulsion')} />
             <DetailTab label="Availability" active={activeTab === 'availability'} onClick={() => setActiveTab('availability')} />
+            <DetailTab label="Videos" active={activeTab === 'videos'} onClick={() => setActiveTab('videos')} />
           </nav>
 
           {activeTab === 'overview' && (
@@ -483,7 +488,19 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
             </>
           )}
 
-          {!detail && activeTab !== 'overview' && (
+          {activeTab === 'videos' && (
+            <DetailSection title="Videos">
+              <p>{videoSearch}</p>
+              <a className="settings-command" href={videoUrl} target="_blank" rel="noopener noreferrer" onClick={(event) => {
+                event.preventDefault();
+                setVideoError(null);
+                void openExternalUrl(videoUrl).catch(() => setVideoError('Could not open YouTube in your browser. Please try again.'));
+              }}>Search YouTube <ExternalLink size={15} aria-hidden="true" /></a>
+              {videoError && <p className="inline-error" role="alert">{videoError}</p>}
+            </DetailSection>
+          )}
+
+          {!detail && activeTab !== 'overview' && activeTab !== 'videos' && (
             <p className="ship-tab-loading">{error ? 'Detailed specifications are unavailable for this vehicle.' : 'Loading detailed specifications...'}</p>
           )}
 
