@@ -11,6 +11,11 @@ export default defineConfig({
       ignored: ['**/src-tauri/target/**']
     },
     proxy: {
+      '/api/rsi-guides': {
+        target: 'https://support.robertsspaceindustries.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/rsi-guides/, '')
+      },
       '/api/rsi-status-page': {
         target: 'https://status.robertsspaceindustries.com',
         changeOrigin: true,

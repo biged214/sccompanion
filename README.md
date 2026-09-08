@@ -23,6 +23,12 @@ A desktop companion for Star Citizen service status, patch notes, news, ships, s
 
 ## What This POC Covers
 
+- Starter Guides under Reference fetches RSI's New Players Knowledge Base category,
+  follows pagination, and groups articles by topic. Preserves sanitized formatting,
+  images, audio/video sources, and click-to-load YouTube/Vimeo embeds. Original links
+  remain available if media cannot be embedded. Article text is cached locally;
+  remote media needs internet access. Refresh checks for new articles and revisions.
+
 - Fetches `https://status.robertsspaceindustries.com/index.xml`
 - Parses RSS/XML into a typed status model
 - Displays recent updates with title, summary, publish time, category, link, and inferred service level

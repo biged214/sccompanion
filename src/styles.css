@@ -848,6 +848,28 @@ h1 {
   color: #e8f1f6;
 }
 
+.guide-filters { display: flex; gap: 16px; align-items: end; flex-wrap: wrap; margin: 20px 0; }
+.guide-filters label { display: grid; gap: 8px; flex: 1 1 220px; }
+.guide-filters input, .guide-filters select { min-width: 0; width: 100%; padding: 10px; color: #e8f1f6; background: #101820; border: 1px solid #42535f; border-radius: 4px; }
+.guide-row { border-top: 1px solid #34424d; }
+.guide-summary { display: flex; justify-content: space-between; gap: 16px; width: 100%; text-align: left; padding: 18px 0; background: transparent; color: #e8f1f6; border: 0; cursor: pointer; }
+.guide-summary span { min-width: 0; overflow-wrap: anywhere; }
+.guide-summary small { display: block; margin-top: 7px; color: #a4b5bf; }
+.guide-summary svg { flex-shrink: 0; }
+.guide-summary[aria-expanded="true"] svg { transform: rotate(180deg); }
+.guide-summary:focus-visible { outline: 2px solid #80d9b2; outline-offset: 2px; }
+.guide-content { max-width: 900px; line-height: 1.7; overflow-wrap: anywhere; padding: 12px 0 24px; }
+.guide-content p, .guide-content ul, .guide-content ol { margin: 14px 0; }
+.guide-content h1, .guide-content h2, .guide-content h3, .guide-content h4 { font-size: 20px; line-height: 1.4; margin: 24px 0 12px; }
+.guide-content img { display: block; max-width: 100%; height: auto; margin: 18px auto; }
+.guide-content video, .guide-content audio { display: block; max-width: 100%; margin: 18px 0; }
+.guide-content table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.guide-content td, .guide-content th { padding: 8px; border: 1px solid #42535f; }
+.guide-content pre { white-space: pre-wrap; }
+.guide-content a { color: #8edee5; text-decoration: underline; }
+.guide-video { margin: 16px 0 24px; max-width: 900px; }
+.guide-video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; margin-bottom: 10px; }
+
 .category-card {
   position: relative;
   display: flex;

@@ -17,7 +17,7 @@ export const DATA_SOURCE_CREDITS: readonly DataSourceCredit[] = [
     id: 'rsi',
     name: 'Roberts Space Industries / CIG',
     url: 'https://robertsspaceindustries.com/',
-    contribution: 'Service status, Spectrum, Comm-Link, public citizen profiles, organizations, and local Game.log data'
+    contribution: 'Service status, Spectrum, Comm-Link, Knowledge Base starter guides and media, public citizen profiles, organizations, and local Game.log data'
   },
   {
     id: 'uex',

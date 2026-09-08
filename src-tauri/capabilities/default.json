@@ -12,6 +12,7 @@
     {
       "identifier": "http:default",
       "allow": [
+        { "url": "https://support.robertsspaceindustries.com/api/v2/help_center/en-us/*" },
         {
           "url": "https://status.robertsspaceindustries.com/*"
         },
@@ -59,6 +60,14 @@
     {
       "identifier": "opener:allow-open-url",
       "allow": [
+        { "url": "https://support.robertsspaceindustries.com/*" },
+        { "url": "https://media.robertsspaceindustries.com/*" },
+        { "url": "https://www.youtube.com/*" },
+        { "url": "https://youtube.com/*" },
+        { "url": "https://youtu.be/*" },
+        { "url": "https://www.youtube-nocookie.com/*" },
+        { "url": "https://vimeo.com/*" },
+        { "url": "https://player.vimeo.com/*" },
         {
           "url": "https://sc-market.space/*"
         },

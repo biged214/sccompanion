@@ -30,7 +30,7 @@ export function useAppUpdater(notificationsEnabled: boolean) {
   const updateRef = useRef<Update | null>(null);
   const checkInProgress = useRef(false);
   const [state, setState] = useState<AppUpdaterState>({
-    currentVersion: '0.30.1',
+    currentVersion: '0.31.0',
     availableVersion: null,
     releaseNotes: null,
     status: 'idle',
