@@ -40,6 +40,7 @@ export function useAppUpdater(notificationsEnabled: boolean) {
   });
 
   const checkForUpdates = useCallback(async (manual = true) => {
+    if (import.meta.env.VITE_STORE_BUILD === 'true') return;
     if (import.meta.env.VITE_TESTING_BUILD === 'true') {
       if (manual) setState((current) => ({ ...current, status: 'error', error: 'Testing builds are downloaded from GitHub Actions. Live updates are disabled.' }));
       return;
@@ -91,6 +92,7 @@ export function useAppUpdater(notificationsEnabled: boolean) {
   }, [notificationsEnabled]);
 
   const installUpdate = useCallback(async () => {
+    if (import.meta.env.VITE_STORE_BUILD === 'true') return;
     const update = updateRef.current;
     if (!update || state.status === 'downloading' || state.status === 'installing') return;
 

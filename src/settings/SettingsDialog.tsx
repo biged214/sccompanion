@@ -62,6 +62,7 @@ export function SettingsDialog({
           />
           <ToggleRow
             label="Launch at startup"
+            disabled={import.meta.env.VITE_STORE_BUILD === 'true'}
             checked={settings.launchAtStartup}
             onChange={(checked) => void onSetLaunchAtStartup(checked)}
           />
@@ -102,7 +103,7 @@ export function SettingsDialog({
             <ToggleRow
               label="SC Companion updates"
               checked={settings.notifyAppUpdates}
-              disabled={!settings.notificationsEnabled}
+              disabled={!settings.notificationsEnabled || import.meta.env.VITE_STORE_BUILD === 'true'}
               onChange={(checked) => onUpdate({ notifyAppUpdates: checked })}
             />
           </div>
@@ -138,6 +139,7 @@ export function SettingsDialog({
 
         <div className="settings-group">
           <h3><Download size={17} aria-hidden="true" /> Application updates</h3>
+          {import.meta.env.VITE_STORE_BUILD === 'true' && <p className="settings-message">Updates are managed by Microsoft Store.</p>}
           <div className="update-version-row">
             <span>Installed version</span>
             <strong>{updater.currentVersion}</strong>
@@ -155,6 +157,7 @@ export function SettingsDialog({
             type="button"
             className="settings-command"
             disabled={updater.status === 'checking' || updater.status === 'downloading' || updater.status === 'installing'}
+            hidden={import.meta.env.VITE_STORE_BUILD === 'true'}
             onClick={() => void (updater.status === 'available' ? onInstallUpdate() : onCheckForUpdates())}
           >
             {updater.status === 'checking' || updater.status === 'downloading' || updater.status === 'installing'

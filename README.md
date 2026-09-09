@@ -1,5 +1,12 @@
 # SC Companion
 
+## Microsoft Store
+
+The separate **Microsoft Store MSIX** workflow creates an x64 Windows 11 package
+for Partner Center upload, with Store-managed updates. See
+`packaging/store/README.md` for required identity values and certification checks.
+Existing GitHub installers and their updater remain unchanged.
+
 ## Testing Downloads
 
 Push changes to `codex/testing` to build Windows and Linux testing installers in

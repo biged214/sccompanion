@@ -1,0 +1,52 @@
+name: Microsoft Store MSIX
+
+on:
+  workflow_dispatch:
+    inputs:
+      identity_name:
+        description: Partner Center Package/Identity/Name
+        required: true
+        type: string
+      identity_publisher:
+        description: Partner Center Package/Identity/Publisher (CN=...)
+        required: true
+        type: string
+      publisher_display_name:
+        description: Partner Center Package/Properties/PublisherDisplayName
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  msix:
+    runs-on: windows-latest
+    env:
+      VITE_STORE_BUILD: 'true'
+      RUSTFLAGS: '-C target-feature=+crt-static'
+      STORE_IDENTITY_NAME: ${{ inputs.identity_name }}
+      STORE_IDENTITY_PUBLISHER: ${{ inputs.identity_publisher }}
+      STORE_PUBLISHER_DISPLAY_NAME: ${{ inputs.publisher_display_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm ci
+      - name: Validate Store identity
+        shell: pwsh
+        run: ./packaging/store/build-msix.ps1 -ValidateOnly
+      - name: Build Store application (no EXE/MSI installer)
+        run: npm run tauri:build -- --no-bundle --features store --config src-tauri/tauri.store.conf.json
+      - name: Package unsigned MSIX for Partner Center
+        shell: pwsh
+        run: ./packaging/store/build-msix.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SC-Companion-Store-x64-${{ github.run_number }}
+          path: store-output/*.msix
+          if-no-files-found: error
+          retention-days: 14

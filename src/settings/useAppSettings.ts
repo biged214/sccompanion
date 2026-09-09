@@ -52,6 +52,7 @@ export function useAppSettings() {
   }, [updateSettings]);
 
   const setLaunchAtStartup = useCallback(async (enabled: boolean) => {
+    if (import.meta.env.VITE_STORE_BUILD === 'true') return;
     if (!window.__TAURI_INTERNALS__) {
       updateSettings({ launchAtStartup: enabled });
       return;
@@ -94,7 +95,7 @@ export function useAppSettings() {
   useEffect(() => {
     if (!window.__TAURI_INTERNALS__) return;
 
-    void isEnabled()
+    if (import.meta.env.VITE_STORE_BUILD !== 'true') void isEnabled()
       .then((enabled) => updateSettings({ launchAtStartup: enabled }))
       .catch(() => setError('Could not read the launch-at-startup setting.'));
 
