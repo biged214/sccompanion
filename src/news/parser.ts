@@ -48,8 +48,8 @@ export function parseNewsArticle(html: string): string {
   return lines.join('\n\n');
 }
 
-const STRUCTURED_ATTRIBUTES = new Set([':content', ':question-list', ':items', ':cards', ':sections', ':copy']);
-const STRUCTURED_TEXT_FIELDS = new Set(['overline', 'title', 'subtitle', 'heading', 'paragraph', 'body', 'content', 'description', 'text']);
+const STRUCTURED_ATTRIBUTES = new Set([':properties', ':content', ':question-list', ':items', ':cards', ':sections', ':copy']);
+const STRUCTURED_TEXT_FIELDS = new Set(['overline', 'title', 'subtitle', 'heading', 'paragraph', 'introduction', 'body', 'content', 'description', 'text']);
 const STRUCTURED_SKIP_FIELDS = new Set([
   'media',
   'background',
@@ -58,7 +58,9 @@ const STRUCTURED_SKIP_FIELDS = new Set([
   'logo',
   'overlay',
   'callToAction',
-  '__typename'
+  '__typename',
+  'sku', 'skus', 'skuList', 'pictures', 'image', 'video', 'imageAction',
+  'backgroundOptions', 'animations', 'globalAnimations', 'dispositions'
 ]);
 
 function extractStructuredContent(root: Element): string[] {
@@ -69,7 +71,8 @@ function extractStructuredContent(root: Element): string[] {
         const value = element.getAttribute(name);
         if (!value) return [];
         try {
-          return collectStructuredLines(JSON.parse(value));
+          const parsed = JSON.parse(value);
+          return collectStructuredLines(name === ':properties' ? parsed?.componentProps : parsed);
         } catch {
           return [];
         }
@@ -88,9 +91,11 @@ function collectStructuredLines(value: unknown, field = ''): string[] {
   if (!value || typeof value !== 'object') return [];
 
   const record = value as Record<string, unknown>;
-  if (record.displayed === false) return [];
+  if (record.displayed === false || record.isDisplayed === false) return [];
+  const dispositions = record.dispositions as { large?: { display?: boolean } } | undefined;
+  if (dispositions?.large?.display === false) return [];
   return Object.entries(record).flatMap(([key, entry]) =>
-    STRUCTURED_SKIP_FIELDS.has(key) ? [] : collectStructuredLines(entry, key)
+    STRUCTURED_SKIP_FIELDS.has(key) || (record.isHeaderDeclared === false && ['title', 'overline', 'subtitle', 'introduction'].includes(key)) ? [] : collectStructuredLines(entry, key)
   );
 }
 

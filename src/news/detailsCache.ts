@@ -3,7 +3,7 @@ interface CachedNewsDetail {
   fetchedAt: string;
 }
 
-const CACHE_KEY = 'star-citizen-status:news-details:v2';
+const CACHE_KEY = 'star-citizen-status:news-details:v3';
 const MAX_CACHED_DETAILS = 20;
 
 export function loadCachedNewsDetail(url: string): string | null {
