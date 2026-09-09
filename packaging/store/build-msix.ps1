@@ -33,10 +33,10 @@ foreach ($asset in @('Square44x44Logo.png', 'Square150x150Logo.png', 'StoreLogo.
 <?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap rescap">
   <Identity Name="PLACEHOLDER" Publisher="CN=PLACEHOLDER" Version="1.0.0.0" ProcessorArchitecture="x64" />
-  <Properties><DisplayName>SC Companion</DisplayName><PublisherDisplayName>PLACEHOLDER</PublisherDisplayName><Description>Star Citizen news, guides, reference data, trade planning, and local gameplay history.</Description><Logo>Assets\StoreLogo.png</Logo></Properties>
+  <Properties><DisplayName>SC-Companion</DisplayName><PublisherDisplayName>PLACEHOLDER</PublisherDisplayName><Description>Star Citizen news, guides, reference data, trade planning, and local gameplay history.</Description><Logo>Assets\StoreLogo.png</Logo></Properties>
   <Resources><Resource Language="en-US" /></Resources>
   <Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" /></Dependencies>
-  <Applications><Application Id="App" Executable="sc-companion-store.exe" EntryPoint="Windows.FullTrustApplication"><uap:VisualElements DisplayName="SC Companion" Description="Star Citizen desktop companion" BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" /></Application></Applications>
+  <Applications><Application Id="App" Executable="sc-companion-store.exe" EntryPoint="Windows.FullTrustApplication"><uap:VisualElements DisplayName="SC-Companion" Description="Star Citizen desktop companion" BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" /></Application></Applications>
   <Capabilities><rescap:Capability Name="runFullTrust" /></Capabilities>
 </Package>
 '@
