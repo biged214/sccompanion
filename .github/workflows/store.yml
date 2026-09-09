@@ -1,19 +1,25 @@
 name: Microsoft Store MSIX
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'packaging/store/**'
+      - 'src-tauri/tauri.store.conf.json'
+      - '.github/workflows/store.yml'
   workflow_dispatch:
     inputs:
       identity_name:
         description: Partner Center Package/Identity/Name
-        required: true
+        required: false
         type: string
       identity_publisher:
         description: Partner Center Package/Identity/Publisher (CN=...)
-        required: true
+        required: false
         type: string
       publisher_display_name:
         description: Partner Center Package/Properties/PublisherDisplayName
-        required: true
+        required: false
         type: string
 
 permissions:

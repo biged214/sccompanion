@@ -1,9 +1,13 @@
 param([switch]$ValidateOnly)
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
+$identity = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'identity.json') -Raw | ConvertFrom-Json
 $name = $env:STORE_IDENTITY_NAME
 $publisher = $env:STORE_IDENTITY_PUBLISHER
 $publisherDisplay = $env:STORE_PUBLISHER_DISPLAY_NAME
+if ([string]::IsNullOrWhiteSpace($name)) { $name = $identity.name }
+if ([string]::IsNullOrWhiteSpace($publisher)) { $publisher = $identity.publisher }
+if ([string]::IsNullOrWhiteSpace($publisherDisplay)) { $publisherDisplay = $identity.publisherDisplayName }
 if ($name -notmatch '^[A-Za-z0-9.-]{3,50}$') { throw 'Enter the exact Package/Identity/Name from Partner Center.' }
 if ([string]::IsNullOrWhiteSpace($publisher) -or !$publisher.StartsWith('CN=')) { throw 'Enter the full Package/Identity/Publisher from Partner Center (CN=...).' }
 if ([string]::IsNullOrWhiteSpace($publisherDisplay)) { throw 'Enter Package/Properties/PublisherDisplayName from Partner Center.' }
