@@ -29,6 +29,6 @@ export const DATA_SOURCE_CREDITS: readonly DataSourceCredit[] = [
     id: 'star-citizen-wiki',
     name: 'Star Citizen Wiki',
     url: 'https://star-citizen.wiki/',
-    contribution: 'Ship and component specifications and media'
+    contribution: 'Ship and component specifications and media; blueprint recipes, materials, quality requirements, and acquisition missions'
   }
 ] as const;

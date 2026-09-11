@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import { createServer } from 'vite';
+import { chromium } from '@playwright/test';
+import { mkdir } from 'node:fs/promises';
+const server = await createServer({ server: { host: '127.0.0.1', port: 1433, strictPort: true } });
+await server.listen();
+let browser;
+try {
+  browser = await chromium.launch({ channel: 'chrome', headless: true });
+  const page = await browser.newPage({ viewport: { width: 1100, height: 900 } });
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('http://127.0.0.1:1433');
+  await page.getByRole('button', { name: 'Blueprints', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('.bp-meta')?.textContent.includes('results'), undefined, { timeout: 120000 });
+  const count = await page.locator('.bp-row').count();
+  if (!count) console.log(await page.locator('.blueprints-view').innerText());
+  assert.equal(count, 50);
+  await page.getByPlaceholder('Blueprint or ingredient').fill('Omnisky III');
+  await page.locator('.bp-row').first().getByText('Recipe & acquisition').click();
+  await page.waitForFunction(() => document.querySelector('.bp-detail')?.textContent.includes('Tactical Strike'), undefined, { timeout: 60000 });
+  assert.ok((await page.locator('.bp-detail').first().innerText()).includes('0.36 SCU'));
+  await page.locator('.bp-row').first().getByLabel('Owned', { exact: true }).check();
+  await page.getByRole('button', { name: 'Home', exact: true }).click();
+  await page.getByRole('button', { name: 'Blueprints', exact: true }).click();
+  assert.equal(await page.getByPlaceholder('Blueprint or ingredient').inputValue(), 'Omnisky III');
+  assert.ok(await page.locator('.bp-row').first().getByLabel('Owned', { exact: true }).isChecked());
+  await mkdir('dist/qa', { recursive: true });
+  await page.screenshot({ path: 'dist/qa/blueprints-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 850 });
+  assert.ok(await page.locator('.blueprints-view').evaluate(el => el.scrollWidth <= el.clientWidth));
+  await page.screenshot({ path: 'dist/qa/blueprints-mobile.png', fullPage: true });
+  assert.deepEqual(errors, []);
+  console.log('Live blueprint browser: list, search, recipe, mission, Owned, navigation persistence, desktop/mobile passed.');
+} finally { await browser?.close(); await server.close(); }

@@ -210,3 +210,10 @@ The tracker reads only new bytes from the active log while the app is running an
 - Add multi-stop and return-trip route planning.
 - Move the larger ship and component catalogs from local storage to SQLite.
 - Add code signing certificates for stronger Windows SmartScreen trust.
+# Blueprints (v0.32.0)
+
+Reference > Blueprints browses Star Citizen Wiki recipes for a selected game version. It includes ingredient quantities in their original units, craft times, quality/input choices, known unlocking missions, and dismantle returns. Game-file presence does not guarantee in-game availability. Unknown outputs and acquisition sources remain explicitly labeled.
+
+Search, filters, expanded entries, and Owned/Wanted checklists persist locally. The complete last successful catalog and up to 20 opened recipe details are cached for offline use. Owned/Wanted are manual, not synced from RSI. Refresh downloads every catalog page and keeps the previous cache if a request fails; detail requests are made only when expanded.
+
+Verification: `node tests/blueprints.mjs` and `node tests/blueprints-browser.mjs` (Chrome installed, port 1433 free; browser test uses live Wiki data).

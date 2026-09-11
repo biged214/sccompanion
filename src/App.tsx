@@ -46,6 +46,7 @@ import { useNews } from './news/useNews';
 import { useUpdateNotifications } from './notifications/useUpdateNotifications';
 import { useUnreadUpdates } from './notifications/useUnreadUpdates';
 import { OrganizationsBrowser } from './organizations/OrganizationsBrowser';
+import { BlueprintsBrowser } from './blueprints/BlueprintsBrowser';
 import { fetchPatchNoteDetails, RSI_PATCH_NOTES_URL } from './patchNotes/patchNotesService';
 import { usePatchNotes } from './patchNotes/usePatchNotes';
 import { openExternalUrl } from './platform/openExternalUrl';
@@ -64,7 +65,7 @@ import { UpdateBanner } from './updates/UpdateBanner';
 import { useAppUpdater } from './updates/useAppUpdater';
 
 export function App() {
-  const [activeView, setActiveView] = useState<'home' | 'guides' | 'my-rsi' | 'player-marketplace' | 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay'>('home');
+  const [activeView, setActiveView] = useState<'blueprints' | 'home' | 'guides' | 'my-rsi' | 'player-marketplace' | 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay'>('home');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const appSettings = useAppSettings();
   const appUpdater = useAppUpdater(
@@ -88,6 +89,7 @@ export function App() {
   const overallLevel = status.snapshot?.currentStatus?.level ?? 'unknown';
   const overallMessage = status.snapshot?.currentStatus?.message ?? formatLevel(overallLevel);
   const isHomeView = activeView === 'home';
+  const isBlueprintsView = activeView === 'blueprints';
   const isGuidesView = activeView === 'guides';
   const isMyRsiView = activeView === 'my-rsi';
   const isAnnouncementsView = activeView === 'announcements';
@@ -100,7 +102,7 @@ export function App() {
   const isPlayerMarketplace = activeView === 'player-marketplace';
   const isTradeRoutesView = activeView === 'trade-routes';
   const isGameplayView = activeView === 'gameplay';
-  const activeFeed = isGuidesView || isHomeView || isMyRsiView || isPlayerMarketplace || isGameplayView || isMarketView || isTradeRoutesView || isOrganizationsView ? null : isAnnouncementsView ? announcements : isStatusView ? status : isPatchNotesView ? patchNotes : isShipsView ? ships : isComponentsView ? components : news;
+  const activeFeed = isBlueprintsView || isGuidesView || isHomeView || isMyRsiView || isPlayerMarketplace || isGameplayView || isMarketView || isTradeRoutesView || isOrganizationsView ? null : isAnnouncementsView ? announcements : isStatusView ? status : isPatchNotesView ? patchNotes : isShipsView ? ships : isComponentsView ? components : news;
   const sourceUrl = isAnnouncementsView ? RSI_ANNOUNCEMENTS_URL : isStatusView ? RSI_STATUS_FEED_URL : isPatchNotesView ? RSI_PATCH_NOTES_URL : isShipsView ? UEX_VEHICLES_URL : isComponentsView ? UEX_COMPONENTS_URL : RSI_NEWS_URL;
   const sourceLabel = isAnnouncementsView ? 'Spectrum Announcements' : isStatusView ? 'RSI status RSS' : isPatchNotesView ? 'Spectrum Patch Notes' : isShipsView || isComponentsView ? 'UEX + Star Citizen Wiki' : 'RSI Comm-Link';
 
@@ -215,7 +217,7 @@ export function App() {
               <CircuitBoard size={17} aria-hidden="true" />
               Component Database
             </div>
-          ) : isOrganizationsView ? (
+          ) : isBlueprintsView ? <div className="status-pill"><ScrollText size={17} />Blueprints</div> : isOrganizationsView ? (
             <div className="status-pill">
               <Building2 size={17} aria-hidden="true" />
               Organization Directory
@@ -293,7 +295,7 @@ export function App() {
         />
       ) : isGameplayView ? (
         <GameplayBrowser overview={gameplay.status} />
-      ) : isOrganizationsView ? (
+      ) : isBlueprintsView ? <BlueprintsBrowser /> : isOrganizationsView ? (
         <OrganizationsBrowser />
       ) : activeFeed ? (
         <>
@@ -457,7 +459,7 @@ export function App() {
   );
 }
 
-type FeedView = 'guides' | 'player-marketplace' | 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay';
+type FeedView = 'blueprints' | 'guides' | 'player-marketplace' | 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay';
 
 function HomeDashboard({
   announcementsCount,
@@ -544,6 +546,7 @@ function HomeDashboard({
       <section className="category-group" aria-labelledby="category-reference">
       <h3 id="category-reference">Reference</h3>
       <div className="category-grid">
+        <CategoryCard title="Blueprints" description="Browse crafting recipes, required materials, quality effects, and known acquisition missions." meta="Star Citizen Wiki" icon={<ScrollText size={25} aria-hidden="true" />} onClick={() => onSelect('blueprints')} />
         <CategoryCard title="Starter Guides" description="Official RSI beginner guides, illustrated tutorials, and videos." meta="RSI Knowledge Base" icon={<BookOpen size={25} aria-hidden="true" />} onClick={() => onSelect('guides')} />
         <CategoryCard
           title="Ships"
