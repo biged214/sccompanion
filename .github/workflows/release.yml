@@ -56,7 +56,19 @@ jobs:
           args: --bundles ${{ matrix.bundles }}
           tagName: v__VERSION__
           releaseName: SC Companion v__VERSION__
-          releaseBody: Download the Windows installer or Linux package below. Existing updater-enabled installations can install this release from inside SC Companion.
+          releaseBody: |
+            ## SC Companion 1.0
+            First 1.0 release, bringing the existing desktop features together for Windows, Linux, and the Microsoft Store edition.
+
+            - Announcements, News, Patch Notes, and current Server Status with unread indicators and optional notifications.
+            - Ships, ship components, organizations, and starter guides in one reference library.
+            - Blueprints with recipes, materials, crafting details, Owned/Wanted checklists, and known mission/faction/reputation prerequisites.
+            - Commodity Market, Player Marketplace, and trade route planning with cargo compatibility, loading options, and time/profit estimates.
+            - Optional local gameplay session history, saved filters, caching, and tray support.
+
+            This release promotes the v0.32.1 feature set to v1.0.0. Store users upgrading from v0.31.2 also receive the Blueprints features added in v0.32.0 and v0.32.1.
+
+            Existing direct-download installations can update in the app. Microsoft Store installations update through the Store after certification. Prices, availability, and route times depend on source data and remain estimates.
           releaseDraft: false
           prerelease: false
           generateReleaseNotes: true
