@@ -4,6 +4,7 @@ import { usePersistentState } from '../state/usePersistentState';
 import { openExternalUrl } from '../platform/openExternalUrl';
 import { acquisition, blueprintDetail, blueprintSource, cachedBlueprints, cachedDetail, fetchBlueprints, materialQuantity, wikiJson, type Blueprint, type Material, type Requirement, type Version } from './service';
 import './blueprints.css';
+import { MissionDetails } from './MissionDetails';
 
 export function BlueprintsBrowser() {
   const [snapshot, setSnapshot] = useState(cachedBlueprints);
@@ -90,7 +91,7 @@ function BlueprintDetails({ blueprint }: { blueprint: Blueprint }) {
   return <div className="bp-detail"><h4>Ingredients</h4><Materials items={b.ingredients} />
     {loading && <p role="status">Loading acquisition and quality details...</p>}{error && <p role="alert">{error} {detail ? 'Showing cached details.' : 'Acquisition details could not be checked.'} <button onClick={() => setReload(n => n + 1)}>Retry</button></p>}
     <h4>How to obtain</h4>{b.is_available_by_default && <p>Available by default according to this game version.</p>}
-    {b.unlocking_missions?.length ? <ul>{b.unlocking_missions.map((m, i) => <li key={i}>{m.title || 'Unnamed mission'}{m.reward_scope ? ` (${m.reward_scope})` : ''}</li>)}</ul> : <p>{b.is_available_by_default ? 'No additional mission source supplied.' : detail ? 'Acquisition unknown: no unlocking missions supplied.' : 'Mission details not loaded.'}</p>}
+    {b.unlocking_missions?.length ? <ul>{b.unlocking_missions.map((m, i) => <li key={i}>{m.title || 'Unnamed mission'}{m.reward_scope ? ` (${m.reward_scope})` : ''}<MissionDetails url={m.web_url} version={b.game_version} /></li>)}</ul> : <p>{b.is_available_by_default ? 'No additional mission source supplied.' : detail ? 'Acquisition unknown: no unlocking missions supplied.' : 'Mission details not loaded.'}</p>}
     {!!b.requirement_groups?.length && <><h4>Quality &amp; input choices</h4><Requirements nodes={b.requirement_groups} /></>}
     {(b.tiers?.length || 0) > 1 && <><h4>Additional tiers</h4>{b.tiers?.map(t => <details key={t.tier_index}><summary>Tier index {t.tier_index} | {time(t.craft_time_seconds)}</summary>{t.requirements && <Requirements nodes={[t.requirements]} />}</details>)}</>}
     {!!b.dismantle_returns.length && <><h4>Dismantle returns</h4><Materials items={b.dismantle_returns} /></>}

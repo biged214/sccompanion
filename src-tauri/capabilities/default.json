@@ -61,6 +61,7 @@
       "identifier": "opener:allow-open-url",
       "allow": [
         { "url": "https://api.star-citizen.wiki/blueprints/*" },
+        { "url": "https://api.star-citizen.wiki/missions/*" },
         { "url": "https://support.robertsspaceindustries.com/*" },
         { "url": "https://media.robertsspaceindustries.com/*" },
         { "url": "https://www.youtube.com/*" },

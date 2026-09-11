@@ -11,6 +11,7 @@ try {
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('http://127.0.0.1:1433');
+  assert.deepEqual(await page.locator('section[aria-labelledby="category-reference"] .category-card').evaluateAll(nodes => nodes.map(n => n.getAttribute('aria-label'))), ['Starter Guides', 'Ships', 'Ship Components', 'Organizations', 'Blueprints']);
   await page.getByRole('button', { name: 'Blueprints', exact: true }).click();
   await page.waitForFunction(() => document.querySelector('.bp-meta')?.textContent.includes('results'), undefined, { timeout: 120000 });
   const count = await page.locator('.bp-row').count();
@@ -20,6 +21,10 @@ try {
   await page.locator('.bp-row').first().getByText('Recipe & acquisition').click();
   await page.waitForFunction(() => document.querySelector('.bp-detail')?.textContent.includes('Tactical Strike'), undefined, { timeout: 60000 });
   assert.ok((await page.locator('.bp-detail').first().innerText()).includes('0.36 SCU'));
+  await page.getByText('Faction, reputation & prerequisites', { exact: true }).first().click();
+  await page.waitForFunction(() => document.querySelector('.bp-mission')?.textContent.includes('Sr. Contractor'), undefined, { timeout: 60000 });
+  assert.ok((await page.locator('.bp-mission').first().innerText()).includes('5,800'));
+  assert.ok((await page.locator('.bp-mission').first().innerText()).includes('InterSec Defense Solutions'));
   await page.locator('.bp-row').first().getByLabel('Owned', { exact: true }).check();
   await page.getByRole('button', { name: 'Home', exact: true }).click();
   await page.getByRole('button', { name: 'Blueprints', exact: true }).click();

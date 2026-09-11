@@ -1,4 +1,5 @@
 .blueprints-view { min-width: 0; }
+.bp-mission dl { display: grid; grid-template-columns: minmax(100px, 160px) minmax(0, 1fr); gap: 10px; font-size: 14px; line-height: 1.6; }.bp-mission dd { margin: 0; }.bp-mission dt { color: #aebbc2; }.bp-briefing { white-space: pre-wrap; }.bp-mission h5 { font-size: 14px; margin: 16px 0 8px; }
 .bp-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 20px 0; }
 .bp-filters label { display: flex; flex-direction: column; gap: 7px; min-width: 0; font-size: 13px; }
 .bp-filters input, .bp-filters select { width: 100%; min-width: 0; padding: 10px; color: inherit; background: #141c21; border: 1px solid #425058; border-radius: 4px; }

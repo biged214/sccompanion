@@ -31,3 +31,13 @@ await assert.rejects(service.fetchBlueprints('', new AbortController().signal), 
 window.fetch = async () => ({ ok: true, json: async () => ({ data: [{ uuid: 'bad' }], meta: { last_page: 1 } }) });
 await assert.rejects(service.fetchBlueprints('', new AbortController().signal), /Invalid blueprint response/);
 console.log('Blueprints: quantities, acquisition, pagination, version pinning, malformed data and cache preservation passed.');
+const missionBuild = await build({ entryPoints: ['src/blueprints/MissionDetails.tsx'], bundle: true, write: false, format: 'esm', platform: 'browser' });
+const mission = await import(`data:text/javascript;base64,${Buffer.from(missionBuild.outputFiles[0].text).toString('base64')}`);
+assert.equal(mission.missionId('https://api.star-citizen.wiki/missions/24ac3c24-ed16-43f5-bb1c-626f0261fcb5'), '24ac3c24-ed16-43f5-bb1c-626f0261fcb5');
+assert.equal(mission.missionId('https://evil.test/missions/24ac3c24-ed16-43f5-bb1c-626f0261fcb5'), null);
+assert.equal(mission.missionId('javascript:alert(1)'), null);
+assert.equal(mission.missionId(undefined), null);
+assert.equal(mission.standingText(null), 'Not supplied');
+assert.match(mission.standingText({ name: 'Neutral', min_reputation: 0 }), /0 reputation/);
+assert.match(mission.standingText({ name: 'Sr. Contractor', min_reputation: 5800 }), /5,800/);
+console.log('Mission acquisition: source allowlist, missing requirements, and zero/nonzero standing thresholds passed.');

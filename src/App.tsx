@@ -546,7 +546,6 @@ function HomeDashboard({
       <section className="category-group" aria-labelledby="category-reference">
       <h3 id="category-reference">Reference</h3>
       <div className="category-grid">
-        <CategoryCard title="Blueprints" description="Browse crafting recipes, required materials, quality effects, and known acquisition missions." meta="Star Citizen Wiki" icon={<ScrollText size={25} aria-hidden="true" />} onClick={() => onSelect('blueprints')} />
         <CategoryCard title="Starter Guides" description="Official RSI beginner guides, illustrated tutorials, and videos." meta="RSI Knowledge Base" icon={<BookOpen size={25} aria-hidden="true" />} onClick={() => onSelect('guides')} />
         <CategoryCard
           title="Ships"
@@ -569,6 +568,7 @@ function HomeDashboard({
           icon={<Building2 size={25} aria-hidden="true" />}
           onClick={() => onSelect('organizations')}
         />
+        <CategoryCard title="Blueprints" description="Browse crafting recipes, required materials, quality effects, and known acquisition missions." meta="Star Citizen Wiki" icon={<ScrollText size={25} aria-hidden="true" />} onClick={() => onSelect('blueprints')} />
       </div>
       </section>
       <section className="category-group" aria-labelledby="category-trading">
