@@ -1,3 +1,4 @@
+import { t, locale } from '../i18n';
 import {
   ArrowRight,
   Box,
@@ -93,48 +94,46 @@ export function ShipsBrowser({ snapshot, isLoading }: { snapshot: ShipsSnapshot 
     <section className="ships-section">
       <div className="section-heading ships-heading">
         <div>
-          <p className="eyebrow">Vehicle Database</p>
-          <h2>Ships</h2>
+          <p className="eyebrow">{t("Vehicle Database")}</p>
+          <h2>{t("Ships")}</h2>
         </div>
-        <p>{filteredShips.length} of {ships.length} vehicles</p>
+        <p>{filteredShips.length} {t("of")} {ships.length} {t("vehicles")}</p>
       </div>
 
-      <section className="ship-filters" aria-label="Ship filters">
+      <section className="ship-filters" aria-label={t("Ship filters")}>
         <label className="ship-search">
           <Search size={18} aria-hidden="true" />
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search ships" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t("Search ships")} />
         </label>
-        <FilterSelect label="Manufacturer" value={manufacturer} onChange={setManufacturer}>
-          <option value="all">All manufacturers</option>
+        <FilterSelect label={t("Manufacturer")} value={manufacturer} onChange={setManufacturer}>
+          <option value="all">{t("All manufacturers")}</option>
           {manufacturers.map((item) => <option key={item} value={item}>{item}</option>)}
         </FilterSelect>
-        <FilterSelect label="Role" value={role} onChange={setRole}>
-          <option value="all">All roles</option>
+        <FilterSelect label={t("Role")} value={role} onChange={setRole}>
+          <option value="all">{t("All roles")}</option>
           {roles.map((item) => <option key={item} value={item}>{item}</option>)}
         </FilterSelect>
-        <FilterSelect label="Type" value={kind} onChange={setKind}>
-          <option value="all">Ships and ground</option>
-          <option value="Ship">Ships</option>
-          <option value="Ground Vehicle">Ground vehicles</option>
+        <FilterSelect label={t("Type")} value={kind} onChange={setKind}>
+          <option value="all">{t("Ships and ground")}</option>
+          <option value="Ship">{t("Ships")}</option>
+          <option value="Ground Vehicle">{t("Ground vehicles")}</option>
         </FilterSelect>
-        <FilterSelect label="Availability" value={availability} onChange={(value) => setAvailability(value as AvailabilityFilter)}>
-          <option value="all">Any availability</option>
-          <option value="purchase">Buy in game</option>
-          <option value="rental">Rent in game</option>
-          <option value="flight-ready">Flight ready</option>
-          <option value="concept">Concept</option>
+        <FilterSelect label={t("Availability")} value={availability} onChange={(value) => setAvailability(value as AvailabilityFilter)}>
+          <option value="all">{t("Any availability")}</option>
+          <option value="purchase">{t("Buy in game")}</option>
+          <option value="rental">{t("Rent in game")}</option>
+          <option value="flight-ready">{t("Flight ready")}</option>
+          <option value="concept">{t("Concept")}</option>
         </FilterSelect>
-        <FilterSelect label="Sort" value={sort} onChange={(value) => setSort(value as ShipSort)}>
-          <option value="name">Name</option>
-          <option value="manufacturer">Manufacturer</option>
-          <option value="cargo">Cargo capacity</option>
-          <option value="price">Lowest price</option>
-          <option value="crew">Maximum crew</option>
+        <FilterSelect label={t("Sort")} value={sort} onChange={(value) => setSort(value as ShipSort)}>
+          <option value="name">{t("Name")}</option>
+          <option value="manufacturer">{t("Manufacturer")}</option>
+          <option value="cargo">{t("Cargo capacity")}</option>
+          <option value="price">{t("Lowest price")}</option>
+          <option value="crew">{t("Maximum crew")}</option>
         </FilterSelect>
         <button type="button" className="clear-filters" onClick={clearFilters}>
-          <SlidersHorizontal size={16} aria-hidden="true" />
-          Reset
-        </button>
+          <SlidersHorizontal size={16} aria-hidden="true" /> {t("Reset")} </button>
       </section>
 
       <div className="ship-grid">
@@ -146,9 +145,7 @@ export function ShipsBrowser({ snapshot, isLoading }: { snapshot: ShipsSnapshot 
       {visibleCount < filteredShips.length && (
         <div className="load-more">
           <button type="button" onClick={() => setVisibleCount((count) => count + 24)}>
-            <ArrowRight size={17} aria-hidden="true" />
-            Load more ships
-          </button>
+            <ArrowRight size={17} aria-hidden="true" /> {t("Load more ships")} </button>
         </div>
       )}
 
@@ -156,8 +153,8 @@ export function ShipsBrowser({ snapshot, isLoading }: { snapshot: ShipsSnapshot 
         <section className="notice">
           <ShipIcon size={19} aria-hidden="true" />
           <div>
-            <strong>No matching ships</strong>
-            <span>Adjust or reset the current filters.</span>
+            <strong>{t("No matching ships")}</strong>
+            <span>{t("Adjust or reset the current filters.")}</span>
           </div>
         </section>
       )}
@@ -195,7 +192,7 @@ function ShipCard({ ship, onClick }: { ship: ShipSummary; onClick: () => void })
         <span className="ship-card__badges">
           <span>{ship.kind}</span>
           <span className={ship.isConcept ? 'ship-badge ship-badge--concept' : 'ship-badge ship-badge--ready'}>
-            {ship.isConcept ? 'Concept' : 'Flight Ready'}
+            {ship.isConcept ? t("Concept") : t("Flight Ready")}
           </span>
         </span>
         <strong className="ship-card__name">{ship.name}</strong>
@@ -206,7 +203,7 @@ function ShipCard({ ship, onClick }: { ship: ShipSummary; onClick: () => void })
           <span><Ruler size={15} aria-hidden="true" /> {formatNumber(ship.length)} m</span>
         </span>
         <span className="ship-card__price">
-          {purchasePrice ? `From ${formatCurrency(purchasePrice)} aUEC` : ship.rentalLocations.length ? `Rent from ${formatCurrency(ship.rentalLocations[0].price)} aUEC` : 'Not sold in game'}
+          {purchasePrice ? t("From {{v0}} aUEC", { v0: formatCurrency(purchasePrice) }) : ship.rentalLocations.length ? t("Rent from {{v0}} aUEC", { v0: formatCurrency(ship.rentalLocations[0].price) }) : t("Not sold in game")}
           <ArrowRight size={18} aria-hidden="true" />
         </span>
       </span>
@@ -347,7 +344,7 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
     setVideoError(null);
     void fetchShipDetail(ship)
       .then((result) => { if (active) setDetail(result); })
-      .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : 'Could not load ship details.'); });
+      .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : t("Could not load ship details.")); });
     return () => { active = false; };
   }, [ship]);
 
@@ -367,7 +364,7 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
             <p className="eyebrow">{ship.manufacturer}</p>
             <h2 id="ship-dialog-title">{ship.name}</h2>
           </div>
-          <button type="button" className="icon-button" aria-label="Close ship details" onClick={onClose}>
+          <button type="button" className="icon-button" aria-label={t("Close ship details")} onClick={onClose}>
             <X size={20} aria-hidden="true" />
           </button>
         </header>
@@ -377,46 +374,46 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
           <div>
             <div className="ship-detail-badges">
               <span>{ship.kind}</span>
-              <span>{detail?.career || ship.roles[0] || 'General'}</span>
-              <span>{detail?.role || ship.roles.slice(0, 2).join(' / ') || 'Multi-role'}</span>
+              <span>{detail?.career || ship.roles[0] || t("General")}</span>
+              <span>{detail?.role || ship.roles.slice(0, 2).join(' / ') || t("Multi-role")}</span>
             </div>
             {detail?.description && <p>{detail.description}</p>}
-            {!detail && !error && <div className="inline-loading"><RefreshCw size={18} className="spin" aria-hidden="true" /> Loading specifications...</div>}
-            {error && <p className="inline-error">{error} Basic UEX information is still shown below.</p>}
+            {!detail && !error && <div className="inline-loading"><RefreshCw size={18} className="spin" aria-hidden="true" /> {t("Loading specifications...")}</div>}
+            {error && <p className="inline-error">{error} {t("Basic UEX information is still shown below.")}</p>}
           </div>
         </div>
 
         <div className="ship-dialog__content">
-          <nav className="ship-detail-tabs" aria-label="Ship detail sections">
-            <DetailTab label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
-            <DetailTab label="Weapons" active={activeTab === 'weapons'} onClick={() => setActiveTab('weapons')} />
-            <DetailTab label="Systems" active={activeTab === 'systems'} onClick={() => setActiveTab('systems')} />
-            <DetailTab label="Propulsion" active={activeTab === 'propulsion'} onClick={() => setActiveTab('propulsion')} />
-            <DetailTab label="Availability" active={activeTab === 'availability'} onClick={() => setActiveTab('availability')} />
-            <DetailTab label="Videos" active={activeTab === 'videos'} onClick={() => setActiveTab('videos')} />
+          <nav className="ship-detail-tabs" aria-label={t("Ship detail sections")}>
+            <DetailTab label={t("Overview")} active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
+            <DetailTab label={t("Weapons")} active={activeTab === 'weapons'} onClick={() => setActiveTab('weapons')} />
+            <DetailTab label={t("Systems")} active={activeTab === 'systems'} onClick={() => setActiveTab('systems')} />
+            <DetailTab label={t("Propulsion")} active={activeTab === 'propulsion'} onClick={() => setActiveTab('propulsion')} />
+            <DetailTab label={t("Availability")} active={activeTab === 'availability'} onClick={() => setActiveTab('availability')} />
+            <DetailTab label={t("Videos")} active={activeTab === 'videos'} onClick={() => setActiveTab('videos')} />
           </nav>
 
           {activeTab === 'overview' && (
             <>
-              <DetailSection title="Core specifications">
+              <DetailSection title={t("Core specifications")}>
                 <div className="ship-spec-grid">
-                  <Spec icon={<Users size={18} />} label="Crew" value={detail ? formatCrewRange(detail.crewMin, detail.crewMax) : formatCrew(ship)} />
-                  <Spec icon={<Box size={18} />} label="Cargo" value={`${formatNumber(detail?.cargoCapacity ?? ship.cargoCapacity)} SCU`} />
-                  <Spec icon={<Ruler size={18} />} label="Dimensions" value={`${formatNumber(detail?.length ?? ship.length)} x ${formatNumber(detail?.width ?? ship.width)} x ${formatNumber(detail?.height ?? ship.height)} m`} />
-                  <Spec icon={<ShipIcon size={18} />} label="Mass" value={formatMetric(detail?.mass ?? ship.mass, 'kg', true)} />
-                  <Spec icon={<Gauge size={18} />} label="SCM / NAV" value={detail ? `${formatNumber(detail.scmSpeed)} / ${formatNumber(detail.maxSpeed)} m/s` : 'Loading'} />
-                  <Spec icon={<MapPin size={18} />} label="Pad size" value={ship.padType || 'Not listed'} />
+                  <Spec icon={<Users size={18} />} label={t("Crew")} value={detail ? formatCrewRange(detail.crewMin, detail.crewMax) : formatCrew(ship)} />
+                  <Spec icon={<Box size={18} />} label={t("Cargo")} value={`${formatNumber(detail?.cargoCapacity ?? ship.cargoCapacity)} SCU`} />
+                  <Spec icon={<Ruler size={18} />} label={t("Dimensions")} value={`${formatNumber(detail?.length ?? ship.length)} x ${formatNumber(detail?.width ?? ship.width)} x ${formatNumber(detail?.height ?? ship.height)} m`} />
+                  <Spec icon={<ShipIcon size={18} />} label={t("Mass")} value={formatMetric(detail?.mass ?? ship.mass, 'kg', true)} />
+                  <Spec icon={<Gauge size={18} />} label="SCM / NAV" value={detail ? `${formatNumber(detail.scmSpeed)} / ${formatNumber(detail.maxSpeed)} m/s` : t("Loading")} />
+                  <Spec icon={<MapPin size={18} />} label={t("Pad size")} value={ship.padType || t("Not listed")} />
                 </div>
               </DetailSection>
 
-              {detail && <DetailSection title="Capacity and durability">
+              {detail && <DetailSection title={t("Capacity and durability")}>
                 <div className="ship-spec-grid">
-                  <Spec icon={<HeartPulse size={18} />} label="Hull health" value={formatMetric(detail.health, 'HP', true)} />
-                  <Spec icon={<Shield size={18} />} label="Armor health" value={formatMetric(detail.armorHealth, 'HP', true)} />
-                  <Spec icon={<Box size={18} />} label="Cargo grids" value={formatMetric(detail.cargoGridCount)} />
-                  <Spec icon={<Box size={18} />} label="Largest cargo box" value={formatMetric(detail.maxCargoBoxSize, 'SCU')} />
-                  <Spec icon={<Box size={18} />} label="Inventory" value={formatMetric(detail.inventoryCapacity, 'SCU')} />
-                  <Spec icon={<HeartPulse size={18} />} label="Beds / medical" value={`${detail.bedCount || 'Not listed'} / ${detail.medicalTier || 'None'}`} />
+                  <Spec icon={<HeartPulse size={18} />} label={t("Hull health")} value={formatMetric(detail.health, 'HP', true)} />
+                  <Spec icon={<Shield size={18} />} label={t("Armor health")} value={formatMetric(detail.armorHealth, 'HP', true)} />
+                  <Spec icon={<Box size={18} />} label={t("Cargo grids")} value={formatMetric(detail.cargoGridCount)} />
+                  <Spec icon={<Box size={18} />} label={t("Largest cargo box")} value={formatMetric(detail.maxCargoBoxSize, 'SCU')} />
+                  <Spec icon={<Box size={18} />} label={t("Inventory")} value={formatMetric(detail.inventoryCapacity, 'SCU')} />
+                  <Spec icon={<HeartPulse size={18} />} label={t("Beds / medical")} value={`${detail.bedCount || t("Not listed")} / ${detail.medicalTier || t("None")}`} />
                 </div>
               </DetailSection>}
             </>
@@ -424,34 +421,34 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
 
           {activeTab === 'weapons' && detail && (
             <>
-              <DetailSection title="Combat output">
+              <DetailSection title={t("Combat output")}>
                 <div className="ship-spec-grid">
-                  <Spec icon={<Crosshair size={18} />} label="Pilot DPS" value={formatMetric(detail.pilotDps)} />
-                  <Spec icon={<Crosshair size={18} />} label="Turret DPS" value={formatMetric(detail.turretDps)} />
-                  <Spec icon={<Rocket size={18} />} label="Missiles" value={formatMetric(detail.missileCount)} />
-                  <Spec icon={<Shield size={18} />} label="Countermeasures" value={formatMetric(detail.countermeasureCount)} />
+                  <Spec icon={<Crosshair size={18} />} label={t("Pilot DPS")} value={formatMetric(detail.pilotDps)} />
+                  <Spec icon={<Crosshair size={18} />} label={t("Turret DPS")} value={formatMetric(detail.turretDps)} />
+                  <Spec icon={<Rocket size={18} />} label={t("Missiles")} value={formatMetric(detail.missileCount)} />
+                  <Spec icon={<Shield size={18} />} label={t("Countermeasures")} value={formatMetric(detail.countermeasureCount)} />
                 </div>
               </DetailSection>
-              <EquipmentSection title="Equipped weapons" items={detail.weapons} emptyText="No equipped gun details are listed for this vehicle." showControl />
+              <EquipmentSection title={t("Equipped weapons")} items={detail.weapons} emptyText="No equipped gun details are listed for this vehicle." showControl />
               <TurretSection turrets={detail.turrets} />
-              <EquipmentSection title="Missiles and racks" items={detail.missiles} emptyText="No equipped missile details are listed for this vehicle." showControl />
+              <EquipmentSection title={t("Missiles and racks")} items={detail.missiles} emptyText="No equipped missile details are listed for this vehicle." showControl />
             </>
           )}
 
           {activeTab === 'systems' && detail && (
             <>
-              <DetailSection title="Defense, power, and signatures">
+              <DetailSection title={t("Defense, power, and signatures")}>
                 <div className="ship-spec-grid">
-                  <Spec icon={<Shield size={18} />} label="Shield capacity" value={formatMetric(detail.shieldHp, 'HP', true)} />
-                  <Spec icon={<Shield size={18} />} label="Shield regeneration" value={formatMetric(detail.shieldRegeneration, 'HP/s', true)} />
-                  <Spec icon={<Shield size={18} />} label="Shield faces" value={detail.shieldFaceType || 'Not listed'} />
-                  <Spec icon={<Zap size={18} />} label="Power segments" value={formatMetric(detail.powerSegments)} />
-                  <Spec icon={<Cog size={18} />} label="Cooling segments" value={formatMetric(detail.coolingSegments)} />
-                  <Spec icon={<Radar size={18} />} label="IR / EM signature" value={`${formatNumber(detail.infraredSignature)} / ${formatNumber(detail.electromagneticSignature)}`} />
+                  <Spec icon={<Shield size={18} />} label={t("Shield capacity")} value={formatMetric(detail.shieldHp, 'HP', true)} />
+                  <Spec icon={<Shield size={18} />} label={t("Shield regeneration")} value={formatMetric(detail.shieldRegeneration, 'HP/s', true)} />
+                  <Spec icon={<Shield size={18} />} label={t("Shield faces")} value={detail.shieldFaceType || t("Not listed")} />
+                  <Spec icon={<Zap size={18} />} label={t("Power segments")} value={formatMetric(detail.powerSegments)} />
+                  <Spec icon={<Cog size={18} />} label={t("Cooling segments")} value={formatMetric(detail.coolingSegments)} />
+                  <Spec icon={<Radar size={18} />} label={t("IR / EM signature")} value={`${formatNumber(detail.infraredSignature)} / ${formatNumber(detail.electromagneticSignature)}`} />
                 </div>
               </DetailSection>
               <EquipmentSection
-                title="Installed systems and avionics"
+                title={t("Installed systems and avionics")}
                 items={detail.components.filter((item) => !isPropulsionComponent(item) && !isWeaponComponent(item))}
                 emptyText="No installed system details are listed for this vehicle."
               />
@@ -460,21 +457,21 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
 
           {activeTab === 'propulsion' && detail && (
             <>
-              <DetailSection title="Flight and quantum performance">
+              <DetailSection title={t("Flight and quantum performance")}>
                 <div className="ship-spec-grid">
-                  <Spec icon={<Gauge size={18} />} label="Forward / reverse boost" value={`${formatNumber(detail.boostForwardSpeed)} / ${formatNumber(detail.boostBackwardSpeed)} m/s`} />
-                  <Spec icon={<Gauge size={18} />} label="Pitch / yaw / roll" value={`${formatNumber(detail.pitchRate)} / ${formatNumber(detail.yawRate)} / ${formatNumber(detail.rollRate)} deg/s`} />
-                  <Spec icon={<Rocket size={18} />} label="Quantum speed" value={formatMetric(detail.quantumSpeed, 'm/s', true)} />
-                  <Spec icon={<Rocket size={18} />} label="Quantum spool" value={formatMetric(detail.quantumSpoolTime, 'sec')} />
-                  <Spec icon={<Rocket size={18} />} label="Quantum range" value={formatMetric(detail.quantumRange, 'm', true)} />
-                  <Spec icon={<Zap size={18} />} label="Quantum fuel" value={formatMetric(detail.quantumFuelCapacity, 'SCU')} />
-                  <Spec icon={<Zap size={18} />} label="Hydrogen fuel" value={formatMetric(detail.fuelCapacity, 'SCU')} />
-                  <Spec icon={<Zap size={18} />} label="Fuel intake" value={formatMetric(detail.fuelIntakeRate, '/s', true)} />
+                  <Spec icon={<Gauge size={18} />} label={t("Forward / reverse boost")} value={`${formatNumber(detail.boostForwardSpeed)} / ${formatNumber(detail.boostBackwardSpeed)} m/s`} />
+                  <Spec icon={<Gauge size={18} />} label={t("Pitch / yaw / roll")} value={`${formatNumber(detail.pitchRate)} / ${formatNumber(detail.yawRate)} / ${formatNumber(detail.rollRate)} deg/s`} />
+                  <Spec icon={<Rocket size={18} />} label={t("Quantum speed")} value={formatMetric(detail.quantumSpeed, 'm/s', true)} />
+                  <Spec icon={<Rocket size={18} />} label={t("Quantum spool")} value={formatMetric(detail.quantumSpoolTime, 'sec')} />
+                  <Spec icon={<Rocket size={18} />} label={t("Quantum range")} value={formatMetric(detail.quantumRange, 'm', true)} />
+                  <Spec icon={<Zap size={18} />} label={t("Quantum fuel")} value={formatMetric(detail.quantumFuelCapacity, 'SCU')} />
+                  <Spec icon={<Zap size={18} />} label={t("Hydrogen fuel")} value={formatMetric(detail.fuelCapacity, 'SCU')} />
+                  <Spec icon={<Zap size={18} />} label={t("Fuel intake")} value={formatMetric(detail.fuelIntakeRate, '/s', true)} />
                 </div>
               </DetailSection>
               <ThrusterSection detail={detail} />
               <EquipmentSection
-                title="Installed propulsion systems"
+                title={t("Installed propulsion systems")}
                 items={detail.components.filter(isPropulsionComponent)}
                 emptyText="No installed propulsion component details are listed for this vehicle."
               />
@@ -483,32 +480,32 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
 
           {activeTab === 'availability' && (
             <>
-              <PriceSection title="Buy in game" entries={ship.purchaseLocations} emptyText="This vehicle is not currently listed for in-game purchase." />
-              <PriceSection title="Rent in game" entries={ship.rentalLocations} emptyText="This vehicle is not currently listed for rental." rental />
+              <PriceSection title={t("Buy in game")} entries={ship.purchaseLocations} emptyText="This vehicle is not currently listed for in-game purchase." />
+              <PriceSection title={t("Rent in game")} entries={ship.rentalLocations} emptyText="This vehicle is not currently listed for rental." rental />
             </>
           )}
 
           {activeTab === 'videos' && (
-            <DetailSection title="Videos">
+            <DetailSection title={t("Videos")}>
               <p>{videoSearch}</p>
               <a className="settings-command" href={videoUrl} target="_blank" rel="noopener noreferrer" onClick={(event) => {
                 event.preventDefault();
                 setVideoError(null);
                 void openExternalUrl(videoUrl).catch(() => setVideoError('Could not open YouTube in your browser. Please try again.'));
-              }}>Search YouTube <ExternalLink size={15} aria-hidden="true" /></a>
+              }}>{t("Search YouTube")} <ExternalLink size={15} aria-hidden="true" /></a>
               {videoError && <p className="inline-error" role="alert">{videoError}</p>}
             </DetailSection>
           )}
 
           {!detail && activeTab !== 'overview' && activeTab !== 'videos' && (
-            <p className="ship-tab-loading">{error ? 'Detailed specifications are unavailable for this vehicle.' : 'Loading detailed specifications...'}</p>
+            <p className="ship-tab-loading">{error ? t("Detailed specifications are unavailable for this vehicle.") : t("Loading detailed specifications...")}</p>
           )}
 
           <footer className="ship-dialog__footer">
-            <span>UEX market data · Wiki specs {detail?.version || ship.gameVersion}</span>
+            <span>{t("UEX market data · Wiki specs")} {detail?.version || ship.gameVersion}</span>
             <div>
-              {detail?.wikiUrl && <ExternalButton href={detail.wikiUrl}>Open Wiki</ExternalButton>}
-              {(detail?.pledgeUrl || ship.pledgeUrl) && <ExternalButton href={detail?.pledgeUrl || ship.pledgeUrl || ''}>RSI Pledge Store</ExternalButton>}
+              {detail?.wikiUrl && <ExternalButton href={detail.wikiUrl}>{t("Open Wiki")}</ExternalButton>}
+              {(detail?.pledgeUrl || ship.pledgeUrl) && <ExternalButton href={detail?.pledgeUrl || ship.pledgeUrl || ''}>{t("RSI Pledge Store")}</ExternalButton>}
             </div>
           </footer>
         </div>
@@ -543,14 +540,14 @@ function EquipmentSection({
   return (
     <DetailSection title={title}>
       {items.length ? <div className="ship-price-table-wrap"><table className="ship-price-table ship-equipment-table">
-        <thead><tr><th>Component</th><th>Type</th>{showControl && <th>Control</th>}<th>Size</th><th>Qty</th><th>Details</th></tr></thead>
+        <thead><tr><th>{t("Component")}</th><th>{t("Type")}</th>{showControl && <th>{t("Control")}</th>}<th>{t("Size")}</th><th>{t("Qty")}</th><th>{t("Details")}</th></tr></thead>
         <tbody>{items.map((item) => <tr key={`${item.type}-${item.name}-${item.size}-${item.control ?? ''}`}>
           <td><strong>{item.name}</strong>{item.manufacturer && <small>{item.manufacturer}</small>}</td>
           <td>{item.type}</td>
-          {showControl && <td><span className="ship-control-badge">{item.control || 'Not listed'}</span></td>}
+          {showControl && <td><span className="ship-control-badge">{item.control ? t(item.control) : t("Not listed")}</span></td>}
           <td>{item.size ? `S${item.size}` : 'N/A'}</td>
           <td>{item.quantity}</td>
-          <td>{item.details.length ? item.details.map((entry) => `${entry.label}: ${entry.value}`).join(' · ') : 'Standard loadout'}</td>
+          <td>{item.details.length ? item.details.map((entry) => `${t(entry.label)}: ${entry.value}`).join(' · ') : t("Standard loadout")}</td>
         </tr>)}</tbody>
       </table></div> : <p className="ship-empty-price">{emptyText}</p>}
     </DetailSection>
@@ -559,30 +556,30 @@ function EquipmentSection({
 
 function TurretSection({ turrets }: { turrets: ShipTurret[] }) {
   return (
-    <DetailSection title="Turrets">
+    <DetailSection title={t("Turrets")}>
       {turrets.length ? <div className="ship-price-table-wrap"><table className="ship-price-table ship-equipment-table">
-        <thead><tr><th>Turret</th><th>Control</th><th>Mounts</th><th>Weapons</th><th>DPS</th></tr></thead>
+        <thead><tr><th>{t("Turret")}</th><th>{t("Control")}</th><th>{t("Mounts")}</th><th>{t("Weapons")}</th><th>DPS</th></tr></thead>
         <tbody>{turrets.map((turret, index) => <tr key={`${turret.control}-${turret.name}-${index}`}>
-          <td><strong>{turret.name}</strong><small>{turret.size ? `Size ${turret.size}` : 'Size not listed'}</small></td>
-          <td>{turret.control}{turret.pilotSlaveable ? ' · Pilot slaveable' : ''}</td>
+          <td><strong>{turret.name}</strong><small>{turret.size ? t("Size {{v0}}", { v0: turret.size }) : t("Size not listed")}</small></td>
+          <td>{t(turret.control)}{turret.pilotSlaveable ? ` · ${t('Pilot slaveable')}` : ''}</td>
           <td>{turret.mountCount || turret.weaponSizes.length || 'N/A'}{turret.weaponSizes.length ? ` · ${turret.weaponSizes.map((size) => `S${size}`).join(', ')}` : ''}</td>
-          <td>{turret.weapons.join(', ') || 'Not equipped'}</td>
-          <td>{formatMetric(turret.dps)}{turret.sustainedDps ? ` · ${formatNumber(turret.sustainedDps)} sustained` : ''}</td>
+          <td>{turret.weapons.join(', ') || t("Not equipped")}</td>
+          <td>{formatMetric(turret.dps)}{turret.sustainedDps ? t(" · {{v0}} sustained", { v0: formatNumber(turret.sustainedDps) }) : ''}</td>
         </tr>)}</tbody>
-      </table></div> : <p className="ship-empty-price">No manned, remote, or point-defense turret details are listed for this vehicle.</p>}
+      </table></div> : <p className="ship-empty-price">{t("No manned, remote, or point-defense turret details are listed for this vehicle.")}</p>}
     </DetailSection>
   );
 }
 
 function ThrusterSection({ detail }: { detail: ShipDetail }) {
   return (
-    <DetailSection title="Thrusters">
+    <DetailSection title={t("Thrusters")}>
       {detail.thrusters.length ? <div className="ship-price-table-wrap"><table className="ship-price-table">
-        <thead><tr><th>Group</th><th>Count</th><th>Capacity</th><th>Acceleration</th></tr></thead>
+        <thead><tr><th>{t("Group")}</th><th>{t("Count")}</th><th>{t("Capacity")}</th><th>{t("Acceleration")}</th></tr></thead>
         <tbody>{detail.thrusters.map((thruster) => <tr key={thruster.type}>
           <td>{thruster.type}</td><td>{thruster.count}</td><td>{formatMetric(thruster.capacityMn, 'MN')}</td><td>{formatMetric(thruster.accelerationG, 'g')}</td>
         </tr>)}</tbody>
-      </table></div> : <p className="ship-empty-price">No thruster group details are listed for this vehicle.</p>}
+      </table></div> : <p className="ship-empty-price">{t("No thruster group details are listed for this vehicle.")}</p>}
     </DetailSection>
   );
 }
@@ -601,7 +598,7 @@ function PriceSection({ title, entries, emptyText, rental = false }: { title: st
       {entries.length ? (
         <div className="ship-price-table-wrap">
           <table className="ship-price-table">
-            <thead><tr><th>Dealer</th><th>Location</th><th>{rental ? 'Daily rental' : 'Price'}</th></tr></thead>
+            <thead><tr><th>{t("Dealer")}</th><th>{t("Location")}</th><th>{rental ? t("Daily rental") : t("Price")}</th></tr></thead>
             <tbody>{entries.map((entry) => (
               <tr key={`${entry.terminal}-${entry.location}-${entry.price}`}>
                 <td>{entry.terminal}</td><td>{entry.location}</td><td>{formatCurrency(entry.price)} aUEC</td>
@@ -633,20 +630,20 @@ function formatCrew(ship: ShipSummary): string {
 }
 
 function formatCrewRange(min: number, max: number): string {
-  if (!max) return 'Unknown';
+  if (!max) return t("Unknown");
   return min && min !== max ? `${min}-${max}` : String(max);
 }
 
 function formatNumber(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value || 0);
+  return new Intl.NumberFormat(locale(), { maximumFractionDigits: 2 }).format(value || 0);
 }
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(value || 0);
+  return new Intl.NumberFormat(locale(), { maximumFractionDigits: 0 }).format(value || 0);
 }
 
 function formatMetric(value: number, unit = '', whole = false): string {
-  if (!value) return 'Not listed';
+  if (!value) return t("Not listed");
   const formatted = whole ? formatCurrency(value) : formatNumber(value);
   return unit ? `${formatted} ${unit}` : formatted;
 }

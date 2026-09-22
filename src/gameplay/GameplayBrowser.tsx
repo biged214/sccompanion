@@ -1,3 +1,4 @@
+import { t, locale } from '../i18n';
 import {
   Activity,
   AlertTriangle,
@@ -79,7 +80,7 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
     setDetailError(null);
     void fetchGameplayDrilldown(detailMetric, effectiveSessionId, detailLimit)
       .then((result) => { if (!cancelled) setDrilldown(result); })
-      .catch((reason) => { if (!cancelled) setDetailError(reason instanceof Error ? reason.message : 'Could not load these details.'); })
+      .catch((reason) => { if (!cancelled) setDetailError(reason instanceof Error ? reason.message : t("Could not load these details.")); })
       .finally(() => { if (!cancelled) setDetailLoading(false); });
     return () => { cancelled = true; };
   }, [detailLimit, detailMetric, effectiveSessionId]);
@@ -90,7 +91,7 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
     setGroupError(null);
     void fetchGameplayDrilldown(detailMetric, effectiveSessionId, groupLimit, selectedGroup.key)
       .then((result) => { if (!cancelled) setGroupDrilldown(result); })
-      .catch((reason) => { if (!cancelled) setGroupError(reason instanceof Error ? reason.message : 'Could not load this activity.'); })
+      .catch((reason) => { if (!cancelled) setGroupError(reason instanceof Error ? reason.message : t("Could not load this activity.")); })
       .finally(() => { if (!cancelled) setGroupLoading(false); });
     return () => { cancelled = true; };
   }, [detailMetric, effectiveSessionId, groupLimit, selectedGroup]);
@@ -108,7 +109,7 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
       await new Promise((resolve) => window.setTimeout(resolve, 350));
       await gameplay.refresh();
     } catch (reason) {
-      setActionError(reason instanceof Error ? reason.message : 'The log tracker could not complete that action.');
+      setActionError(reason instanceof Error ? reason.message : t("The log tracker could not complete that action."));
     } finally {
       setActionPending(false);
     }
@@ -144,8 +145,8 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
   return (
     <section className="gameplay-section">
       <div className="section-heading gameplay-heading">
-        <div><p className="eyebrow">Local Gameplay History</p><h2>Live Sessions</h2></div>
-        <p>{formatNumber(trackerStatus?.indexedSessions ?? 0)} captured sessions</p>
+        <div><p className="eyebrow">{t("Local Gameplay History")}</p><h2>{t("Live Sessions")}</h2></div>
+        <p>{formatNumber(trackerStatus?.indexedSessions ?? 0)} {t("captured sessions")}</p>
       </div>
 
       <TrackerBanner
@@ -158,7 +159,7 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
         onPathChange={setPathValue}
         onDetect={() => void runAction(async () => {
           const detected = await autoDetectGameLog();
-          if (!detected) throw new Error('No LIVE, PTU, or EPTU Game.log was found automatically.');
+          if (!detected) throw new Error(t("No LIVE, PTU, or EPTU Game.log was found automatically."));
           setPathValue(detected);
         })}
         onSave={() => void runAction(() => setGameLogPath(pathValue))}
@@ -166,13 +167,11 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
       />
 
       <div className="gameplay-viewbar">
-        <div className="gameplay-mode" role="tablist" aria-label="Session scope">
+        <div className="gameplay-mode" role="tablist" aria-label={t("Session scope")}>
           <button type="button" role="tab" aria-selected={mode === 'live'} className={mode === 'live' ? 'active' : ''} onClick={() => setMode('live')}>
-            <Radio size={16} aria-hidden="true" /> Live session
-          </button>
+            <Radio size={16} aria-hidden="true" /> {t("Live session")} </button>
           <button type="button" role="tab" aria-selected={mode === 'all'} className={mode === 'all' ? 'active' : ''} onClick={() => setMode('all')}>
-            <Database size={16} aria-hidden="true" /> All sessions
-          </button>
+            <Database size={16} aria-hidden="true" /> {t("All sessions")} </button>
           {mode === 'session' && selectedSession && (
             <button type="button" role="tab" aria-selected="true" className="active">
               <History size={16} aria-hidden="true" /> {formatSessionLabel(selectedSession)}
@@ -180,7 +179,7 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
           )}
         </div>
         <span className="gameplay-scope-label">
-          {mode === 'live' ? 'Following the current Game.log' : mode === 'all' ? 'Combined lifetime totals' : 'Viewing one archived session'}
+          {mode === 'live' ? t("Following the current Game.log") : mode === 'all' ? t("Combined lifetime totals") : t("Viewing one archived session")}
         </span>
       </div>
 
@@ -208,23 +207,23 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
       <div className="gameplay-layout">
         <div className="gameplay-main">
           <header className="timeline-heading">
-            <div><p className="eyebrow">Event Stream</p><h3>{mode === 'all' ? 'All captured events' : selectedSession ? formatSessionLabel(selectedSession) : 'Current session'}</h3></div>
-            <span>{snapshot?.totalMatchingEvents.toLocaleString() ?? 0} matching</span>
+            <div><p className="eyebrow">{t("Event Stream")}</p><h3>{mode === 'all' ? t("All captured events") : selectedSession ? formatSessionLabel(selectedSession) : t("Current session")}</h3></div>
+            <span>{snapshot?.totalMatchingEvents.toLocaleString(locale()) ?? 0} {t("matching")}</span>
           </header>
 
-          <section className="gameplay-filters" aria-label="Gameplay event filters">
+          <section className="gameplay-filters" aria-label={t("Gameplay event filters")}>
             <label className="gameplay-search">
               <Search size={17} aria-hidden="true" />
-              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search events, items, or locations" />
+              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t("Search events, items, or locations")} />
             </label>
             <label>
-              <span>Category</span>
+              <span>{t("Category")}</span>
               <select value={category} onChange={(event) => setCategory(event.target.value)}>
-                <option value="all">All event categories</option>
-                {(snapshot?.categoryCounts ?? []).map((entry) => <option key={entry.category} value={entry.category}>{entry.category} ({entry.count.toLocaleString()})</option>)}
+                <option value="all">{t("All event categories")}</option>
+                {(snapshot?.categoryCounts ?? []).map((entry) => <option key={entry.category} value={entry.category}>{entry.category} ({entry.count.toLocaleString(locale())})</option>)}
               </select>
             </label>
-            <button type="button" className="icon-button" title="Refresh events" aria-label="Refresh gameplay events" onClick={() => void gameplay.refresh()} disabled={gameplay.isLoading}>
+            <button type="button" className="icon-button" title={t("Refresh events")} aria-label={t("Refresh gameplay events")} onClick={() => void gameplay.refresh()} disabled={gameplay.isLoading}>
               <RefreshCw size={18} className={gameplay.isLoading ? 'spin' : undefined} aria-hidden="true" />
             </button>
           </section>
@@ -236,7 +235,7 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
           {!gameplay.isLoading && snapshot?.events.length === 0 && (
             <section className="notice gameplay-empty">
               <Activity size={19} aria-hidden="true" />
-              <div><strong>No matching events</strong><span>The tracker is still capturing data. Adjust the filters or select another session.</span></div>
+              <div><strong>{t("No matching events")}</strong><span>{t("The tracker is still capturing data. Adjust the filters or select another session.")}</span></div>
             </section>
           )}
 
@@ -244,7 +243,7 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
             <div className="load-more">
               <button type="button" onClick={() => setLimit((current) => Math.min(current + 100, 500))} disabled={limit >= 500}>
                 <ArrowRight size={17} aria-hidden="true" />
-                {limit >= 500 ? 'Refine filters to see more' : 'Load more events'}
+                {limit >= 500 ? t("Refine filters to see more") : t("Load more events")}
               </button>
             </div>
           )}
@@ -289,23 +288,23 @@ function TrackerBanner({
       <div className="tracker-banner__status">
         <span className="tracker-signal" aria-hidden="true"><span /></span>
         <div>
-          <strong>{status?.monitoring ? 'Game log monitoring active' : 'Game log not connected'}</strong>
-          <span>{status?.logPath || 'SC Companion could not locate Game.log.'}</span>
+          <strong>{status?.monitoring ? t("Game log monitoring active") : t("Game log not connected")}</strong>
+          <span>{status?.logPath || t("SC Companion could not locate Game.log.")}</span>
         </div>
       </div>
       <div className="tracker-banner__meta">
-        {status?.indexing && <span><RefreshCw size={15} className="spin" aria-hidden="true" /> Indexing {status.queuedBackups} older logs</span>}
-        <span><Database size={15} aria-hidden="true" /> {status?.indexedSessions ?? 0} sessions indexed</span>
+        {status?.indexing && <span><RefreshCw size={15} className="spin" aria-hidden="true" /> {t("Indexing")} {status.queuedBackups} {t("older logs")}</span>}
+        <span><Database size={15} aria-hidden="true" /> {status?.indexedSessions ?? 0} {t("sessions indexed")}</span>
       </div>
       <div className="tracker-banner__actions">
-        <button type="button" className="icon-button" title="Log location" aria-label="Configure game log location" onClick={onToggleEditor}><Settings2 size={18} /></button>
-        <button type="button" className="refresh-button" onClick={onRescan} disabled={pending}><RefreshCw size={16} className={pending ? 'spin' : undefined} /> Re-index</button>
+        <button type="button" className="icon-button" title={t("Log location")} aria-label={t("Configure game log location")} onClick={onToggleEditor}><Settings2 size={18} /></button>
+        <button type="button" className="refresh-button" onClick={onRescan} disabled={pending}><RefreshCw size={16} className={pending ? 'spin' : undefined} /> {t("Re-index")}</button>
       </div>
       {editorOpen && (
         <div className="tracker-path-editor">
-          <label><span>Game.log or channel folder</span><input value={pathValue} onChange={(event) => onPathChange(event.target.value)} /></label>
-          <button type="button" className="secondary-button" onClick={onDetect} disabled={pending}><FolderSearch size={16} /> Auto-detect</button>
-          <button type="button" className="refresh-button" onClick={onSave} disabled={pending}>Save path</button>
+          <label><span>{t("Game.log or channel folder")}</span><input value={pathValue} onChange={(event) => onPathChange(event.target.value)} /></label>
+          <button type="button" className="secondary-button" onClick={onDetect} disabled={pending}><FolderSearch size={16} /> {t("Auto-detect")}</button>
+          <button type="button" className="refresh-button" onClick={onSave} disabled={pending}>{t("Save path")}</button>
         </div>
       )}
       {error && <div className="tracker-banner__error"><AlertTriangle size={16} /> {error}</div>}
@@ -316,14 +315,14 @@ function TrackerBanner({
 function SummaryGrid({ snapshot, activeMetric, onSelect }: { snapshot: GameplaySnapshot; activeMetric: GameplayMetric | null; onSelect: (metric: GameplayMetric) => void }) {
   const summary = snapshot.summary;
   const stats = [
-    { metric: 'sessions' as const, label: 'Sessions', value: formatNumber(summary.totalSessions), icon: <History size={19} /> },
-    { metric: 'gameplayEvents' as const, label: 'Gameplay events', value: formatNumber(summary.gameplayEvents), icon: <Activity size={19} /> },
-    { metric: 'creditsEarned' as const, label: 'Credits earned', value: `${formatCompactCurrency(summary.creditsEarned)} aUEC`, icon: <CircleDollarSign size={19} />, tone: 'positive' },
-    { metric: 'creditsSpent' as const, label: 'Credits spent', value: `${formatCompactCurrency(summary.creditsSpent)} aUEC`, icon: <ShoppingCart size={19} /> },
-    { metric: 'missionsCompleted' as const, label: 'Missions complete', value: formatNumber(summary.missionsCompleted), icon: <CheckCircle2 size={19} /> },
-    { metric: 'purchases' as const, label: 'Purchases', value: formatNumber(summary.purchases), icon: <PackageOpen size={19} /> },
-    { metric: 'cargoActions' as const, label: 'Cargo actions', value: formatNumber(summary.cargoActions), icon: <Box size={19} /> },
-    { metric: 'locationsVisited' as const, label: 'Known locations', value: formatNumber(summary.locationsVisited), icon: <MapPin size={19} /> }
+    { metric: 'sessions' as const, label: t("Sessions"), value: formatNumber(summary.totalSessions), icon: <History size={19} /> },
+    { metric: 'gameplayEvents' as const, label: t("Gameplay events"), value: formatNumber(summary.gameplayEvents), icon: <Activity size={19} /> },
+    { metric: 'creditsEarned' as const, label: t("Credits earned"), value: `${formatCompactCurrency(summary.creditsEarned)} aUEC`, icon: <CircleDollarSign size={19} />, tone: 'positive' },
+    { metric: 'creditsSpent' as const, label: t("Credits spent"), value: `${formatCompactCurrency(summary.creditsSpent)} aUEC`, icon: <ShoppingCart size={19} /> },
+    { metric: 'missionsCompleted' as const, label: t("Missions complete"), value: formatNumber(summary.missionsCompleted), icon: <CheckCircle2 size={19} /> },
+    { metric: 'purchases' as const, label: t("Purchases"), value: formatNumber(summary.purchases), icon: <PackageOpen size={19} /> },
+    { metric: 'cargoActions' as const, label: t("Cargo actions"), value: formatNumber(summary.cargoActions), icon: <Box size={19} /> },
+    { metric: 'locationsVisited' as const, label: t("Known locations"), value: formatNumber(summary.locationsVisited), icon: <MapPin size={19} /> }
   ];
   return <div className="gameplay-summary">{stats.map((stat) => (
     <button type="button" className={`gameplay-stat ${stat.tone ? `gameplay-stat--${stat.tone}` : ''} ${activeMetric === stat.metric ? 'active' : ''}`} key={stat.label} onClick={() => onSelect(stat.metric)} aria-pressed={activeMetric === stat.metric}>
@@ -367,23 +366,23 @@ function DrilldownPanel({
     <section className="gameplay-drilldown" aria-live="polite">
       <header>
         <div>
-          <p className="eyebrow">Detailed Breakdown</p>
-          <h3>{data?.title ?? 'Loading details'}</h3>
+          <p className="eyebrow">{t("Detailed Breakdown")}</p>
+          <h3>{data?.title ?? t("Loading details")}</h3>
           {data && <p>{data.description}</p>}
         </div>
-        <button type="button" className="icon-button" title="Close details" aria-label="Close details" onClick={onClose}><X size={18} /></button>
+        <button type="button" className="icon-button" title={t("Close details")} aria-label={t("Close details")} onClick={onClose}><X size={18} /></button>
       </header>
-      {loading && !data && <div className="gameplay-drilldown__loading"><RefreshCw size={18} className="spin" /> Reading full session history...</div>}
+      {loading && !data && <div className="gameplay-drilldown__loading"><RefreshCw size={18} className="spin" /> {t("Reading full session history...")}</div>}
       {error && <div className="tracker-banner__error"><AlertTriangle size={16} /> {error}</div>}
       {data && (
         <>
           <div className="gameplay-drilldown__totals">
-            <div><span>Source records</span><strong>{formatNumber(data.totalRecords)}</strong></div>
-            <div><span>Grouped results</span><strong>{formatNumber(data.groups.length)}</strong></div>
-            {['creditsEarned', 'creditsSpent', 'purchases'].includes(data.metric) && data.totalAmount > 0 && <div><span>Recorded value</span><strong>{formatCurrency(data.totalAmount)} aUEC</strong></div>}
+            <div><span>{t("Source records")}</span><strong>{formatNumber(data.totalRecords)}</strong></div>
+            <div><span>{t("Grouped results")}</span><strong>{formatNumber(data.groups.length)}</strong></div>
+            {['creditsEarned', 'creditsSpent', 'purchases'].includes(data.metric) && data.totalAmount > 0 && <div><span>{t("Recorded value")}</span><strong>{formatCurrency(data.totalAmount)} aUEC</strong></div>}
           </div>
           <div className="gameplay-drilldown__groups">
-            <div className="gameplay-drilldown__group gameplay-drilldown__group--heading"><span>Result</span><span>Activity</span><span>{data.metric === 'sessions' ? 'Ended / duration' : 'Last seen'}</span></div>
+            <div className="gameplay-drilldown__group gameplay-drilldown__group--heading"><span>{t("Result")}</span><span>{t("Activity")}</span><span>{data.metric === 'sessions' ? 'Ended / duration' : t("Last seen")}</span></div>
             {data.groups.map((group, index) => (
               <button type="button" className={`gameplay-drilldown__group ${selectedGroup?.key === group.key ? 'active' : ''}`} key={`${group.key}-${index}`} onClick={() => onSelectGroup(group)} aria-pressed={selectedGroup?.key === group.key}>
                 <div><strong>{humanizeIdentifier(group.label)}</strong>{group.context && <span>{formatDrilldownContext(group.context)}</span>}</div>
@@ -395,30 +394,30 @@ function DrilldownPanel({
           {selectedGroup && (
             <section className="gameplay-group-detail">
               <header>
-                <div><p className="eyebrow">Selected Activity</p><h3>{humanizeIdentifier(selectedGroup.label)}</h3><span>Individual matching records, newest first. Select a record to see every captured field.</span></div>
-                <button type="button" className="icon-button" title="Close selected activity" aria-label="Close selected activity" onClick={onClearGroup}><X size={17} /></button>
+                <div><p className="eyebrow">{t("Selected Activity")}</p><h3>{humanizeIdentifier(selectedGroup.label)}</h3><span>{t("Individual matching records, newest first. Select a record to see every captured field.")}</span></div>
+                <button type="button" className="icon-button" title={t("Close selected activity")} aria-label={t("Close selected activity")} onClick={onClearGroup}><X size={17} /></button>
               </header>
-              {groupLoading && !groupData && <div className="gameplay-drilldown__loading"><RefreshCw size={18} className="spin" /> Loading activity details...</div>}
+              {groupLoading && !groupData && <div className="gameplay-drilldown__loading"><RefreshCw size={18} className="spin" /> {t("Loading activity details...")}</div>}
               {groupError && <div className="tracker-banner__error"><AlertTriangle size={16} /> {groupError}</div>}
               {groupData && (
                 <>
                   <div className="gameplay-group-detail__totals">
-                    <div><span>Matching records</span><strong>{formatNumber(groupData.totalRecords)}</strong></div>
-                    {groupData.totalAmount > 0 && <div><span>Recorded value</span><strong>{formatCurrency(groupData.totalAmount)} aUEC</strong></div>}
-                    <div><span>Loaded</span><strong>{formatNumber(groupData.events.length)}</strong></div>
+                    <div><span>{t("Matching records")}</span><strong>{formatNumber(groupData.totalRecords)}</strong></div>
+                    {groupData.totalAmount > 0 && <div><span>{t("Recorded value")}</span><strong>{formatCurrency(groupData.totalAmount)} aUEC</strong></div>}
+                    <div><span>{t("Loaded")}</span><strong>{formatNumber(groupData.events.length)}</strong></div>
                   </div>
                   <div className="gameplay-timeline">{groupData.events.map((event) => <EventRow key={`group-${event.id}`} event={event} />)}</div>
-                  {groupData.events.length === 0 && !groupLoading && <div className="gameplay-drilldown__loading">No source records were available for this activity.</div>}
-                  {groupData.events.length < groupData.totalRecords && groupLimit < 500 && <div className="load-more"><button type="button" onClick={onLoadMoreGroup}><ArrowRight size={17} /> Load more records</button></div>}
+                  {groupData.events.length === 0 && !groupLoading && <div className="gameplay-drilldown__loading">{t("No source records were available for this activity.")}</div>}
+                  {groupData.events.length < groupData.totalRecords && groupLimit < 500 && <div className="load-more"><button type="button" onClick={onLoadMoreGroup}><ArrowRight size={17} /> {t("Load more records")}</button></div>}
                 </>
               )}
             </section>
           )}
           {!selectedGroup && data.events.length > 0 && (
             <div className="gameplay-drilldown__records">
-              <div className="timeline-heading"><div><p className="eyebrow">Underlying Records</p><h3>Event details</h3></div><span>{formatNumber(data.events.length)} shown</span></div>
+              <div className="timeline-heading"><div><p className="eyebrow">{t("Underlying Records")}</p><h3>{t("Event details")}</h3></div><span>{formatNumber(data.events.length)} {t("shown")}</span></div>
               <div className="gameplay-timeline">{data.events.map((event) => <EventRow key={`detail-${event.id}`} event={event} />)}</div>
-              {data.events.length < data.totalRecords && limit < 500 && <div className="load-more"><button type="button" onClick={onLoadMore}><ArrowRight size={17} /> Load more records</button></div>}
+              {data.events.length < data.totalRecords && limit < 500 && <div className="load-more"><button type="button" onClick={onLoadMore}><ArrowRight size={17} /> {t("Load more records")}</button></div>}
             </div>
           )}
         </>
@@ -449,8 +448,8 @@ function EventRow({ event }: { event: GameEvent }) {
       </button>
       {open && (
         <div className="gameplay-event__details">
-          {details.length > 0 ? details.map(([key, value]) => <div key={key}><span>{humanizeIdentifier(key)}</span><strong>{String(value)}</strong></div>) : <p>No additional structured fields were available for this event.</p>}
-          <div className="gameplay-event__raw"><span>Sanitized source line</span><code>{event.rawSanitized}</code></div>
+          {details.length > 0 ? details.map(([key, value]) => <div key={key}><span>{humanizeIdentifier(key)}</span><strong>{String(value)}</strong></div>) : <p>{t("No additional structured fields were available for this event.")}</p>}
+          <div className="gameplay-event__raw"><span>{t("Sanitized source line")}</span><code>{event.rawSanitized}</code></div>
         </div>
       )}
     </article>
@@ -460,15 +459,15 @@ function EventRow({ event }: { event: GameEvent }) {
 function SessionHistory({ sessions, activeSessionId, currentSessionId, onSelect }: { sessions: GameSession[]; activeSessionId: number | null; currentSessionId: number | null; onSelect: (session: GameSession) => void }) {
   return (
     <aside className="session-history">
-      <header><div><p className="eyebrow">Archive</p><h3>Session History</h3></div><span>{sessions.length}</span></header>
+      <header><div><p className="eyebrow">{t("Archive")}</p><h3>{t("Session History")}</h3></div><span>{sessions.length}</span></header>
       <div className="session-history__list">
         {sessions.map((session) => (
           <button type="button" className={session.id === activeSessionId ? 'active' : ''} onClick={() => onSelect(session)} key={session.id}>
             <span className="session-history__top">
               <strong>{formatSessionDate(session.startedAt)}</strong>
-              {session.id === currentSessionId && !session.endedAt ? <span className="session-live">Live</span> : <span>{formatDuration(session)}</span>}
+              {session.id === currentSessionId && !session.endedAt ? <span className="session-live">{t("Live")}</span> : <span>{formatDuration(session)}</span>}
             </span>
-            <span className="session-history__bottom"><span>{session.channel}{session.build ? ` · ${session.build}` : ''}</span><span>{formatNumber(session.eventCount)} events</span></span>
+            <span className="session-history__bottom"><span>{session.channel}{session.build ? ` · ${session.build}` : ''}</span><span>{formatNumber(session.eventCount)} {t("events")}</span></span>
           </button>
         ))}
       </div>
@@ -494,11 +493,11 @@ function formatSessionLabel(session: GameSession): string {
 }
 
 function formatSessionDate(value: string): string {
-  return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(value));
+  return new Intl.DateTimeFormat(locale(), { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(value));
 }
 
 function formatEventTime(value: string): string {
-  return new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(new Date(value));
+  return new Intl.DateTimeFormat(locale(), { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(new Date(value));
 }
 
 function formatDrilldownContext(value: string): string {
@@ -507,7 +506,7 @@ function formatDrilldownContext(value: string): string {
 }
 
 function formatSessionEnding(startedAt: string | null, endedAt: string | null): string {
-  if (!endedAt) return 'Open';
+  if (!endedAt) return t("Open");
   if (!startedAt) return formatSessionDate(endedAt);
   const minutes = Math.max(1, Math.round((Date.parse(endedAt) - Date.parse(startedAt)) / 60_000));
   const duration = minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes}m`;
@@ -515,7 +514,7 @@ function formatSessionEnding(startedAt: string | null, endedAt: string | null): 
 }
 
 function formatDuration(session: GameSession): string {
-  if (!session.endedAt) return 'Open';
+  if (!session.endedAt) return t("Open");
   const minutes = Math.max(1, Math.round((Date.parse(session.endedAt) - Date.parse(session.startedAt)) / 60_000));
   return minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes}m`;
 }
@@ -529,13 +528,13 @@ function slug(value: string): string {
 }
 
 function formatNumber(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value || 0);
+  return new Intl.NumberFormat(locale(), { maximumFractionDigits: 2 }).format(value || 0);
 }
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(value || 0);
+  return new Intl.NumberFormat(locale(), { maximumFractionDigits: 0 }).format(value || 0);
 }
 
 function formatCompactCurrency(value: number): string {
-  return new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 }).format(value || 0);
+  return new Intl.NumberFormat(locale(), { notation: 'compact', maximumFractionDigits: 1 }).format(value || 0);
 }

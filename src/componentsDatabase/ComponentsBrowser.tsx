@@ -1,3 +1,4 @@
+import { t, locale } from '../i18n';
 import {
   ArrowRight,
   Box,
@@ -94,44 +95,42 @@ export function ComponentsBrowser({ snapshot, isLoading }: { snapshot: Component
     <section className="ships-section components-section">
       <div className="section-heading ships-heading">
         <div>
-          <p className="eyebrow">Equipment Database</p>
-          <h2>Ship Components</h2>
+          <p className="eyebrow">{t("Equipment Database")}</p>
+          <h2>{t("Ship Components")}</h2>
         </div>
-        <p>{filteredComponents.length} of {components.length} components</p>
+        <p>{filteredComponents.length} {t("of")} {components.length} {t("components")}</p>
       </div>
 
-      <section className="ship-filters" aria-label="Component filters">
+      <section className="ship-filters" aria-label={t("Component filters")}>
         <label className="ship-search">
           <Search size={18} aria-hidden="true" />
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search components" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t("Search components")} />
         </label>
-        <FilterSelect label="Manufacturer" value={manufacturer} onChange={setManufacturer}>
-          <option value="all">All manufacturers</option>
+        <FilterSelect label={t("Manufacturer")} value={manufacturer} onChange={setManufacturer}>
+          <option value="all">{t("All manufacturers")}</option>
           {manufacturers.map((item) => <option key={item} value={item}>{item}</option>)}
         </FilterSelect>
-        <FilterSelect label="Category" value={category} onChange={setCategory}>
-          <option value="all">All categories</option>
+        <FilterSelect label={t("Category")} value={category} onChange={setCategory}>
+          <option value="all">{t("All categories")}</option>
           {categories.map((item) => <option key={item} value={item}>{item}</option>)}
         </FilterSelect>
-        <FilterSelect label="Size" value={size} onChange={setSize}>
-          <option value="all">All sizes</option>
-          {sizes.map((item) => <option key={item} value={item}>Size {item}</option>)}
+        <FilterSelect label={t("Size")} value={size} onChange={setSize}>
+          <option value="all">{t("All sizes")}</option>
+          {sizes.map((item) => <option key={item} value={item}>{t("Size")} {item}</option>)}
         </FilterSelect>
-        <FilterSelect label="Availability" value={availability} onChange={(value) => setAvailability(value as AvailabilityFilter)}>
-          <option value="all">Any availability</option>
-          <option value="purchase">Buy in game</option>
-          <option value="unlisted">Not sold in game</option>
+        <FilterSelect label={t("Availability")} value={availability} onChange={(value) => setAvailability(value as AvailabilityFilter)}>
+          <option value="all">{t("Any availability")}</option>
+          <option value="purchase">{t("Buy in game")}</option>
+          <option value="unlisted">{t("Not sold in game")}</option>
         </FilterSelect>
-        <FilterSelect label="Sort" value={sort} onChange={(value) => setSort(value as ComponentSort)}>
-          <option value="name">Name</option>
-          <option value="manufacturer">Manufacturer</option>
-          <option value="size">Component size</option>
-          <option value="price">Lowest price</option>
+        <FilterSelect label={t("Sort")} value={sort} onChange={(value) => setSort(value as ComponentSort)}>
+          <option value="name">{t("Name")}</option>
+          <option value="manufacturer">{t("Manufacturer")}</option>
+          <option value="size">{t("Component size")}</option>
+          <option value="price">{t("Lowest price")}</option>
         </FilterSelect>
         <button type="button" className="clear-filters" onClick={clearFilters}>
-          <SlidersHorizontal size={16} aria-hidden="true" />
-          Reset
-        </button>
+          <SlidersHorizontal size={16} aria-hidden="true" /> {t("Reset")} </button>
       </section>
 
       <div className="ship-grid component-grid">
@@ -143,16 +142,14 @@ export function ComponentsBrowser({ snapshot, isLoading }: { snapshot: Component
       {visibleCount < filteredComponents.length && (
         <div className="load-more">
           <button type="button" onClick={() => setVisibleCount((count) => count + 24)}>
-            <ArrowRight size={17} aria-hidden="true" />
-            Load more components
-          </button>
+            <ArrowRight size={17} aria-hidden="true" /> {t("Load more components")} </button>
         </div>
       )}
 
       {!isLoading && components.length > 0 && filteredComponents.length === 0 && (
         <section className="notice">
           <Cpu size={19} aria-hidden="true" />
-          <div><strong>No matching components</strong><span>Adjust or reset the current filters.</span></div>
+          <div><strong>{t("No matching components")}</strong><span>{t("Adjust or reset the current filters.")}</span></div>
         </section>
       )}
 
@@ -182,11 +179,11 @@ function ComponentCard({ component, onClick }: { component: ComponentSummary; on
         <strong className="ship-card__name">{component.name}</strong>
         <span className="ship-card__maker">{component.manufacturer}</span>
         <span className="ship-card__stats">
-          <span><Box size={15} aria-hidden="true" /> Size {component.size}</span>
-          <span><MapPin size={15} aria-hidden="true" /> {component.purchaseLocations.length} shops</span>
+          <span><Box size={15} aria-hidden="true" /> {t("Size")} {component.size}</span>
+          <span><MapPin size={15} aria-hidden="true" /> {component.purchaseLocations.length} {t("shops")}</span>
         </span>
         <span className="ship-card__price">
-          {purchasePrice ? `From ${formatCurrency(purchasePrice)} aUEC` : 'Not sold in game'}
+          {purchasePrice ? t("From {{v0}} aUEC", { v0: formatCurrency(purchasePrice) }) : t("Not sold in game")}
           <ArrowRight size={18} aria-hidden="true" />
         </span>
       </span>
@@ -233,7 +230,7 @@ function ComponentDetailDialog({ component, onClose }: { component: ComponentSum
     setError(null);
     void fetchComponentDetail(component)
       .then((result) => { if (active) setDetail(result); })
-      .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : 'Could not load component details.'); });
+      .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : t("Could not load component details.")); });
     return () => { active = false; };
   }, [component]);
 
@@ -248,33 +245,33 @@ function ComponentDetailDialog({ component, onClose }: { component: ComponentSum
       <section className="ship-dialog component-dialog" role="dialog" aria-modal="true" aria-labelledby="component-dialog-title">
         <header className="ship-dialog__header">
           <div><p className="eyebrow">{component.manufacturer}</p><h2 id="component-dialog-title">{component.name}</h2></div>
-          <button type="button" className="icon-button" aria-label="Close component details" onClick={onClose}><X size={20} aria-hidden="true" /></button>
+          <button type="button" className="icon-button" aria-label={t("Close component details")} onClick={onClose}><X size={20} aria-hidden="true" /></button>
         </header>
 
         <div className="ship-dialog__hero">
           <ComponentVisual component={component} imageUrl={detail?.imageUrl} />
           <div>
-            <div className="ship-detail-badges"><span>{component.section}</span><span>{detail?.type || component.category}</span><span>Size {detail?.size || component.size}</span></div>
+            <div className="ship-detail-badges"><span>{component.section}</span><span>{detail?.type || component.category}</span><span>{t("Size")} {detail?.size || component.size}</span></div>
             {detail?.description && <p>{detail.description}</p>}
-            {!detail && !error && <div className="inline-loading"><RefreshCw size={18} className="spin" aria-hidden="true" /> Loading specifications...</div>}
-            {error && <p className="inline-error">{error} Basic UEX information is still shown below.</p>}
+            {!detail && !error && <div className="inline-loading"><RefreshCw size={18} className="spin" aria-hidden="true" /> {t("Loading specifications...")}</div>}
+            {error && <p className="inline-error">{error} {t("Basic UEX information is still shown below.")}</p>}
           </div>
         </div>
 
         <div className="ship-dialog__content">
-          <DetailSection title="Component information">
+          <DetailSection title={t("Component information")}>
             <div className="ship-spec-grid">
-              <Spec icon={<Box size={18} />} label="Size" value={`S${detail?.size || component.size}`} />
-              <Spec icon={<Gauge size={18} />} label="Grade" value={detail?.grade || 'Loading'} />
-              <Spec icon={<Cpu size={18} />} label="Class" value={detail?.itemClass || 'Loading'} />
-              <Spec icon={<Ruler size={18} />} label="Mass" value={detail ? `${formatNumber(detail.mass)} kg` : 'Loading'} />
-              <Spec icon={<Shield size={18} />} label="Health" value={detail ? `${formatNumber(detail.health)} HP` : 'Loading'} />
-              <Spec icon={<Wrench size={18} />} label="Repairable" value={detail?.repairable == null ? 'Unknown' : detail.repairable ? 'Yes' : 'No'} />
+              <Spec icon={<Box size={18} />} label={t("Size")} value={`S${detail?.size || component.size}`} />
+              <Spec icon={<Gauge size={18} />} label={t("Grade")} value={detail?.grade || t("Loading")} />
+              <Spec icon={<Cpu size={18} />} label={t("Class")} value={detail?.itemClass || t("Loading")} />
+              <Spec icon={<Ruler size={18} />} label={t("Mass")} value={detail ? `${formatNumber(detail.mass)} kg` : t("Loading")} />
+              <Spec icon={<Shield size={18} />} label={t("Health")} value={detail ? `${formatNumber(detail.health)} HP` : t("Loading")} />
+              <Spec icon={<Wrench size={18} />} label={t("Repairable")} value={detail?.repairable == null ? t("Unknown") : detail.repairable ? t("Yes") : t("No")} />
             </div>
           </DetailSection>
 
           {detail && detail.specifications.length > 0 && (
-            <DetailSection title="Performance">
+            <DetailSection title={t("Performance")}>
               <div className="ship-spec-grid">
                 {detail.specifications.map((spec) => <Spec key={spec.label} icon={<Gauge size={18} />} label={spec.label} value={spec.value} />)}
               </div>
@@ -284,8 +281,8 @@ function ComponentDetailDialog({ component, onClose }: { component: ComponentSum
           <PriceSection entries={component.purchaseLocations} />
 
           <footer className="ship-dialog__footer">
-            <span>UEX market data · Wiki specs {detail?.version || component.gameVersion}</span>
-            <div>{detail?.wikiUrl && <ExternalButton href={detail.wikiUrl}>Open Wiki</ExternalButton>}</div>
+            <span>{t("UEX market data · Wiki specs")} {detail?.version || component.gameVersion}</span>
+            <div>{detail?.wikiUrl && <ExternalButton href={detail.wikiUrl}>{t("Open Wiki")}</ExternalButton>}</div>
           </footer>
         </div>
       </section>
@@ -303,11 +300,11 @@ function Spec({ icon, label, value }: { icon: ReactNode; label: string; value: s
 
 function PriceSection({ entries }: { entries: ComponentSummary['purchaseLocations'] }) {
   return (
-    <DetailSection title="Buy in game">
+    <DetailSection title={t("Buy in game")}>
       {entries.length ? (
         <div className="ship-price-table-wrap">
           <table className="ship-price-table">
-            <thead><tr><th>Dealer</th><th>Location</th><th>Price</th></tr></thead>
+            <thead><tr><th>{t("Dealer")}</th><th>{t("Location")}</th><th>{t("Price")}</th></tr></thead>
             <tbody>{entries.map((entry) => (
               <tr key={`${entry.terminal}-${entry.location}-${entry.price}`}>
                 <td>{entry.terminal}</td><td>{entry.location}</td><td>{formatCurrency(entry.price)} aUEC</td>
@@ -315,7 +312,7 @@ function PriceSection({ entries }: { entries: ComponentSummary['purchaseLocation
             ))}</tbody>
           </table>
         </div>
-      ) : <p className="ship-empty-price">This component is not currently listed for in-game purchase.</p>}
+      ) : <p className="ship-empty-price">{t("This component is not currently listed for in-game purchase.")}</p>}
     </DetailSection>
   );
 }
@@ -343,11 +340,11 @@ function lowestPrice(component: ComponentSummary): number {
 }
 
 function formatNumber(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value || 0);
+  return new Intl.NumberFormat(locale(), { maximumFractionDigits: 2 }).format(value || 0);
 }
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(value || 0);
+  return new Intl.NumberFormat(locale(), { maximumFractionDigits: 0 }).format(value || 0);
 }
 
 const componentImageCache = new Map<string, Promise<string>>();

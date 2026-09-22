@@ -1,3 +1,4 @@
+import { t, locale } from '../i18n';
 import { ChevronDown, ExternalLink, Package, RefreshCw, Search } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { openExternalUrl } from '../platform/openExternalUrl';
@@ -55,7 +56,7 @@ export function PlayerMarketplace() {
       const errors: string[] = [];
       results.forEach((result, index) => {
         if (result.status === 'fulfilled') listings.push(...result.value);
-        else errors.push(`${listingProviders[index].name}: ${result.reason instanceof Error ? result.reason.message : 'Unable to load listings.'}`);
+        else errors.push(`${listingProviders[index].name}: ${result.reason instanceof Error ? result.reason.message : t("Unable to load listings.")}`);
       });
       if (results.some((result) => result.status === 'fulfilled')) {
         const next = { listings: [...new Map(listings.map((row) => [row.id, row])).values()], fetchedAt: Date.now() };
@@ -88,46 +89,46 @@ export function PlayerMarketplace() {
   }
   return <section className="player-market">
     <header className="toolbar">
-      <div><h2>Player Marketplace</h2><span>{snapshot ? `Fetched ${new Date(snapshot.fetchedAt).toLocaleString()}` : 'Player buy and sell listings'}</span></div>
-      <button className="refresh-button" disabled={loading} onClick={() => setRefreshId((value) => value + 1)}><RefreshCw size={17} className={loading ? 'spin' : ''} />Refresh</button>
+      <div><h2>{t("Player Marketplace")}</h2><span>{snapshot ? t("Fetched {{v0}}", { v0: new Date(snapshot.fetchedAt).toLocaleString(locale()) }) : t("Player buy and sell listings")}</span></div>
+      <button className="refresh-button" disabled={loading} onClick={() => setRefreshId((value) => value + 1)}><RefreshCw size={17} className={loading ? 'spin' : ''} />{t("Refresh")}</button>
     </header>
     <div className="player-market-sources">
-      <span>Listing feed: UEX Corp</span>
-      <button className="settings-command" onClick={() => void open('https://uexcorp.space/marketplace')}>UEX marketplace <ExternalLink size={14} /></button>
-      <button className="settings-command" onClick={() => void open('https://sc-market.space/')}>SC Market (external) <ExternalLink size={14} /></button>
+      <span>{t("Listing feed: UEX Corp")}</span>
+      <button className="settings-command" onClick={() => void open('https://uexcorp.space/marketplace')}>{t("UEX marketplace")} <ExternalLink size={14} /></button>
+      <button className="settings-command" onClick={() => void open('https://sc-market.space/')}>{t("SC Market (external)")} <ExternalLink size={14} /></button>
     </div>
     <form className="player-market-seller" onSubmit={(event) => { event.preventDefault(); setSeller(sellerDraft.trim()); setRefreshId((value) => value + 1); }}>
-      <label>UEX player handle<input value={sellerDraft} onChange={(event) => setSellerDraft(event.target.value)} placeholder="Any player" /></label>
-      <button className="refresh-button" disabled={loading}><Search size={16} />Find player</button>
+      <label>{t("UEX player handle")}<input value={sellerDraft} onChange={(event) => setSellerDraft(event.target.value)} placeholder={t("Any player")} /></label>
+      <button className="refresh-button" disabled={loading}><Search size={16} />{t("Find player")}</button>
     </form>
     <div className="player-market-filters">
-      <label>Search listings<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Item or player" /></label>
-      <label>Transaction<select value={transaction} onChange={(event) => setTransaction(event.target.value)}><option value="">All transactions</option>{[...new Set(['sell', 'buy', ...rows.map((row) => row.transaction), ...(transaction ? [transaction] : [])])].map((operation) => <option key={operation} value={operation}>{transactionLabel(operation)}</option>)}</select></label>
+      <label>{t("Search listings")}<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Item or player")} /></label>
+      <label>{t("Transaction")}<select value={transaction} onChange={(event) => setTransaction(event.target.value)}><option value="">{t("All transactions")}</option>{[...new Set(['sell', 'buy', ...rows.map((row) => row.transaction), ...(transaction ? [transaction] : [])])].map((operation) => <option key={operation} value={operation}>{transactionLabel(operation)}</option>)}</select></label>
       {([['System', system, setSystem, 'system'], ['Location', location, setLocation, 'location'], ['Currency', currency, setCurrency, 'currency']] as const).map(([label, value, setter, field]) =>
-        <label key={label}>{label}<select value={value} onChange={(event) => setter(event.target.value)}><option value="">All</option>{[...new Set([...rows.map((row) => row[field]), ...(value ? [value] : [])])].sort().map((option) => <option key={option}>{option}</option>)}</select></label>)}
-      <label>Sort<select value={sort} onChange={(event) => setSort(event.target.value)}><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
+        <label key={label}>{label}<select value={value} onChange={(event) => setter(event.target.value)}><option value="">{t("All")}</option>{[...new Set([...rows.map((row) => row[field]), ...(value ? [value] : [])])].sort().map((option) => <option key={option}>{option}</option>)}</select></label>)}
+      <label>{t("Sort")}<select value={sort} onChange={(event) => setSort(event.target.value)}><option value="newest">{t("Newest first")}</option><option value="price-low">{t("Price: low to high")}</option><option value="price-high">{t("Price: high to low")}</option></select></label>
     </div>
-    <p className="player-market-note">{filtered.length} matching listings from {rows.length} loaded listings. Searches expand buy/sell results for item IDs found in matching recent titles. Items absent from the recent feed and unlinked listings may be missing; UEX also caps item results. Prices are advertiser asks or offers, grouped by currency when sorting.</p>
-    <button className="settings-command" onClick={() => void open(`https://uexcorp.space/marketplace/home/?search=${encodeURIComponent(query.trim())}`)}>Search on UEX <ExternalLink size={14} /></button>
+    <p className="player-market-note">{filtered.length} {t("matching listings from")} {rows.length} {t("loaded listings. Searches expand buy/sell results for item IDs found in matching recent titles. Items absent from the recent feed and unlinked listings may be missing; UEX also caps item results. Prices are advertiser asks or offers, grouped by currency when sorting.")}</p>
+    <button className="settings-command" onClick={() => void open(`https://uexcorp.space/marketplace/home/?search=${encodeURIComponent(query.trim())}`)}>{t("Search on UEX")} <ExternalLink size={14} /></button>
     {(error || linkError) && <p role="alert" className="notice notice--error">{error || linkError}{error && snapshot ? ' Showing cached listings.' : ''}</p>}
-    {(loading || searchQuery !== query.trim().toLowerCase()) && <p role="status">Loading player listings...</p>}
-    {!loading && !filtered.length && <p>No matching listings. Try another search, player, or transaction type.</p>}
+    {(loading || searchQuery !== query.trim().toLowerCase()) && <p role="status">{t("Loading player listings...")}</p>}
+    {!loading && !filtered.length && <p>{t("No matching listings. Try another search, player, or transaction type.")}</p>}
     <div className="player-market-list">
       {filtered.slice(0, count).map((row) => <details className="player-listing" key={row.id}>
         <summary>
           {row.photos[0] ? <img loading="lazy" src={row.photos[0]} alt={row.title} onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }} /> : <Package size={36} />}
-          <div><span className="player-transaction" data-operation={row.transaction}>{transactionLabel(row.transaction)}</span><strong>{row.title}</strong><span>{row.seller} · {row.system} · {row.location}</span><small>UEX Corp · {row.added ? new Date(row.added).toLocaleString() : 'Date unavailable'}</small></div>
-          <div className="player-listing-price"><strong>{row.price === null ? 'Price unspecified' : `${row.price.toLocaleString()} ${row.currency}`}</strong><span>{row.unit ? `Per ${row.unit} · ` : ''}{row.transaction === 'sell' ? `Stock: ${row.stock ?? 'Unknown'}` : row.transaction === 'buy' ? 'Buyer offer' : 'Listed price'} <ChevronDown size={14} aria-hidden="true" /></span></div>
+          <div><span className="player-transaction" data-operation={row.transaction}>{transactionLabel(row.transaction)}</span><strong>{row.title}</strong><span>{row.seller} · {row.system} · {row.location}</span><small>UEX Corp · {row.added ? new Date(row.added).toLocaleString(locale()) : t("Date unavailable")}</small></div>
+          <div className="player-listing-price"><strong>{row.price === null ? t("Price unspecified") : `${row.price.toLocaleString(locale())} ${row.currency}`}</strong><span>{row.unit ? t("Per {{v0}} · ", { v0: row.unit }) : ''}{row.transaction === 'sell' ? t("Stock: {{v0}}", { v0: row.stock ?? 'Unknown' }) : row.transaction === 'buy' ? t("Buyer offer") : t("Listed price")} <ChevronDown size={14} aria-hidden="true" /></span></div>
         </summary>
         <div className="player-listing-details">
-          <p>Availability: {row.availability} · Origin: {row.origin}</p>
-          <p className="player-listing-description">{row.description || 'No description provided.'}</p>
+          <p>{t("Availability:")} {row.availability} {t("· Origin:")} {row.origin}</p>
+          <p className="player-listing-description">{row.description || t("No description provided.")}</p>
           <div className="player-listing-photos">{row.photos.slice(1).map((photo) => <img loading="lazy" key={photo} src={photo} alt={row.title} />)}</div>
-          <p>{row.expires ? `Expires ${new Date(row.expires).toLocaleString()}` : 'Expiration unspecified'}</p>
-          <button className="settings-command" onClick={() => void open(row.url)}>View listing / contact player <ExternalLink size={15} /></button>
+          <p>{row.expires ? t("Expires {{v0}}", { v0: new Date(row.expires).toLocaleString(locale()) }) : t("Expiration unspecified")}</p>
+          <button className="settings-command" onClick={() => void open(row.url)}>{t("View listing / contact player")} <ExternalLink size={15} /></button>
         </div>
       </details>)}
     </div>
-    {count < filtered.length && <button className="refresh-button" onClick={() => setCount((value) => value + 40)}>Show more ({filtered.length - count} remaining)</button>}
+    {count < filtered.length && <button className="refresh-button" onClick={() => setCount((value) => value + 40)}>{t("Show more (")}{filtered.length - count} {t("remaining)")}</button>}
   </section>;
 }

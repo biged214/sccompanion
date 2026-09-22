@@ -1,3 +1,4 @@
+import { t, locale } from '../i18n';
 export interface Material { name: string; quantity_scu?: number | null; quantity?: number | null; min_quality?: number | null; }
 export interface Requirement extends Material {
   kind?: string; required_count?: number | null; children?: Requirement[];
@@ -72,9 +73,9 @@ export async function fetchBlueprints(version: string, signal: AbortSignal, prog
   return snapshot;
 }
 export function materialQuantity(m: Material): string {
-  if (typeof m.quantity_scu === 'number' && Number.isFinite(m.quantity_scu)) return `${m.quantity_scu.toLocaleString(undefined, { maximumFractionDigits: 6 })} SCU`;
-  if (typeof m.quantity === 'number' && Number.isFinite(m.quantity)) return `${m.quantity.toLocaleString()} item(s)`;
-  return 'Quantity unknown';
+  if (typeof m.quantity_scu === 'number' && Number.isFinite(m.quantity_scu)) return `${m.quantity_scu.toLocaleString(locale(), { maximumFractionDigits: 6 })} SCU`;
+  if (typeof m.quantity === 'number' && Number.isFinite(m.quantity)) return t('{{amount}} item(s)', { amount: m.quantity.toLocaleString(locale()) });
+  return t('Quantity unknown');
 }
 export function acquisition(b: Blueprint): string {
   return b.is_available_by_default ? 'Available by default' : b.unlocking_missions_count > 0 ? 'Mission-linked' : 'Acquisition unknown';

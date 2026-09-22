@@ -1,3 +1,4 @@
+import { t, locale } from './i18n';
 import {
   Activity,
   AlertTriangle,
@@ -26,6 +27,8 @@ import {
   UserRound,
   WifiOff
 } from 'lucide-react';
+import { useLanguage } from './i18n';
+import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { fetchAnnouncementDetails, RSI_ANNOUNCEMENTS_URL } from './announcements/announcementService';
@@ -65,6 +68,12 @@ import { UpdateBanner } from './updates/UpdateBanner';
 import { useAppUpdater } from './updates/useAppUpdater';
 
 export function App() {
+  const language = useLanguage();
+  useEffect(() => {
+    if (window.__TAURI_INTERNALS__) {
+      void invoke('set_language', { language }).catch(error => console.error('Could not update tray language.', error));
+    }
+  }, [language]);
   const [activeView, setActiveView] = useState<'blueprints' | 'home' | 'guides' | 'my-rsi' | 'player-marketplace' | 'announcements' | 'status' | 'patch-notes' | 'news' | 'ships' | 'components' | 'organizations' | 'market' | 'trade-routes' | 'gameplay'>('home');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const appSettings = useAppSettings();
@@ -148,21 +157,19 @@ export function App() {
 
   return (
     <main className="app-shell">
-      <nav className="app-utility-nav" aria-label="Account and application controls">
+      <nav className="app-utility-nav" aria-label={t("Account and application controls")}>
         <button
           type="button"
           className={`home-button${isMyRsiView ? ' home-button--active' : ''}`}
           aria-current={isMyRsiView ? 'page' : undefined}
           onClick={() => setActiveView('my-rsi')}
         >
-          <UserRound size={18} aria-hidden="true" />
-          My RSI
-        </button>
+          <UserRound size={18} aria-hidden="true" /> {t("My RSI")} </button>
         <button
           type="button"
           className="icon-button"
-          aria-label="Open settings"
-          title="Settings"
+          aria-label={t("Open settings")}
+          title={t("Settings")}
           onClick={() => setSettingsOpen(true)}
         >
           <SettingsIcon size={19} aria-hidden="true" />
@@ -171,32 +178,24 @@ export function App() {
 
       <section className="status-hero">
         <div>
-          <p className="eyebrow">Star Citizen Desktop Companion</p>
+          <p className="eyebrow">{t("Star Citizen Desktop Companion")}</p>
           <h1>SC Companion</h1>
-          <p className="hero-copy">
-            Service status, patch releases, reference data, trade planning, and your local gameplay history.
-          </p>
+          <p className="hero-copy"> {t("Service status, patch releases, reference data, trade planning, and your local gameplay history.")} </p>
         </div>
 
         <div className="hero-actions">
           {!isHomeView && (
             <button type="button" className="home-button" onClick={() => setActiveView('home')}>
-              <House size={18} aria-hidden="true" />
-              Home
-            </button>
+              <House size={18} aria-hidden="true" /> {t("Home")} </button>
           )}
           {isHomeView ? (
             <div className="status-pill">
-              <LayoutGrid size={17} aria-hidden="true" />
-              Categories
-            </div>
-          ) : isGuidesView ? <div className="status-pill"><BookOpen size={17} />Starter Guides</div> : isMyRsiView ? null : isPlayerMarketplace ? (
-            <div className="status-pill"><Store size={17} aria-hidden="true" />Player Marketplace</div>
+              <LayoutGrid size={17} aria-hidden="true" /> {t("Categories")} </div>
+          ) : isGuidesView ? <div className="status-pill"><BookOpen size={17} />{t("Starter Guides")}</div> : isMyRsiView ? null : isPlayerMarketplace ? (
+            <div className="status-pill"><Store size={17} aria-hidden="true" />{t("Player Marketplace")}</div>
           ) : isAnnouncementsView ? (
             <div className="status-pill">
-              <Megaphone size={17} aria-hidden="true" />
-              Official Announcements
-            </div>
+              <Megaphone size={17} aria-hidden="true" /> {t("Official Announcements")} </div>
           ) : isStatusView ? (
             <div className={`status-pill status-pill--${overallLevel}`}>
               <span aria-hidden="true" />
@@ -204,44 +203,30 @@ export function App() {
             </div>
           ) : isPatchNotesView ? (
             <div className="status-pill">
-              <Newspaper size={17} aria-hidden="true" />
-              Official Patch Notes
-            </div>
+              <Newspaper size={17} aria-hidden="true" /> {t("Official Patch Notes")} </div>
           ) : isShipsView ? (
             <div className="status-pill">
-              <ShipIcon size={17} aria-hidden="true" />
-              Ship Database
-            </div>
+              <ShipIcon size={17} aria-hidden="true" /> {t("Ship Database")} </div>
           ) : isComponentsView ? (
             <div className="status-pill">
-              <CircuitBoard size={17} aria-hidden="true" />
-              Component Database
-            </div>
-          ) : isBlueprintsView ? <div className="status-pill"><ScrollText size={17} />Blueprints</div> : isOrganizationsView ? (
+              <CircuitBoard size={17} aria-hidden="true" /> {t("Component Database")} </div>
+          ) : isBlueprintsView ? <div className="status-pill"><ScrollText size={17} />{t("Blueprints")}</div> : isOrganizationsView ? (
             <div className="status-pill">
-              <Building2 size={17} aria-hidden="true" />
-              Organization Directory
-            </div>
+              <Building2 size={17} aria-hidden="true" /> {t("Organization Directory")} </div>
           ) : isTradeRoutesView ? (
             <div className="status-pill">
-              <RouteIcon size={17} aria-hidden="true" />
-              Trade Route Planner
-            </div>
+              <RouteIcon size={17} aria-hidden="true" /> {t("Trade Route Planner")} </div>
           ) : isMarketView ? (
             <div className="status-pill">
-              <Store size={17} aria-hidden="true" />
-              Commodity Market
-            </div>
+              <Store size={17} aria-hidden="true" /> {t("Commodity Market")} </div>
           ) : isGameplayView ? (
             <div className={`status-pill ${gameplay.status?.monitoring ? 'status-pill--operational' : 'status-pill--unknown'}`}>
               <ScrollText size={17} aria-hidden="true" />
-              {gameplay.status?.monitoring ? 'Log Monitoring' : 'Log Tracker'}
+              {gameplay.status?.monitoring ? t("Log Monitoring") : t("Log Tracker")}
             </div>
           ) : (
             <div className="status-pill">
-              <Radio size={17} aria-hidden="true" />
-              Latest RSI News
-            </div>
+              <Radio size={17} aria-hidden="true" /> {t("Latest RSI News")} </div>
           )}
         </div>
       </section>
@@ -299,11 +284,11 @@ export function App() {
         <OrganizationsBrowser />
       ) : activeFeed ? (
         <>
-          <section className="toolbar" aria-label="Feed controls">
+          <section className="toolbar" aria-label={t("Feed controls")}>
             <div className="feed-source">
               <Satellite size={18} aria-hidden="true" />
               <div>
-                <span>Source</span>
+                <span>{t("Source")}</span>
                 <a
                   href={sourceUrl}
                   target="_blank"
@@ -319,8 +304,7 @@ export function App() {
             <div className="toolbar-actions">
               {activeFeed.snapshot && (
                 <span className="timestamp">
-                  <Clock3 size={16} aria-hidden="true" />
-                  Updated {formatRelativeTime(activeFeed.snapshot.fetchedAt)}
+                  <Clock3 size={16} aria-hidden="true" /> {t("Updated")} {formatRelativeTime(activeFeed.snapshot.fetchedAt)}
                 </span>
               )}
               <button
@@ -329,9 +313,7 @@ export function App() {
                 onClick={() => void activeFeed.refresh()}
                 disabled={activeFeed.isLoading}
               >
-                <RefreshCw size={17} aria-hidden="true" className={activeFeed.isLoading ? 'spin' : undefined} />
-                Refresh
-              </button>
+                <RefreshCw size={17} aria-hidden="true" className={activeFeed.isLoading ? 'spin' : undefined} /> {t("Refresh")} </button>
             </div>
           </section>
 
@@ -339,9 +321,9 @@ export function App() {
             <section className="notice notice--error" role="alert">
               <WifiOff size={19} aria-hidden="true" />
               <div>
-                <strong>Refresh failed</strong>
+                <strong>{t("Refresh failed")}</strong>
                 <span>{activeFeed.error}</span>
-                {activeFeed.usingCache && <span>Showing the last saved updates from this device.</span>}
+                {activeFeed.usingCache && <span>{t("Showing the last saved updates from this device.")}</span>}
               </div>
             </section>
           )}
@@ -350,8 +332,8 @@ export function App() {
             <section className="notice">
               <RefreshCw size={19} aria-hidden="true" className="spin" />
               <div>
-                <strong>{isAnnouncementsView ? 'Loading announcements' : isStatusView ? 'Loading RSI updates' : isPatchNotesView ? 'Loading patch notes' : isShipsView ? 'Loading ship database' : isComponentsView ? 'Loading component database' : 'Loading RSI news'}</strong>
-                <span>{isAnnouncementsView ? 'Fetching the latest official Spectrum announcements.' : isStatusView ? 'Fetching the current RSS feed.' : isPatchNotesView ? 'Fetching the latest Spectrum threads.' : isShipsView ? 'Combining ship specifications with purchase and rental data.' : isComponentsView ? 'Combining component specifications with in-game shop prices.' : 'Fetching the latest Comm-Link articles.'}</span>
+                <strong>{isAnnouncementsView ? t("Loading announcements") : isStatusView ? t("Loading RSI updates") : isPatchNotesView ? t("Loading patch notes") : isShipsView ? t("Loading ship database") : isComponentsView ? t("Loading component database") : t("Loading RSI news")}</strong>
+                <span>{isAnnouncementsView ? t("Fetching the latest official Spectrum announcements.") : isStatusView ? t("Fetching the current RSS feed.") : isPatchNotesView ? t("Fetching the latest Spectrum threads.") : isShipsView ? t("Combining ship specifications with purchase and rental data.") : isComponentsView ? t("Combining component specifications with in-game shop prices.") : t("Fetching the latest Comm-Link articles.")}</span>
               </div>
             </section>
           )}
@@ -409,19 +391,12 @@ export function App() {
         />
         <div className="community-disclaimer__body">
           <div className="community-disclaimer__legal">
-            <strong>Unofficial fan project</strong>
-            <p>
-              SC Companion is an unofficial Star Citizen fan application and is not affiliated with the
-              Cloud Imperium group of companies. Content not authored by this application's host or users
-              remains the property of its respective owners.
-            </p>
-            <p className="community-disclaimer__trademarks">
-              Star Citizen®, Roberts Space Industries®, and Cloud Imperium® are registered trademarks of
-              Cloud Imperium Rights LLC.
-            </p>
+            <strong>{t("Unofficial fan project")}</strong>
+            <p> {t("SC Companion is an unofficial Star Citizen fan application and is not affiliated with the Cloud Imperium group of companies. Content not authored by this application's host or users remains the property of its respective owners.")} </p>
+            <p className="community-disclaimer__trademarks"> {t("Star Citizen®, Roberts Space Industries®, and Cloud Imperium® are registered trademarks of Cloud Imperium Rights LLC.")} </p>
           </div>
           <div className="community-disclaimer__sources">
-            <strong>Data sources</strong>
+            <strong>{t("Data sources")}</strong>
             <div className="data-source-list">
               {DATA_SOURCE_CREDITS.map((source) => (
                 <a
@@ -432,7 +407,7 @@ export function App() {
                   onClick={(event) => handleExternalLink(event, source.url)}
                 >
                   <span>{source.name}</span>
-                  <small>{source.contribution}</small>
+                  <small>{t(source.contribution)}</small>
                 </a>
               ))}
             </div>
@@ -500,41 +475,41 @@ function HomeDashboard({
     <section className="category-section">
       <div className="section-heading category-heading">
         <div>
-          <p className="eyebrow">Browse</p>
-          <h2>Categories</h2>
+          <p className="eyebrow">{t("Browse")}</p>
+          <h2>{t("Categories")}</h2>
         </div>
       </div>
 
       <section className="category-group" aria-labelledby="category-updates">
-      <h3 id="category-updates">Updates</h3>
+      <h3 id="category-updates">{t("Updates")}</h3>
       <div className="category-grid">
         <CategoryCard
-          title="Announcements"
-          description="Official Star Citizen announcements, service changes, events, policies, and major releases."
-          meta={announcementsCount > 0 ? `${announcementsCount} recent posts` : 'Official Spectrum posts'}
+          title={t("Announcements")}
+          description={t("Official Star Citizen announcements, service changes, events, policies, and major releases.")}
+          meta={announcementsCount > 0 ? t("{{v0}} recent posts", { v0: announcementsCount }) : t("Official Spectrum posts")}
           icon={<Megaphone size={25} aria-hidden="true" />}
           unreadCount={announcementsUnreadCount}
           onClick={() => onSelect('announcements')}
         />
         <CategoryCard
-          title="News"
-          description="Comm-Link announcements, weekly updates, events, videos, and development reports."
-          meta={newsCount > 0 ? `${newsCount} recent articles` : 'Official RSI Comm-Link'}
+          title={t("News")}
+          description={t("Comm-Link announcements, weekly updates, events, videos, and development reports.")}
+          meta={newsCount > 0 ? t("{{v0}} recent articles", { v0: newsCount }) : t("Official RSI Comm-Link")}
           icon={<Radio size={25} aria-hidden="true" />}
           unreadCount={newsUnreadCount}
           onClick={() => onSelect('news')}
         />
         <CategoryCard
-          title="Patch Notes"
-          description="The latest LIVE, PTU, hotfix, and release notes from the official Spectrum forum."
-          meta={patchNotesCount > 0 ? `${patchNotesCount} recent posts` : 'Official Spectrum posts'}
+          title={t("Patch Notes")}
+          description={t("The latest LIVE, PTU, hotfix, and release notes from the official Spectrum forum.")}
+          meta={patchNotesCount > 0 ? t("{{v0}} recent posts", { v0: patchNotesCount }) : t("Official Spectrum posts")}
           icon={<Newspaper size={25} aria-hidden="true" />}
           unreadCount={patchNotesUnreadCount}
           onClick={() => onSelect('patch-notes')}
         />
         <CategoryCard
-          title="Server Status"
-          description="Current service health and incident updates for the RSI platform and game services."
+          title={t("Server Status")}
+          description={t("Current service health and incident updates for the RSI platform and game services.")}
           meta={statusMessage}
           metaLevel={statusLevel}
           icon={<Activity size={25} aria-hidden="true" />}
@@ -544,66 +519,66 @@ function HomeDashboard({
       </div>
       </section>
       <section className="category-group" aria-labelledby="category-reference">
-      <h3 id="category-reference">Reference</h3>
+      <h3 id="category-reference">{t("Reference")}</h3>
       <div className="category-grid">
-        <CategoryCard title="Starter Guides" description="Official RSI beginner guides, illustrated tutorials, and videos." meta="RSI Knowledge Base" icon={<BookOpen size={25} aria-hidden="true" />} onClick={() => onSelect('guides')} />
+        <CategoryCard title={t("Starter Guides")} description={t("Official RSI beginner guides, illustrated tutorials, and videos.")} meta="RSI Knowledge Base" icon={<BookOpen size={25} aria-hidden="true" />} onClick={() => onSelect('guides')} />
         <CategoryCard
-          title="Ships"
-          description="Browse ship specifications, roles, cargo capacity, and in-game purchase or rental locations."
-          meta={shipCount > 0 ? `${shipCount} ships and vehicles` : 'UEX and Wiki data'}
+          title={t("Ships")}
+          description={t("Browse ship specifications, roles, cargo capacity, and in-game purchase or rental locations.")}
+          meta={shipCount > 0 ? t("{{v0}} ships and vehicles", { v0: shipCount }) : 'UEX and Wiki data'}
           icon={<ShipIcon size={25} aria-hidden="true" />}
           onClick={() => onSelect('ships')}
         />
         <CategoryCard
-          title="Ship Components"
-          description="Compare ship systems, weapons, utility equipment, specifications, and in-game shop prices."
-          meta={componentCount > 0 ? `${componentCount} components` : 'UEX and Wiki data'}
+          title={t("Ship Components")}
+          description={t("Compare ship systems, weapons, utility equipment, specifications, and in-game shop prices.")}
+          meta={componentCount > 0 ? t("{{v0}} components", { v0: componentCount }) : 'UEX and Wiki data'}
           icon={<CircuitBoard size={25} aria-hidden="true" />}
           onClick={() => onSelect('components')}
         />
         <CategoryCard
-          title="Organizations"
-          description="Search public RSI organizations, review their profiles, and browse visible members, ranks, and roles."
+          title={t("Organizations")}
+          description={t("Search public RSI organizations, review their profiles, and browse visible members, ranks, and roles.")}
           meta="Public RSI directory"
           icon={<Building2 size={25} aria-hidden="true" />}
           onClick={() => onSelect('organizations')}
         />
-        <CategoryCard title="Blueprints" description="Browse crafting recipes, required materials, quality effects, and known acquisition missions." meta="Star Citizen Wiki" icon={<ScrollText size={25} aria-hidden="true" />} onClick={() => onSelect('blueprints')} />
+        <CategoryCard title={t("Blueprints")} description={t("Browse crafting recipes, required materials, quality effects, and known acquisition missions.")} meta="Star Citizen Wiki" icon={<ScrollText size={25} aria-hidden="true" />} onClick={() => onSelect('blueprints')} />
       </div>
       </section>
       <section className="category-group" aria-labelledby="category-trading">
-      <h3 id="category-trading">Trading Tools</h3>
+      <h3 id="category-trading">{t("Trading Tools")}</h3>
       <div className="category-grid">
         <CategoryCard
-          title="Market"
-          description="Browse commodity prices, stock, demand, locations, container sizes, and cargo services."
-          meta={marketCommodityCount > 0 ? `${marketCommodityCount} commodities` : 'Live UEX market data'}
+          title={t("Market")}
+          description={t("Browse commodity prices, stock, demand, locations, container sizes, and cargo services.")}
+          meta={marketCommodityCount > 0 ? t("{{v0}} commodities", { v0: marketCommodityCount }) : t("Live UEX market data")}
           icon={<Store size={25} aria-hidden="true" />}
           onClick={() => onSelect('market')}
         />
         <CategoryCard
-          title="Player Marketplace"
-          description="Player-listed items, seller asking prices, available stock, and pickup locations."
+          title={t("Player Marketplace")}
+          description={t("Player-listed items, seller asking prices, available stock, and pickup locations.")}
           meta="UEX player listings"
           icon={<Store size={25} aria-hidden="true" />}
           onClick={() => onSelect('player-marketplace')}
         />
         <CategoryCard
-          title="Trade Routes"
-          description="Plan commodity runs by ship, budget, system, terminals, cargo handling, and expected profit."
-          meta={tradeRouteCount > 0 ? `${tradeRouteCount.toLocaleString()} market reports` : 'Live UEX market data'}
+          title={t("Trade Routes")}
+          description={t("Plan commodity runs by ship, budget, system, terminals, cargo handling, and expected profit.")}
+          meta={tradeRouteCount > 0 ? t("{{v0}} market reports", { v0: tradeRouteCount.toLocaleString(locale()) }) : t("Live UEX market data")}
           icon={<RouteIcon size={25} aria-hidden="true" />}
           onClick={() => onSelect('trade-routes')}
         />
       </div>
       </section>
       <section className="category-group" aria-labelledby="category-tools">
-      <h3 id="category-tools">Tools</h3>
+      <h3 id="category-tools">{t("Tools")}</h3>
       <div className="category-grid">
         <CategoryCard
-          title="Live Sessions"
-          description="Capture gameplay events from Game.log and review live activity, session history, and combined totals."
-          meta={sessionCount > 0 ? `${sessionCount} captured sessions` : isTracking ? 'Monitoring Game.log' : 'Local log tracking'}
+          title={t("Live Sessions")}
+          description={t("Capture gameplay events from Game.log and review live activity, session history, and combined totals.")}
+          meta={sessionCount > 0 ? t("{{v0}} captured sessions", { v0: sessionCount }) : isTracking ? t("Monitoring Game.log") : t("Local log tracking")}
           icon={<ScrollText size={25} aria-hidden="true" />}
           onClick={() => onSelect('gameplay')}
         />
@@ -631,8 +606,8 @@ function CategoryCard({
   onClick: () => void;
 }) {
   return (
-    <button type="button" className="category-card" onClick={onClick} aria-label={unreadCount > 0 ? `${title}, ${unreadCount} unread update${unreadCount === 1 ? '' : 's'}` : title}>
-      {unreadCount > 0 && <span className="category-card__unread" title={`${unreadCount} unread update${unreadCount === 1 ? '' : 's'}`} aria-hidden="true" />}
+    <button type="button" className="category-card" onClick={onClick} aria-label={unreadCount > 0 ? `${title}, ${t('{{count}} unread updates', { count: unreadCount })}` : title}>
+      {unreadCount > 0 && <span className="category-card__unread" title={t('{{count}} unread updates', { count: unreadCount })} aria-hidden="true" />}
       <span className="category-card__icon">{icon}</span>
       <span className="category-card__content">
         <strong>{title}</strong>
@@ -641,7 +616,7 @@ function CategoryCard({
       <span className="category-card__footer">
         <span className={metaLevel ? `category-card__meta category-card__meta--${metaLevel}` : 'category-card__meta'}>
           {metaLevel && <span aria-hidden="true" />}
-          {meta}
+          {t(meta)}
         </span>
         <ArrowRight className="category-card__arrow" size={19} aria-hidden="true" />
       </span>
@@ -665,10 +640,10 @@ function Announcements({
     <section className="updates-section">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Official Updates</p>
-          <h2>Star Citizen Announcements</h2>
+          <p className="eyebrow">{t("Official Updates")}</p>
+          <h2>{t("Star Citizen Announcements")}</h2>
         </div>
-        <p>Major game, community, account, event, and platform announcements from RSI.</p>
+        <p>{t("Major game, community, account, event, and platform announcements from RSI.")}</p>
       </div>
 
       <div className="updates-list">
@@ -677,23 +652,23 @@ function Announcements({
             key={announcement.id}
             className="patch-card"
             title={announcement.title}
-            preview={`Official Spectrum post by ${announcement.author}.`}
+            preview={t("Official Spectrum post by {{v0}}.", { v0: announcement.author })}
             loadContent={() => fetchAnnouncementDetails(announcement.url)}
             externalUrl={announcement.url}
-            externalLabel="Open on Spectrum"
+            externalLabel={t("Open on Spectrum")}
             unread={isUnread(announcement.id)}
             onRead={() => onRead(announcement.id)}
             meta={
               <>
-                <span className="patch-channel patch-channel--live">Announcement</span>
+                <span className="patch-channel patch-channel--live">{t("Announcement")}</span>
                 <time dateTime={announcement.publishedAt}>{formatDate(announcement.publishedAt)}</time>
               </>
             }
             footer={
-              <div className="patch-metrics" aria-label="Thread activity">
-                <span title="Replies"><MessageSquare size={15} aria-hidden="true" /> {formatCount(announcement.replies)}</span>
-                <span title="Views"><Eye size={15} aria-hidden="true" /> {formatCount(announcement.views)}</span>
-                <span title="Votes"><ThumbsUp size={15} aria-hidden="true" /> {formatCount(announcement.votes)}</span>
+              <div className="patch-metrics" aria-label={t("Thread activity")}>
+                <span title={t("Replies")}><MessageSquare size={15} aria-hidden="true" /> {formatCount(announcement.replies)}</span>
+                <span title={t("Views")}><Eye size={15} aria-hidden="true" /> {formatCount(announcement.views)}</span>
+                <span title={t("Votes")}><ThumbsUp size={15} aria-hidden="true" /> {formatCount(announcement.votes)}</span>
               </div>
             }
           />
@@ -708,8 +683,8 @@ function Announcements({
         <section className="notice">
           <AlertTriangle size={19} aria-hidden="true" />
           <div>
-            <strong>No announcements found</strong>
-            <span>Spectrum loaded, but it did not include any announcement threads.</span>
+            <strong>{t("No announcements found")}</strong>
+            <span>{t("Spectrum loaded, but it did not include any announcement threads.")}</span>
           </div>
         </section>
       )}
@@ -733,10 +708,10 @@ function News({
     <section className="updates-section">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Latest Headlines</p>
-          <h2>Official RSI News</h2>
+          <p className="eyebrow">{t("Latest Headlines")}</p>
+          <h2>{t("Official RSI News")}</h2>
         </div>
-        <p>Comm-Link announcements, weekly updates, roadmap reports, events, and videos.</p>
+        <p>{t("Comm-Link announcements, weekly updates, roadmap reports, events, and videos.")}</p>
       </div>
 
       <div className="updates-list">
@@ -748,7 +723,7 @@ function News({
             preview={article.summary}
             loadContent={() => fetchNewsDetails(article.url)}
             externalUrl={article.url}
-            externalLabel="Open on RSI"
+            externalLabel={t("Open on RSI")}
             unread={isUnread(article.id)}
             onRead={() => onRead(article.id)}
             meta={
@@ -760,8 +735,8 @@ function News({
               </>
             }
             footer={article.comments > 0 ? (
-              <div className="patch-metrics" aria-label="Article activity">
-                <span title="Comments"><MessageSquare size={15} aria-hidden="true" /> {formatCount(article.comments)}</span>
+              <div className="patch-metrics" aria-label={t("Article activity")}>
+                <span title={t("Comments")}><MessageSquare size={15} aria-hidden="true" /> {formatCount(article.comments)}</span>
               </div>
             ) : undefined}
           />
@@ -776,8 +751,8 @@ function News({
         <section className="notice">
           <AlertTriangle size={19} aria-hidden="true" />
           <div>
-            <strong>No news articles found</strong>
-            <span>Comm-Link loaded, but it did not include any recent articles.</span>
+            <strong>{t("No news articles found")}</strong>
+            <span>{t("Comm-Link loaded, but it did not include any recent articles.")}</span>
           </div>
         </section>
       )}
@@ -804,7 +779,7 @@ function StatusUpdates({
           <section className={`current-status current-status--${snapshot.currentStatus.level}`}>
             <div className="current-status__heading">
               <div>
-                <p className="eyebrow">Current Service Status</p>
+                <p className="eyebrow">{t("Current Service Status")}</p>
                 <h2>{snapshot.currentStatus.message}</h2>
               </div>
               <span className={`current-status__overall current-status__overall--${snapshot.currentStatus.level}`}>
@@ -828,10 +803,10 @@ function StatusUpdates({
 
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Recent Updates</p>
+            <p className="eyebrow">{t("Recent Updates")}</p>
             <h2>{snapshot?.feedTitle ?? 'RSI Status'}</h2>
           </div>
-          <p>{snapshot?.feedDescription ?? 'Waiting for the first feed response.'}</p>
+          <p>{snapshot?.feedDescription ?? t("Waiting for the first feed response.")}</p>
         </div>
 
         <div className="updates-list">
@@ -839,10 +814,10 @@ function StatusUpdates({
             <ExpandableCard
               key={update.id}
               title={update.title}
-              preview={update.description || 'No summary was included in the feed item.'}
-              content={update.description || 'No details were included in the feed item.'}
+              preview={update.description || t("No summary was included in the feed item.")}
+              content={update.description || t("No details were included in the feed item.")}
               externalUrl={update.link || undefined}
-              externalLabel="Open status page"
+              externalLabel={t("Open status page")}
               unread={isUnread(update.id)}
               onRead={() => onRead(update.id)}
               meta={
@@ -864,8 +839,8 @@ function StatusUpdates({
           <section className="notice">
             <AlertTriangle size={19} aria-hidden="true" />
             <div>
-              <strong>No status entries found</strong>
-              <span>The feed loaded, but it did not contain recent RSS items.</span>
+              <strong>{t("No status entries found")}</strong>
+              <span>{t("The feed loaded, but it did not contain recent RSS items.")}</span>
             </div>
           </section>
         )}
@@ -889,10 +864,10 @@ function PatchNotes({
     <section className="updates-section">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Latest Releases</p>
-          <h2>Official Patch Notes</h2>
+          <p className="eyebrow">{t("Latest Releases")}</p>
+          <h2>{t("Official Patch Notes")}</h2>
         </div>
-        <p>Current LIVE, PTU, release, and hotfix posts from the official Spectrum forum.</p>
+        <p>{t("Current LIVE, PTU, release, and hotfix posts from the official Spectrum forum.")}</p>
       </div>
 
       <div className="updates-list">
@@ -901,10 +876,10 @@ function PatchNotes({
             key={note.id}
             className="patch-card"
             title={note.title}
-            preview={`Official Spectrum post by ${note.author}.`}
+            preview={t("Official Spectrum post by {{v0}}.", { v0: note.author })}
             loadContent={() => fetchPatchNoteDetails(note.url)}
             externalUrl={note.url}
-            externalLabel="Open on Spectrum"
+            externalLabel={t("Open on Spectrum")}
             unread={isUnread(note.id)}
             onRead={() => onRead(note.id)}
             meta={
@@ -916,10 +891,10 @@ function PatchNotes({
               </>
             }
             footer={
-              <div className="patch-metrics" aria-label="Thread activity">
-                <span title="Replies"><MessageSquare size={15} aria-hidden="true" /> {formatCount(note.replies)}</span>
-                <span title="Views"><Eye size={15} aria-hidden="true" /> {formatCount(note.views)}</span>
-                <span title="Votes"><ThumbsUp size={15} aria-hidden="true" /> {formatCount(note.votes)}</span>
+              <div className="patch-metrics" aria-label={t("Thread activity")}>
+                <span title={t("Replies")}><MessageSquare size={15} aria-hidden="true" /> {formatCount(note.replies)}</span>
+                <span title={t("Views")}><Eye size={15} aria-hidden="true" /> {formatCount(note.views)}</span>
+                <span title={t("Votes")}><ThumbsUp size={15} aria-hidden="true" /> {formatCount(note.votes)}</span>
               </div>
             }
           />
@@ -934,8 +909,8 @@ function PatchNotes({
         <section className="notice">
           <AlertTriangle size={19} aria-hidden="true" />
           <div>
-            <strong>No patch notes found</strong>
-            <span>Spectrum loaded, but it did not include any recent patch-note threads.</span>
+            <strong>{t("No patch notes found")}</strong>
+            <span>{t("Spectrum loaded, but it did not include any recent patch-note threads.")}</span>
           </div>
         </section>
       )}
@@ -952,7 +927,7 @@ function LoadMoreButton({ onClick, isLoading = false }: { onClick: () => void; i
         ) : (
           <ChevronDown size={17} aria-hidden="true" />
         )}
-        {isLoading ? 'Loading...' : 'Load more'}
+        {isLoading ? t("Loading...") : t("Load more")}
       </button>
     </div>
   );
@@ -977,11 +952,11 @@ function formatLevel(level: ServiceLevel): string {
     maintenance: 'Maintenance',
     unknown: 'Status Unknown'
   };
-  return labels[level];
+  return t(labels[level]);
 }
 
 function formatDate(value: string): string {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(locale(), {
     dateStyle: 'medium',
     timeStyle: 'short'
   }).format(new Date(value));
@@ -996,18 +971,18 @@ function formatRelativeTime(value: string): string {
 
   const minutes = Math.round(seconds / 60);
   if (minutes < 60) {
-    return `${minutes} min ago`;
+    return t("{{v0}} min ago", { v0: minutes });
   }
 
   const hours = Math.round(minutes / 60);
   if (hours < 24) {
-    return `${hours} hr ago`;
+    return t("{{v0}} hr ago", { v0: hours });
   }
 
   const days = Math.round(hours / 24);
-  return `${days} day${days === 1 ? '' : 's'} ago`;
+  return t('{{count}} days ago', { count: days });
 }
 
 function formatCount(value: number): string {
-  return new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+  return new Intl.NumberFormat(locale(), { notation: 'compact', maximumFractionDigits: 1 }).format(value);
 }

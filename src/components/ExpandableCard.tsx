@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import { ChevronDown, ChevronUp, ExternalLink, RefreshCw } from 'lucide-react';
 import { useEffect, useId, useState, type MouseEvent, type ReactNode } from 'react';
 import { openExternalUrl } from '../platform/openExternalUrl';
@@ -56,7 +57,7 @@ export function ExpandableCard({
     try {
       setLoadedContent(await loadContent());
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : 'Could not load the full article.');
+      setError(loadError instanceof Error ? loadError.message : t("Could not load the full article."));
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +66,7 @@ export function ExpandableCard({
   return (
     <article className={`update-card${expanded ? ' update-card--expanded' : ''}${unread ? ' update-card--unread' : ''}${className ? ` ${className}` : ''}`}>
       <div className="update-card__meta">
-        {unread && <span className="update-card__unread" aria-label="Unread update" title="New update" />}
+        {unread && <span className="update-card__unread" aria-label={t("Unread update")} title={t("New update")} />}
         {meta}
       </div>
       <h3>{title}</h3>
@@ -75,9 +76,7 @@ export function ExpandableCard({
           <>
             {isLoading && (
               <div className="inline-loading">
-                <RefreshCw size={16} className="spin" aria-hidden="true" />
-                Loading full article...
-              </div>
+                <RefreshCw size={16} className="spin" aria-hidden="true" /> {t("Loading full article...")} </div>
             )}
             {error && <p className="inline-error">{error}</p>}
             {!isLoading && !error && (
@@ -100,7 +99,7 @@ export function ExpandableCard({
           onClick={() => void toggleExpanded()}
         >
           {expanded ? <ChevronUp size={17} aria-hidden="true" /> : <ChevronDown size={17} aria-hidden="true" />}
-          {expanded ? 'Close' : 'Read'}
+          {expanded ? t("Close") : t("Read")}
         </button>
 
         {externalUrl && (

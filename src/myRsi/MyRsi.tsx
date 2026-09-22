@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import { Building2, ExternalLink, RefreshCw, Search, ShieldCheck, UserRound } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from 'react';
 import { openExternalUrl } from '../platform/openExternalUrl';
@@ -45,15 +46,15 @@ export function MyRsi() {
     <section className="my-rsi-section">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Public Citizen Profile</p>
-          <h2>My RSI</h2>
+          <p className="eyebrow">{t("Public Citizen Profile")}</p>
+          <h2>{t("My RSI")}</h2>
         </div>
-        <p>Connect a public RSI handle here. Private account management stays on the official RSI website.</p>
+        <p>{t("Connect a public RSI handle here. Private account management stays on the official RSI website.")}</p>
       </div>
 
       <div className="my-rsi-actions">
         <form className="my-rsi-search" onSubmit={handleSubmit}>
-          <label htmlFor="rsi-handle">Public RSI handle</label>
+          <label htmlFor="rsi-handle">{t("Public RSI handle")}</label>
           <div>
             <input
               id="rsi-handle"
@@ -63,13 +64,13 @@ export function MyRsi() {
                 setIsLoading(false);
                 setHandle(event.currentTarget.value);
               }}
-              placeholder="Enter your handle"
+              placeholder={t("Enter your handle")}
               autoComplete="off"
               spellCheck={false}
             />
             <button type="submit" disabled={isLoading || !handle.trim()}>
               {isLoading ? <RefreshCw className="spin" size={17} aria-hidden="true" /> : <Search size={17} aria-hidden="true" />}
-              {profile ? 'Refresh profile' : 'Load profile'}
+              {profile ? t("Refresh profile") : t("Load profile")}
             </button>
           </div>
         </form>
@@ -82,13 +83,13 @@ export function MyRsi() {
           onClick={handleExternalLink}
         >
           <ExternalLink size={18} aria-hidden="true" />
-          <span><strong>Open RSI Account Dashboard</strong><small>Sign in and manage private account details on RSI</small></span>
+          <span><strong>{t("Open RSI Account Dashboard")}</strong><small>{t("Sign in and manage private account details on RSI")}</small></span>
         </a>
       </div>
 
       <div className="my-rsi-security-note">
         <ShieldCheck size={19} aria-hidden="true" />
-        <span>SC Companion only reads the public citizen dossier. Never enter an RSI password or authentication code in this app.</span>
+        <span>{t("SC Companion only reads the public citizen dossier. Never enter an RSI password or authentication code in this app.")}</span>
       </div>
 
       {error && <div className="notice notice--error" role="alert"><span>{error}</span></div>}
@@ -104,16 +105,15 @@ export function MyRsi() {
               <h3>{profile.displayName}</h3>
               <span>@{profile.handle}</span>
             </div>
-            <a href={profile.profileUrl} target="_blank" rel="noreferrer" onClick={handleExternalLink}>
-              View public dossier <ExternalLink size={15} aria-hidden="true" />
+            <a href={profile.profileUrl} target="_blank" rel="noreferrer" onClick={handleExternalLink}> {t("View public dossier")} <ExternalLink size={15} aria-hidden="true" />
             </a>
           </header>
 
           <div className="rsi-profile__facts">
-            <ProfileFact label="Title" value={profile.title} />
-            <ProfileFact label="Enlisted" value={profile.enlistedAt} />
-            <ProfileFact label="Languages" value={profile.fluency.join(', ') || 'Not public'} />
-            <ProfileFact label="Website" value={profile.website || 'Not listed'} />
+            <ProfileFact label={t("Title")} value={profile.title} />
+            <ProfileFact label={t("Enlisted")} value={profile.enlistedAt} />
+            <ProfileFact label={t("Languages")} value={profile.fluency.join(', ') || t("Not public")} />
+            <ProfileFact label={t("Website")} value={profile.website || t("Not listed")} />
           </div>
 
           {profile.mainOrganization && (
@@ -121,12 +121,12 @@ export function MyRsi() {
               <span className="rsi-profile__organization-logo">
                 {profile.mainOrganization.logoUrl ? <img src={profile.mainOrganization.logoUrl} alt="" /> : <Building2 size={24} aria-hidden="true" />}
               </span>
-              <span><small>Main organization</small><strong>{profile.mainOrganization.name}</strong><span>{profile.mainOrganization.sid} · {profile.mainOrganization.rank}</span></span>
+              <span><small>{t("Main organization")}</small><strong>{profile.mainOrganization.name}</strong><span>{profile.mainOrganization.sid} · {profile.mainOrganization.rank}</span></span>
               <ExternalLink size={16} aria-hidden="true" />
             </a>
           )}
 
-          {profile.bio && <div className="rsi-profile__bio"><small>Bio</small><p>{profile.bio}</p></div>}
+          {profile.bio && <div className="rsi-profile__bio"><small>{t("Bio")}</small><p>{profile.bio}</p></div>}
         </article>
       )}
     </section>
@@ -150,5 +150,5 @@ function readErrorMessage(error: unknown): string {
     const message = Reflect.get(error, 'message');
     if (typeof message === 'string' && message) return message;
   }
-  return 'Could not load the public RSI profile.';
+  return t("Could not load the public RSI profile.");
 }

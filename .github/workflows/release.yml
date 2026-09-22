@@ -57,18 +57,15 @@ jobs:
           tagName: v__VERSION__
           releaseName: SC Companion v__VERSION__
           releaseBody: |
-            ## SC Companion 1.0
-            First 1.0 release, bringing the existing desktop features together for Windows, Linux, and the Microsoft Store edition.
+            ## French Language Support
 
-            - Announcements, News, Patch Notes, and current Server Status with unread indicators and optional notifications.
-            - Ships, ship components, organizations, and starter guides in one reference library.
-            - Blueprints with recipes, materials, crafting details, Owned/Wanted checklists, and known mission/faction/reputation prerequisites.
-            - Commodity Market, Player Marketplace, and trade route planning with cargo compatibility, loading options, and time/profit estimates.
-            - Optional local gameplay session history, saved filters, caching, and tray support.
+            - Choose English or French in Settings > Language. Your choice is remembered on restart.
+            - French interface labels across categories, filters, settings, notification headings, and the system tray.
+            - Localized dates and numbers, with English fallback for untranslated text.
+            - Switching languages preserves saved filters and selections. Source articles, game names, and raw logs remain in their original language.
+            - Improved header wrapping for longer labels and smaller windows.
 
-            This release promotes the v0.32.1 feature set to v1.0.0. Store users upgrading from v0.31.2 also receive the Blueprints features added in v0.32.0 and v0.32.1.
-
-            Existing direct-download installations can update in the app. Microsoft Store installations update through the Store after certification. Prices, availability, and route times depend on source data and remain estimates.
+            Existing direct-download Windows and Linux installations can update in the app. No Microsoft Store package is included in this release; the Store edition remains unchanged.
           releaseDraft: false
           prerelease: false
           generateReleaseNotes: true

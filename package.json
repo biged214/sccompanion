@@ -1,7 +1,7 @@
 {
   "name": "sc-companion",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev:vite": "vite --host 127.0.0.1 --port 1420",
@@ -20,6 +20,7 @@
     "@tauri-apps/plugin-process": "^2.3.1",
     "@tauri-apps/plugin-updater": "^2.11.0",
     "dompurify": "^3.4.15",
+    "i18next": "^26.4.2",
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

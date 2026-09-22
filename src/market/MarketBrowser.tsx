@@ -1,3 +1,4 @@
+import { t, locale } from '../i18n';
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, PackageSearch, RefreshCw, Search, Store } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { normalizeLocationDisplayName } from '../locations/displayNames';
@@ -102,38 +103,38 @@ export function MarketBrowser({
     <section className="market-browser">
       <div className="section-heading market-heading">
         <div>
-          <p className="eyebrow">Commodity Exchange</p>
-          <h2>Market</h2>
+          <p className="eyebrow">{t("Commodity Exchange")}</p>
+          <h2>{t("Market")}</h2>
         </div>
-        <p>Browse current commodity prices, stock, demand, locations, and cargo services reported by UEX.</p>
+        <p>{t("Browse current commodity prices, stock, demand, locations, and cargo services reported by UEX.")}</p>
       </div>
 
-      <section className="market-filters" aria-label="Market filters">
+      <section className="market-filters" aria-label={t("Market filters")}>
         <label className="market-search">
           <Search size={18} aria-hidden="true" />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search commodities" aria-label="Search commodities" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Search commodities")} aria-label={t("Search commodities")} />
         </label>
         <label className="market-filter-select">
-          <span>System</span>
+          <span>{t("System")}</span>
           <select value={systemId} onChange={(event) => changeSystem(event.target.value)}>
-            <option value="">All systems</option>
+            <option value="">{t("All systems")}</option>
             {snapshot?.systems.map((system) => <option key={system.id} value={system.id}>{system.name}</option>)}
           </select>
         </label>
         <label className="market-filter-select">
-          <span>Location</span>
+          <span>{t("Location")}</span>
           <select value={location} onChange={(event) => setLocation(event.target.value)}>
-            <option value="">All locations</option>
+            <option value="">{t("All locations")}</option>
             {locations.map((option) => <option key={option} value={option}>{option}</option>)}
           </select>
         </label>
         <label className="market-filter-select">
-          <span>Availability</span>
+          <span>{t("Availability")}</span>
           <select value={availability} onChange={(event) => setAvailability(event.target.value as MarketAvailability)}>
-            <option value="all">Buy or sell</option>
-            <option value="buy">Available to buy</option>
-            <option value="sell">Accepted for sale</option>
-            <option value="both">Both buy and sell</option>
+            <option value="all">{t("Buy or sell")}</option>
+            <option value="buy">{t("Available to buy")}</option>
+            <option value="sell">{t("Accepted for sale")}</option>
+            <option value="both">{t("Both buy and sell")}</option>
           </select>
         </label>
       </section>
@@ -141,33 +142,32 @@ export function MarketBrowser({
       {error && (
         <section className="notice notice--error" role="alert">
           <RefreshCw size={19} aria-hidden="true" />
-          <div><strong>Market refresh failed</strong><span>{error}</span>{usingCache && <span>Showing saved market data.</span>}</div>
+          <div><strong>{t("Market refresh failed")}</strong><span>{error}</span>{usingCache && <span>{t("Showing saved market data.")}</span>}</div>
         </section>
       )}
       {isLoading && !snapshot && (
-        <section className="notice"><RefreshCw size={19} className="spin" aria-hidden="true" /><div><strong>Loading commodity markets</strong><span>Fetching live prices, stock, demand, locations, and terminal capabilities.</span></div></section>
+        <section className="notice"><RefreshCw size={19} className="spin" aria-hidden="true" /><div><strong>{t("Loading commodity markets")}</strong><span>{t("Fetching live prices, stock, demand, locations, and terminal capabilities.")}</span></div></section>
       )}
 
       {snapshot && (
         <section className="market-results">
           <div className="market-results__summary">
-            <div><Store size={18} aria-hidden="true" /><strong>{formatNumber(listings.length)} market listings</strong><span>{formatNumber(commodityCount)} commodities</span></div>
+            <div><Store size={18} aria-hidden="true" /><strong>{formatNumber(listings.length)} {t("market listings")}</strong><span>{formatNumber(commodityCount)} {t("commodities")}</span></div>
             <button type="button" className="refresh-button" onClick={() => void onRefresh()} disabled={isLoading}>
-              <RefreshCw size={16} className={isLoading ? 'spin' : undefined} aria-hidden="true" /> Refresh markets
-            </button>
+              <RefreshCw size={16} className={isLoading ? 'spin' : undefined} aria-hidden="true" /> {t("Refresh markets")} </button>
           </div>
 
           {listings.length > 0 ? (
-            <div className="market-table" role="table" aria-label="Commodity market listings">
+            <div className="market-table" role="table" aria-label={t("Commodity market listings")}>
               <div className="market-table__head" role="row">
-                <SortHeader label="Commodity" field="commodity" current={sort} direction={direction} onSort={changeSort} />
-                <span role="columnheader">Terminal and location</span>
-                <span role="columnheader">System</span>
-                <SortHeader label="Buy price" field="buy" current={sort} direction={direction} onSort={changeSort} />
-                <SortHeader label="Sell price" field="sell" current={sort} direction={direction} onSort={changeSort} />
-                <SortHeader label="Supply" field="supply" current={sort} direction={direction} onSort={changeSort} />
-                <SortHeader label="Demand" field="demand" current={sort} direction={direction} onSort={changeSort} />
-                <SortHeader label="Updated" field="updated" current={sort} direction={direction} onSort={changeSort} />
+                <SortHeader label={t("Commodity")} field="commodity" current={sort} direction={direction} onSort={changeSort} />
+                <span role="columnheader">{t("Terminal and location")}</span>
+                <span role="columnheader">{t("System")}</span>
+                <SortHeader label={t("Buy price")} field="buy" current={sort} direction={direction} onSort={changeSort} />
+                <SortHeader label={t("Sell price")} field="sell" current={sort} direction={direction} onSort={changeSort} />
+                <SortHeader label={t("Supply")} field="supply" current={sort} direction={direction} onSort={changeSort} />
+                <SortHeader label={t("Demand")} field="demand" current={sort} direction={direction} onSort={changeSort} />
+                <SortHeader label={t("Updated")} field="updated" current={sort} direction={direction} onSort={changeSort} />
                 <span aria-hidden="true" />
               </div>
               {listings.slice(0, visibleCount).map((listing) => <MarketRow key={listing.id} listing={listing} />)}
@@ -175,13 +175,13 @@ export function MarketBrowser({
           ) : (
             <section className="trade-empty">
               <PackageSearch size={28} aria-hidden="true" />
-              <strong>No market listings match these filters</strong>
-              <span>Try another commodity name, location, system, or availability option.</span>
+              <strong>{t("No market listings match these filters")}</strong>
+              <span>{t("Try another commodity name, location, system, or availability option.")}</span>
             </section>
           )}
 
           {visibleCount < listings.length && (
-            <div className="load-more"><button type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}>Show more listings</button></div>
+            <div className="load-more"><button type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}>{t("Show more listings")}</button></div>
           )}
         </section>
       )}
@@ -220,8 +220,8 @@ function MarketRow({ listing }: { listing: MarketListing }) {
         <span data-label="Commodity" role="cell"><strong>{price.commodityName}</strong><small>ID {price.commodityId}</small></span>
         <span data-label="Terminal" role="cell"><strong>{terminal.name}</strong><small>{terminal.location}</small></span>
         <span data-label="System" role="cell"><strong>{terminal.systemName}</strong></span>
-        <span data-label="Buy price" role="cell" className="market-price market-price--buy"><strong>{formatPrice(price.buyPrice)}</strong><small>{price.buyPrice > 0 ? 'per SCU' : 'Not sold here'}</small></span>
-        <span data-label="Sell price" role="cell" className="market-price market-price--sell"><strong>{formatPrice(price.sellPrice)}</strong><small>{price.sellPrice > 0 ? 'per SCU' : 'Not accepted'}</small></span>
+        <span data-label="Buy price" role="cell" className="market-price market-price--buy"><strong>{formatPrice(price.buyPrice)}</strong><small>{price.buyPrice > 0 ? t("per SCU") : t("Not sold here")}</small></span>
+        <span data-label="Sell price" role="cell" className="market-price market-price--sell"><strong>{formatPrice(price.sellPrice)}</strong><small>{price.sellPrice > 0 ? t("per SCU") : t("Not accepted")}</small></span>
         <span data-label="Supply" role="cell"><strong>{formatAvailability(price.supply)}</strong><small>SCU</small></span>
         <span data-label="Demand" role="cell"><strong>{formatAvailability(price.demand)}</strong><small>SCU</small></span>
         <span data-label="Updated" role="cell"><strong>{formatRelativeTime(price.updatedAt)}</strong><small>{formatDate(price.updatedAt)}</small></span>
@@ -229,12 +229,12 @@ function MarketRow({ listing }: { listing: MarketListing }) {
       </button>
       {expanded && (
         <div className="market-row__details" role="row">
-          <MarketDetail label="Market role" value={formatMarketRole(price)} detail={`Buy ${formatPrice(price.buyPrice)} · Sell ${formatPrice(price.sellPrice)}`} />
-          <MarketDetail label="Inventory" value={`${formatNumber(price.supply)} SCU supply`} detail={`${formatNumber(price.demand)} SCU demand`} />
-          <MarketDetail label="Container sizes" value={formatContainerSizes(price.containerSizes)} detail={terminal.maxContainerSize > 0 ? `Terminal maximum: ${terminal.maxContainerSize} SCU` : 'Terminal maximum not reported'} />
-          <MarketDetail label="Cargo services" value={terminal.supportsAutoload ? 'Autoload available' : 'Manual handling'} detail={formatCargoServices(terminal)} />
-          <MarketDetail label="Location" value={terminal.name} detail={`${terminal.location}, ${terminal.systemName}`} />
-          <MarketDetail label="Report timestamp" value={formatDate(price.updatedAt)} detail="Community-maintained UEX market report" />
+          <MarketDetail label={t("Market role")} value={formatMarketRole(price)} detail={t("Buy {{v0}} · Sell {{v1}}", { v0: formatPrice(price.buyPrice), v1: formatPrice(price.sellPrice) })} />
+          <MarketDetail label={t("Inventory")} value={t("{{v0}} SCU supply", { v0: formatNumber(price.supply) })} detail={t("{{v0}} SCU demand", { v0: formatNumber(price.demand) })} />
+          <MarketDetail label={t("Container sizes")} value={formatContainerSizes(price.containerSizes)} detail={terminal.maxContainerSize > 0 ? t("Terminal maximum: {{v0}} SCU", { v0: terminal.maxContainerSize }) : t("Terminal maximum not reported")} />
+          <MarketDetail label={t("Cargo services")} value={terminal.supportsAutoload ? t("Autoload available") : t("Manual handling")} detail={formatCargoServices(terminal)} />
+          <MarketDetail label={t("Location")} value={terminal.name} detail={`${terminal.location}, ${terminal.systemName}`} />
+          <MarketDetail label={t("Report timestamp")} value={formatDate(price.updatedAt)} detail="Community-maintained UEX market report" />
         </div>
       )}
     </article>
@@ -263,10 +263,10 @@ function compareOptionalPrices(left: number, right: number, multiplier: number):
 }
 
 function formatMarketRole(price: CommodityPrice): string {
-  if (price.buyPrice > 0 && price.sellPrice > 0) return 'Buys and sells';
-  if (price.buyPrice > 0) return 'Purchase location';
-  if (price.sellPrice > 0) return 'Sell location';
-  return 'No active market';
+  if (price.buyPrice > 0 && price.sellPrice > 0) return t("Buys and sells");
+  if (price.buyPrice > 0) return t("Purchase location");
+  if (price.sellPrice > 0) return t("Sell location");
+  return t("No active market");
 }
 
 function formatCargoServices(terminal: TradeTerminal): string {
@@ -275,38 +275,38 @@ function formatCargoServices(terminal: TradeTerminal): string {
     terminal.hasLoadingDock ? 'loading dock' : '',
     terminal.hasDockingPort ? 'docking port' : ''
   ].filter(Boolean);
-  return services.length > 0 ? services.join(' · ') : 'No cargo services reported';
+  return services.length > 0 ? services.map(service => t(service)).join(' · ') : t("No cargo services reported");
 }
 
 function formatContainerSizes(sizes: number[]): string {
-  return sizes.length > 0 ? `${sizes.join(', ')} SCU` : 'Not reported';
+  return sizes.length > 0 ? `${sizes.join(', ')} SCU` : t("Not reported");
 }
 
 function formatPrice(value: number): string {
-  return value > 0 ? `${value.toLocaleString(undefined, { maximumFractionDigits: 3 })} aUEC` : 'Not available';
+  return value > 0 ? `${value.toLocaleString(locale(), { maximumFractionDigits: 3 })} aUEC` : t("Not available");
 }
 
 function formatAvailability(value: number): string {
-  return value > 0 ? formatNumber(value) : 'None';
+  return value > 0 ? formatNumber(value) : t("None");
 }
 
 function formatNumber(value: number): string {
-  return Math.floor(value).toLocaleString();
+  return Math.floor(value).toLocaleString(locale());
 }
 
 function formatDate(value: string): string {
   const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return 'Unknown date';
-  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+  if (!Number.isFinite(date.getTime())) return t("Unknown date");
+  return new Intl.DateTimeFormat(locale(), { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 }
 
 function formatRelativeTime(value: string): string {
   const milliseconds = Date.now() - Date.parse(value);
-  if (!Number.isFinite(milliseconds) || milliseconds < 0) return 'Just now';
+  if (!Number.isFinite(milliseconds) || milliseconds < 0) return t("Just now");
   const minutes = Math.floor(milliseconds / 60_000);
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1) return t("Just now");
+  if (minutes < 60) return t("{{v0}}m ago", { v0: minutes });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
+  if (hours < 24) return t("{{v0}}h ago", { v0: hours });
+  return t("{{v0}}d ago", { v0: Math.floor(hours / 24) });
 }

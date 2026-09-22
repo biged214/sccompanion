@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import { sendNotification } from '@tauri-apps/plugin-notification';
 import { useEffect, useRef } from 'react';
 import type { AnnouncementsSnapshot } from '../announcements/types';
@@ -28,7 +29,7 @@ export function useUpdateNotifications({ settings, announcements, status, patchN
 
     if (candidates.length > 0 && canNotify(settings, settings.notifyAnnouncements)) {
       notify(
-        candidates.length === 1 ? 'New Star Citizen announcement' : `${candidates.length} new Star Citizen announcements`,
+        candidates.length === 1 ? t("New Star Citizen announcement") : t("{{v0}} new Star Citizen announcements", { v0: candidates.length }),
         candidates.length === 1 ? candidates[0].title : candidates.map((item) => item.title).slice(0, 3).join('\n')
       );
     }
@@ -41,7 +42,7 @@ export function useUpdateNotifications({ settings, announcements, status, patchN
     previousStatus.current = current;
 
     if (previous && previous !== current && canNotify(settings, settings.notifyStatus)) {
-      notify('Star Citizen service status', status.currentStatus.message);
+      notify(t("Star Citizen service status"), status.currentStatus.message);
     }
   }, [settings, status]);
 
@@ -53,7 +54,7 @@ export function useUpdateNotifications({ settings, announcements, status, patchN
 
     if (candidates.length > 0 && canNotify(settings, settings.notifyPatchNotes)) {
       notify(
-        candidates.length === 1 ? 'New Star Citizen patch notes' : `${candidates.length} new Star Citizen patch notes`,
+        candidates.length === 1 ? t("New Star Citizen patch notes") : t("{{v0}} new Star Citizen patch notes", { v0: candidates.length }),
         candidates.length === 1 ? candidates[0].title : candidates.map((note) => note.title).slice(0, 3).join('\n')
       );
     }
@@ -67,7 +68,7 @@ export function useUpdateNotifications({ settings, announcements, status, patchN
 
     if (candidates.length > 0 && canNotify(settings, settings.notifyNews)) {
       notify(
-        candidates.length === 1 ? 'New RSI Comm-Link article' : `${candidates.length} new RSI Comm-Link articles`,
+        candidates.length === 1 ? t("New RSI Comm-Link article") : t("{{v0}} new RSI Comm-Link articles", { v0: candidates.length }),
         candidates.length === 1 ? candidates[0].title : candidates.map((article) => article.title).slice(0, 3).join('\n')
       );
     }

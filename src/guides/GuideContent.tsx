@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import DOMPurify from 'dompurify';
 import { useMemo, useState } from 'react';
 import { ExternalLink, Play } from 'lucide-react';
@@ -43,7 +44,7 @@ export function prepareGuide(body: string, base: string) {
       if (url) node.setAttribute(attr, url); else node.removeAttribute(attr);
     }
   });
-  doc.querySelectorAll('img').forEach((img) => { img.setAttribute('loading', 'lazy'); img.setAttribute('alt', img.getAttribute('alt') || 'RSI guide image'); });
+  doc.querySelectorAll('img').forEach((img) => { img.setAttribute('loading', 'lazy'); img.setAttribute('alt', img.getAttribute('alt') || t("RSI guide image")); });
   doc.querySelectorAll('video, audio').forEach((media) => media.setAttribute('controls', ''));
   const html = DOMPurify.sanitize(doc.body.innerHTML, {
     ALLOWED_TAGS: ['p', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'strong', 'b', 'em', 'i', 'u', 's', 'br', 'hr', 'blockquote', 'pre', 'code', 'a', 'img', 'figure', 'figcaption', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'video', 'audio', 'source'],
@@ -67,8 +68,8 @@ export function GuideContent({ body, url, open }: { body: string; url: string; o
       } else if (href) open(href);
     }} dangerouslySetInnerHTML={{ __html: content.html }} />
     {content.videos.map((video, index) => <div className="guide-video" key={video.embed}>
-      {playing.includes(video.embed) ? <iframe title={`Guide video ${index + 1}`} src={video.embed} referrerPolicy="strict-origin-when-cross-origin" allow="fullscreen; encrypted-media; picture-in-picture" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" /> : <button className="refresh-button" onClick={() => setPlaying((current) => [...current, video.embed])}><Play size={18} />Play video {index + 1}</button>}
-      <button className="settings-command" onClick={() => open(video.url)}>Open original video <ExternalLink size={14} /></button>
+      {playing.includes(video.embed) ? <iframe title={t("Guide video {{v0}}", { v0: index + 1 })} src={video.embed} referrerPolicy="strict-origin-when-cross-origin" allow="fullscreen; encrypted-media; picture-in-picture" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" /> : <button className="refresh-button" onClick={() => setPlaying((current) => [...current, video.embed])}><Play size={18} />{t("Play video")} {index + 1}</button>}
+      <button className="settings-command" onClick={() => open(video.url)}>{t("Open original video")} <ExternalLink size={14} /></button>
     </div>)}
   </>;
 }

@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import { getVersion } from '@tauri-apps/api/app';
 import { relaunch } from '@tauri-apps/plugin-process';
 import { sendNotification } from '@tauri-apps/plugin-notification';
@@ -30,7 +31,7 @@ export function useAppUpdater(notificationsEnabled: boolean) {
   const updateRef = useRef<Update | null>(null);
   const checkInProgress = useRef(false);
   const [state, setState] = useState<AppUpdaterState>({
-    currentVersion: '1.0.0',
+    currentVersion: '1.0.1',
     availableVersion: null,
     releaseNotes: null,
     status: 'idle',
@@ -75,8 +76,8 @@ export function useAppUpdater(notificationsEnabled: boolean) {
       const lastNotified = window.localStorage.getItem(NOTIFIED_VERSION_KEY);
       if (notificationsEnabled && lastNotified !== update.version) {
         sendNotification({
-          title: 'SC Companion update available',
-          body: `Version ${update.version} is ready to install.`
+          title: t("SC Companion update available"),
+          body: t("Version {{v0}} is ready to install.", { v0: update.version })
         });
         window.localStorage.setItem(NOTIFIED_VERSION_KEY, update.version);
       }
@@ -147,6 +148,6 @@ export function useAppUpdater(notificationsEnabled: boolean) {
 
 function formatUpdateError(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
-  if (/404|not found/i.test(message)) return 'No published SC Companion release is available yet.';
-  return message || 'Could not check for updates.';
+  if (/404|not found/i.test(message)) return t("No published SC Companion release is available yet.");
+  return message || t("Could not check for updates.");
 }

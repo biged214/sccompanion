@@ -1,3 +1,4 @@
+import { t, locale } from '../i18n';
 import {
   Bookmark,
   Building2,
@@ -84,7 +85,7 @@ export function OrganizationsBrowser() {
       setFetchedAt(result.fetchedAt);
     } catch (cause) {
       if (requestId.current !== currentRequest) return;
-      setError(cause instanceof Error ? cause.message : 'Could not load public RSI organizations.');
+      setError(cause instanceof Error ? cause.message : t("Could not load public RSI organizations."));
     } finally {
       if (requestId.current === currentRequest) {
         setIsLoading(false);
@@ -125,7 +126,7 @@ export function OrganizationsBrowser() {
         setFetchedAt(result.fetchedAt);
       })
       .catch((cause) => {
-        if (requestId.current === currentRequest) setError(cause instanceof Error ? cause.message : 'Could not load public RSI organizations.');
+        if (requestId.current === currentRequest) setError(cause instanceof Error ? cause.message : t("Could not load public RSI organizations."));
       })
       .finally(() => {
         if (requestId.current === currentRequest) setIsLoading(false);
@@ -142,82 +143,79 @@ export function OrganizationsBrowser() {
     <section className="organizations-section">
       <div className="section-heading organizations-heading">
         <div>
-          <p className="eyebrow">Public RSI Directory</p>
-          <h2>Organizations</h2>
+          <p className="eyebrow">{t("Public RSI Directory")}</p>
+          <h2>{t("Organizations")}</h2>
         </div>
         <p>{savedOnly
-          ? `${visibleOrganizations.length} of ${favorites.length} saved`
-          : `${visibleOrganizations.length} of ${organizations.length} results loaded`}</p>
+          ? t("{{v0}} of {{v1}} saved", { v0: visibleOrganizations.length, v1: favorites.length })
+          : t("{{v0}} of {{v1}} results loaded", { v0: visibleOrganizations.length, v1: organizations.length })}</p>
       </div>
 
       <form className="organization-filters" onSubmit={submitSearch}>
         <label className="organization-search">
           <Search size={18} aria-hidden="true" />
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Organization name or Spectrum ID" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t("Organization name or Spectrum ID")} />
         </label>
-        <FilterSelect label="Archetype" value={archetype} onChange={setArchetype}>
-          <option value="all">All archetypes</option>
-          <option value="generic">Organization</option>
-          <option value="corp">Corporation</option>
+        <FilterSelect label={t("Archetype")} value={archetype} onChange={setArchetype}>
+          <option value="all">{t("All archetypes")}</option>
+          <option value="generic">{t("Organization")}</option>
+          <option value="corp">{t("Corporation")}</option>
           <option value="pmc">PMC</option>
-          <option value="faith">Faith</option>
-          <option value="syndicate">Syndicate</option>
-          <option value="club">Club</option>
+          <option value="faith">{t("Faith")}</option>
+          <option value="syndicate">{t("Syndicate")}</option>
+          <option value="club">{t("Club")}</option>
         </FilterSelect>
-        <FilterSelect label="Commitment" value={commitment} onChange={setCommitment}>
-          <option value="all">Any commitment</option>
-          <option value="CA">Casual</option>
-          <option value="RE">Regular</option>
-          <option value="HA">Hardcore</option>
+        <FilterSelect label={t("Commitment")} value={commitment} onChange={setCommitment}>
+          <option value="all">{t("Any commitment")}</option>
+          <option value="CA">{t("Casual")}</option>
+          <option value="RE">{t("Regular")}</option>
+          <option value="HA">{t("Hardcore")}</option>
         </FilterSelect>
-        <FilterSelect label="Recruiting" value={recruiting} onChange={setRecruiting}>
-          <option value="all">Either</option>
-          <option value="1">Recruiting</option>
-          <option value="0">Not recruiting</option>
+        <FilterSelect label={t("Recruiting")} value={recruiting} onChange={setRecruiting}>
+          <option value="all">{t("Either")}</option>
+          <option value="1">{t("Recruiting")}</option>
+          <option value="0">{t("Not recruiting")}</option>
         </FilterSelect>
-        <FilterSelect label="Role play" value={rolePlay} onChange={setRolePlay}>
-          <option value="all">Either</option>
-          <option value="1">Yes</option>
-          <option value="0">No</option>
+        <FilterSelect label={t("Role play")} value={rolePlay} onChange={setRolePlay}>
+          <option value="all">{t("Either")}</option>
+          <option value="1">{t("Yes")}</option>
+          <option value="0">{t("No")}</option>
         </FilterSelect>
-        <FilterSelect label="Members" value={memberRange} onChange={(value) => setMemberRange(value as MemberRange)}>
-          <option value="all">Any size</option>
-          <option value="1-10">1-10 members</option>
-          <option value="11-50">11-50 members</option>
-          <option value="51-200">51-200 members</option>
-          <option value="201+">201+ members</option>
+        <FilterSelect label={t("Members")} value={memberRange} onChange={(value) => setMemberRange(value as MemberRange)}>
+          <option value="all">{t("Any size")}</option>
+          <option value="1-10">{t("1-10 members")}</option>
+          <option value="11-50">{t("11-50 members")}</option>
+          <option value="51-200">{t("51-200 members")}</option>
+          <option value="201+">{t("201+ members")}</option>
         </FilterSelect>
         <button type="submit" className="organization-search-button" disabled={isLoading}>
-          <Search size={16} aria-hidden="true" /> Search
-        </button>
+          <Search size={16} aria-hidden="true" /> {t("Search")} </button>
         <button type="button" className="clear-filters" onClick={resetFilters}>
-          <SlidersHorizontal size={16} aria-hidden="true" /> Reset
-        </button>
+          <SlidersHorizontal size={16} aria-hidden="true" /> {t("Reset")} </button>
       </form>
 
       <div className="organization-viewbar">
-        <div className="organization-view-mode" role="group" aria-label="Organization results">
+        <div className="organization-view-mode" role="group" aria-label={t("Organization results")}>
           <button type="button" className={!savedOnly ? 'active' : ''} onClick={() => setSavedOnly(false)}>
-            <Globe2 size={16} aria-hidden="true" /> Directory
-          </button>
+            <Globe2 size={16} aria-hidden="true" /> {t("Directory")} </button>
           <button type="button" className={savedOnly ? 'active' : ''} onClick={() => setSavedOnly(true)}>
-            <Bookmark size={16} aria-hidden="true" /> Saved ({favorites.length})
+            <Bookmark size={16} aria-hidden="true" /> {t("Saved (")}{favorites.length})
           </button>
         </div>
-        {fetchedAt && !savedOnly && <span>Updated {formatRelativeTime(fetchedAt)}</span>}
+        {fetchedAt && !savedOnly && <span>{t("Updated")} {formatRelativeTime(fetchedAt)}</span>}
       </div>
 
       {error && (
         <section className="notice notice--error" role="alert">
           <Building2 size={19} aria-hidden="true" />
-          <div><strong>Organizations unavailable</strong><span>{error}</span></div>
+          <div><strong>{t("Organizations unavailable")}</strong><span>{error}</span></div>
         </section>
       )}
 
       {isLoading && organizations.length === 0 ? (
         <section className="notice">
           <Search size={19} aria-hidden="true" />
-          <div><strong>Searching organizations</strong><span>Reading the public RSI organization directory.</span></div>
+          <div><strong>{t("Searching organizations")}</strong><span>{t("Reading the public RSI organization directory.")}</span></div>
         </section>
       ) : (
         <div className="organization-list">
@@ -237,8 +235,8 @@ export function OrganizationsBrowser() {
         <section className="notice">
           <Building2 size={19} aria-hidden="true" />
           <div>
-            <strong>{savedOnly ? 'No saved organizations' : 'No organizations found'}</strong>
-            <span>{savedOnly ? 'Use the star button on a result to keep it here.' : 'Try a broader name or reset the filters.'}</span>
+            <strong>{savedOnly ? t("No saved organizations") : t("No organizations found")}</strong>
+            <span>{savedOnly ? t("Use the star button on a result to keep it here.") : t("Try a broader name or reset the filters.")}</span>
           </div>
         </section>
       )}
@@ -246,7 +244,7 @@ export function OrganizationsBrowser() {
       {!savedOnly && hasMore && organizations.length > 0 && (
         <div className="load-more">
           <button type="button" onClick={() => void runSearch(page + 1)} disabled={isLoadingMore}>
-            <ChevronRight size={17} aria-hidden="true" /> {isLoadingMore ? 'Loading...' : 'Load more organizations'}
+            <ChevronRight size={17} aria-hidden="true" /> {isLoadingMore ? t("Loading...") : t("Load more organizations")}
           </button>
         </div>
       )}
@@ -277,19 +275,19 @@ function OrganizationRow({ organization, isFavorite, onFavorite, onOpen }: {
           <strong>{organization.name}</strong>
           <span>{organization.sid}</span>
         </span>
-        <span className="organization-row__field"><small>Archetype</small><strong>{organization.archetype}</strong></span>
-        <span className="organization-row__field"><small>Commitment</small><strong>{organization.commitment}</strong></span>
-        <span className="organization-row__field"><small>Language</small><strong>{organization.language}</strong></span>
-        <span className="organization-row__field"><small>Members</small><strong>{organization.memberCount.toLocaleString()}</strong></span>
-        <span className="organization-row__field"><small>Recruiting</small><strong>{formatBoolean(organization.recruiting)}</strong></span>
+        <span className="organization-row__field"><small>{t("Archetype")}</small><strong>{organization.archetype}</strong></span>
+        <span className="organization-row__field"><small>{t("Commitment")}</small><strong>{organization.commitment}</strong></span>
+        <span className="organization-row__field"><small>{t("Language")}</small><strong>{organization.language}</strong></span>
+        <span className="organization-row__field"><small>{t("Members")}</small><strong>{organization.memberCount.toLocaleString(locale())}</strong></span>
+        <span className="organization-row__field"><small>{t("Recruiting")}</small><strong>{formatBoolean(organization.recruiting)}</strong></span>
         <ChevronRight className="organization-row__arrow" size={20} aria-hidden="true" />
       </button>
       <button
         type="button"
         className={`organization-favorite ${isFavorite ? 'active' : ''}`}
         onClick={onFavorite}
-        aria-label={isFavorite ? `Remove ${organization.name} from saved organizations` : `Save ${organization.name}`}
-        title={isFavorite ? 'Remove from saved' : 'Save organization'}
+        aria-label={isFavorite ? t("Remove {{v0}} from saved organizations", { v0: organization.name }) : t("Save {{v0}}", { v0: organization.name })}
+        title={isFavorite ? t("Remove from saved") : t("Save organization")}
       >
         <Star size={18} fill={isFavorite ? 'currentColor' : 'none'} aria-hidden="true" />
       </button>
@@ -321,7 +319,7 @@ function OrganizationDialog({ summary, isFavorite, onFavorite, onClose }: {
     document.body.style.overflow = 'hidden';
     void fetchOrganizationDetail(summary.sid)
       .then((result) => { if (active) setDetail({ ...result, language: summary.language, recruiting: summary.recruiting, rolePlay: summary.rolePlay }); })
-      .catch((cause) => { if (active) setDetailError(cause instanceof Error ? cause.message : 'Could not load organization details.'); });
+      .catch((cause) => { if (active) setDetailError(cause instanceof Error ? cause.message : t("Could not load organization details.")); });
     const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
     window.addEventListener('keydown', closeOnEscape);
     return () => {
@@ -340,7 +338,7 @@ function OrganizationDialog({ summary, isFavorite, onFavorite, onClose }: {
       setMemberPage(page);
       setHasMoreMembers(result.hasMore);
     } catch (cause) {
-      setMembersError(cause instanceof Error ? cause.message : 'Could not load the public member roster.');
+      setMembersError(cause instanceof Error ? cause.message : t("Could not load the public member roster."));
     } finally {
       setMembersLoading(false);
     }
@@ -376,10 +374,10 @@ function OrganizationDialog({ summary, isFavorite, onFavorite, onClose }: {
             <h2 id="organization-dialog-title">{organization.name}</h2>
           </div>
           <div className="organization-dialog__actions">
-            <button type="button" className={`organization-favorite ${isFavorite ? 'active' : ''}`} onClick={onFavorite} title={isFavorite ? 'Remove from saved' : 'Save organization'}>
+            <button type="button" className={`organization-favorite ${isFavorite ? 'active' : ''}`} onClick={onFavorite} title={isFavorite ? t("Remove from saved") : t("Save organization")}>
               <Star size={18} fill={isFavorite ? 'currentColor' : 'none'} aria-hidden="true" />
             </button>
-            <button type="button" className="icon-button" onClick={onClose} aria-label="Close organization details" title="Close">
+            <button type="button" className="icon-button" onClick={onClose} aria-label={t("Close organization details")} title={t("Close")}>
               <X size={20} aria-hidden="true" />
             </button>
           </div>
@@ -388,16 +386,16 @@ function OrganizationDialog({ summary, isFavorite, onFavorite, onClose }: {
         <OrganizationHero organization={organization} detail={detail} />
 
         <div className="ship-dialog__content">
-          <nav className="ship-detail-tabs" aria-label="Organization details">
+          <nav className="ship-detail-tabs" aria-label={t("Organization details")}>
             {(['overview', 'members', 'history', 'manifesto', 'charter'] as DetailTab[]).map((item) => (
               <button key={item} type="button" className={tab === item ? 'active' : ''} onClick={() => selectTab(item)}>
-                {item === 'members' ? `Members (${organization.memberCount.toLocaleString()})` : titleCase(item)}
+                {item === 'members' ? t("Members ({{v0}})", { v0: organization.memberCount.toLocaleString(locale()) }) : t(titleCase(item))}
               </button>
             ))}
           </nav>
 
-          {detailError && <section className="notice notice--error"><Building2 size={19} aria-hidden="true" /><div><strong>Details unavailable</strong><span>{detailError}</span></div></section>}
-          {!detail && !detailError && <p className="ship-tab-loading">Loading public organization details...</p>}
+          {detailError && <section className="notice notice--error"><Building2 size={19} aria-hidden="true" /><div><strong>{t("Details unavailable")}</strong><span>{detailError}</span></div></section>}
+          {!detail && !detailError && <p className="ship-tab-loading">{t("Loading public organization details...")}</p>}
 
           {tab === 'overview' && detail && <OrganizationOverview detail={detail} />}
           {tab === 'members' && (
@@ -420,15 +418,14 @@ function OrganizationDialog({ summary, isFavorite, onFavorite, onClose }: {
               onLoadMore={() => void loadMembers(memberPage + 1)}
             />
           )}
-          {tab === 'history' && detail && <TextTab title="History" content={detail.history} />}
-          {tab === 'manifesto' && detail && <TextTab title="Manifesto" content={detail.manifesto} />}
-          {tab === 'charter' && detail && <TextTab title="Charter" content={detail.charter} />}
+          {tab === 'history' && detail && <TextTab title={t("History")} content={detail.history} />}
+          {tab === 'manifesto' && detail && <TextTab title={t("Manifesto")} content={detail.manifesto} />}
+          {tab === 'charter' && detail && <TextTab title={t("Charter")} content={detail.charter} />}
         </div>
 
         <footer className="ship-dialog__footer organization-dialog__footer">
-          <span>Only information made public by RSI is shown.</span>
-          <a href={organization.url} target="_blank" rel="noreferrer" onClick={(event) => handleExternalLink(event, organization.url)}>
-            View on RSI <ExternalLink size={15} aria-hidden="true" />
+          <span>{t("Only information made public by RSI is shown.")}</span>
+          <a href={organization.url} target="_blank" rel="noreferrer" onClick={(event) => handleExternalLink(event, organization.url)}> {t("View on RSI")} <ExternalLink size={15} aria-hidden="true" />
           </a>
         </footer>
       </section>
@@ -444,10 +441,10 @@ function OrganizationHero({ organization, detail }: { organization: Organization
         <div className="ship-detail-badges">
           <span>{organization.archetype}</span>
           <span>{organization.commitment}</span>
-          {organization.recruiting === true && <span>Recruiting</span>}
-          {organization.rolePlay === true && <span>Role play</span>}
+          {organization.recruiting === true && <span>{t("Recruiting")}</span>}
+          {organization.rolePlay === true && <span>{t("Role play")}</span>}
         </div>
-        {detail?.activities.length ? <p>{detail.activities.join(' / ')}</p> : <p>Public organization profile</p>}
+        {detail?.activities.length ? <p>{detail.activities.join(' / ')}</p> : <p>{t("Public organization profile")}</p>}
       </div>
     </section>
   );
@@ -456,18 +453,18 @@ function OrganizationHero({ organization, detail }: { organization: Organization
 function OrganizationOverview({ detail }: { detail: OrganizationDetail }) {
   return (
     <section className="ship-detail-section">
-      <h3>Overview</h3>
+      <h3>{t("Overview")}</h3>
       <div className="organization-stat-grid">
-        <Stat icon={<Users size={18} />} label="Reported members" value={detail.memberCount.toLocaleString()} />
-        <Stat icon={<Building2 size={18} />} label="Archetype" value={detail.archetype} />
-        <Stat icon={<ShieldCheck size={18} />} label="Commitment" value={detail.commitment} />
-        <Stat icon={<Globe2 size={18} />} label="Language" value={detail.language || 'Not listed'} />
-        <Stat icon={<UserRound size={18} />} label="Recruiting" value={formatBoolean(detail.recruiting)} />
-        <Stat icon={<Star size={18} />} label="Role play" value={formatBoolean(detail.rolePlay)} />
+        <Stat icon={<Users size={18} />} label={t("Reported members")} value={detail.memberCount.toLocaleString(locale())} />
+        <Stat icon={<Building2 size={18} />} label={t("Archetype")} value={detail.archetype} />
+        <Stat icon={<ShieldCheck size={18} />} label={t("Commitment")} value={detail.commitment} />
+        <Stat icon={<Globe2 size={18} />} label={t("Language")} value={detail.language || t("Not listed")} />
+        <Stat icon={<UserRound size={18} />} label={t("Recruiting")} value={formatBoolean(detail.recruiting)} />
+        <Stat icon={<Star size={18} />} label={t("Role play")} value={formatBoolean(detail.rolePlay)} />
       </div>
       <div className="organization-prose">
-        <h3>Description</h3>
-        <p>{detail.description || 'No public description was provided.'}</p>
+        <h3>{t("Description")}</h3>
+        <p>{detail.description || t("No public description was provided.")}</p>
       </div>
     </section>
   );
@@ -494,36 +491,36 @@ function MembersTab({ members, loadedCount, reportedCount, isLoading, error, has
   return (
     <section className="ship-detail-section organization-members">
       <div className="organization-members__heading">
-        <div><h3>Public Member Roster</h3><p>{loadedCount.toLocaleString()} public profiles loaded / {reportedCount.toLocaleString()} members reported by RSI</p></div>
+        <div><h3>{t("Public Member Roster")}</h3><p>{loadedCount.toLocaleString(locale())} {t("public profiles loaded /")} {reportedCount.toLocaleString(locale())} {t("members reported by RSI")}</p></div>
       </div>
       <div className="organization-member-filters">
-        <label className="organization-search"><Search size={17} aria-hidden="true" /><input value={search} onChange={(event) => onSearch(event.target.value)} placeholder="Search loaded members" /></label>
-        <FilterSelect label="Affiliation" value={affiliation} onChange={onAffiliation}><option value="all">All affiliations</option><option value="Main">Main</option><option value="Affiliate">Affiliate</option></FilterSelect>
-        <FilterSelect label="Rank" value={rank} onChange={onRank}><option value="all">All public ranks</option>{ranks.map((item) => <option key={item} value={item}>{item}</option>)}</FilterSelect>
-        <FilterSelect label="Sort" value={sort} onChange={onSort}><option value="handle">Handle</option><option value="rank">Rank</option><option value="affiliation">Affiliation</option></FilterSelect>
+        <label className="organization-search"><Search size={17} aria-hidden="true" /><input value={search} onChange={(event) => onSearch(event.target.value)} placeholder={t("Search loaded members")} /></label>
+        <FilterSelect label={t("Affiliation")} value={affiliation} onChange={onAffiliation}><option value="all">{t("All affiliations")}</option><option value="Main">{t("Main")}</option><option value="Affiliate">{t("Affiliate")}</option></FilterSelect>
+        <FilterSelect label={t("Rank")} value={rank} onChange={onRank}><option value="all">{t("All public ranks")}</option>{ranks.map((item) => <option key={item} value={item}>{item}</option>)}</FilterSelect>
+        <FilterSelect label={t("Sort")} value={sort} onChange={onSort}><option value="handle">{t("Handle")}</option><option value="rank">{t("Rank")}</option><option value="affiliation">{t("Affiliation")}</option></FilterSelect>
       </div>
-      {error && <section className="notice notice--error"><Users size={18} aria-hidden="true" /><div><strong>Roster unavailable</strong><span>{error}</span></div></section>}
+      {error && <section className="notice notice--error"><Users size={18} aria-hidden="true" /><div><strong>{t("Roster unavailable")}</strong><span>{error}</span></div></section>}
       <div className="organization-member-list">
         {members.map((member) => (
           <a key={member.handle} href={member.profileUrl} target="_blank" rel="noreferrer" onClick={(event) => handleExternalLink(event, member.profileUrl)} className="organization-member">
             <span className="organization-member__avatar">{member.avatarUrl ? <img src={member.avatarUrl} alt="" /> : <UserRound size={20} />}</span>
-            <span><strong>{member.handle}</strong><small>{member.roles.length ? member.roles.join(', ') : 'No public roles'}</small></span>
-            <span><small>Rank</small><strong>{member.rank}</strong></span>
-            <span><small>Affiliation</small><strong>{member.affiliation}</strong></span>
+            <span><strong>{member.handle}</strong><small>{member.roles.length ? member.roles.join(', ') : t("No public roles")}</small></span>
+            <span><small>{t("Rank")}</small><strong>{member.rank}</strong></span>
+            <span><small>{t("Affiliation")}</small><strong>{member.affiliation}</strong></span>
             <ExternalLink size={16} aria-hidden="true" />
           </a>
         ))}
       </div>
-      {!isLoading && loadedCount > 0 && members.length === 0 && <p className="ship-empty-price">No loaded members match these filters.</p>}
-      {isLoading && <p className="ship-tab-loading">Loading public member profiles...</p>}
-      {hasMore && loadedCount > 0 && <div className="load-more"><button type="button" onClick={onLoadMore} disabled={isLoading}><ChevronRight size={17} /> Load more public members</button></div>}
-      {!hasMore && loadedCount < reportedCount && <p className="organization-privacy-note">Some members may be hidden or have redacted affiliations. RSI's reported total can be larger than its public roster.</p>}
+      {!isLoading && loadedCount > 0 && members.length === 0 && <p className="ship-empty-price">{t("No loaded members match these filters.")}</p>}
+      {isLoading && <p className="ship-tab-loading">{t("Loading public member profiles...")}</p>}
+      {hasMore && loadedCount > 0 && <div className="load-more"><button type="button" onClick={onLoadMore} disabled={isLoading}><ChevronRight size={17} /> {t("Load more public members")}</button></div>}
+      {!hasMore && loadedCount < reportedCount && <p className="organization-privacy-note">{t("Some members may be hidden or have redacted affiliations. RSI's reported total can be larger than its public roster.")}</p>}
     </section>
   );
 }
 
 function TextTab({ title, content }: { title: string; content: string }) {
-  return <section className="ship-detail-section organization-prose"><h3>{title}</h3><p>{content || `No public ${title.toLowerCase()} was provided.`}</p></section>;
+  return <section className="ship-detail-section organization-prose"><h3>{title}</h3><p>{content || t("No public {{v0}} was provided.", { v0: title.toLowerCase() })}</p></section>;
 }
 
 function OrganizationLogo({ organization, large = false }: { organization: OrganizationSummary; large?: boolean }) {
@@ -568,7 +565,7 @@ function matchesMemberRange(memberCount: number, range: MemberRange): boolean {
 }
 
 function formatBoolean(value: boolean | null): string {
-  return value === null ? 'Not listed' : value ? 'Yes' : 'No';
+  return value === null ? t("Not listed") : value ? t("Yes") : t("No");
 }
 
 function titleCase(value: string): string {
@@ -578,9 +575,9 @@ function titleCase(value: string): string {
 function formatRelativeTime(value: string): string {
   const minutes = Math.max(0, Math.round((Date.now() - Date.parse(value)) / 60_000));
   if (minutes < 1) return 'just now';
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return t("{{v0}}m ago", { v0: minutes });
   const hours = Math.round(minutes / 60);
-  return hours < 24 ? `${hours}h ago` : `${Math.round(hours / 24)}d ago`;
+  return hours < 24 ? t("{{v0}}h ago", { v0: hours }) : t("{{v0}}d ago", { v0: Math.round(hours / 24) });
 }
 
 function handleExternalLink(event: MouseEvent<HTMLAnchorElement>, url: string) {

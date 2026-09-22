@@ -1,5 +1,7 @@
+import { t } from '../i18n';
 import { Bell, Clock3, Download, Power, RefreshCw, Settings, X } from 'lucide-react';
 import { useEffect } from 'react';
+import { setLanguage, useLanguage, type Language } from '../i18n';
 import type { AppUpdaterState } from '../updates/useAppUpdater';
 import type { AppSettings, NotificationPermissionState } from './types';
 
@@ -30,6 +32,7 @@ export function SettingsDialog({
   onCheckForUpdates,
   onInstallUpdate
 }: SettingsDialogProps) {
+  const language = useLanguage();
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') onClose();
@@ -45,23 +48,33 @@ export function SettingsDialog({
       <section className="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
         <header className="settings-header">
           <div>
-            <p className="eyebrow">Application</p>
-            <h2 id="settings-title"><Settings size={21} aria-hidden="true" /> Settings</h2>
+            <p className="eyebrow">{t("Application")}</p>
+            <h2 id="settings-title"><Settings size={21} aria-hidden="true" /> {t("Settings")}</h2>
           </div>
-          <button type="button" className="icon-button" aria-label="Close settings" title="Close settings" onClick={onClose}>
+          <button type="button" className="icon-button" aria-label={t("Close settings")} title={t("Close settings")} onClick={onClose}>
             <X size={19} aria-hidden="true" />
           </button>
         </header>
 
         <div className="settings-group">
-          <h3><Power size={17} aria-hidden="true" /> Background</h3>
+          <label className="setting-row setting-row--select" htmlFor="app-language">
+            <span id="app-language-label">{t('Language')}</span>
+            <select id="app-language" aria-labelledby="app-language-label" value={language} onChange={(event) => setLanguage(event.currentTarget.value as Language)}>
+              <option value="en" lang="en">English</option>
+              <option value="fr" lang="fr">Français</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="settings-group">
+          <h3><Power size={17} aria-hidden="true" /> {t("Background")}</h3>
           <ToggleRow
-            label="Keep running in system tray"
+            label={t("Keep running in system tray")}
             checked={settings.keepRunningInTray}
             onChange={(checked) => onUpdate({ keepRunningInTray: checked })}
           />
           <ToggleRow
-            label="Launch at startup"
+            label={t("Launch at startup")}
             disabled={import.meta.env.VITE_STORE_BUILD === 'true'}
             checked={settings.launchAtStartup}
             onChange={(checked) => void onSetLaunchAtStartup(checked)}
@@ -69,39 +82,39 @@ export function SettingsDialog({
         </div>
 
         <div className="settings-group">
-          <h3><Bell size={17} aria-hidden="true" /> Notifications</h3>
+          <h3><Bell size={17} aria-hidden="true" /> {t("Notifications")}</h3>
           <ToggleRow
-            label="System notifications"
+            label={t("System notifications")}
             checked={settings.notificationsEnabled}
             onChange={(checked) => void onSetNotifications(checked)}
           />
           <div className="settings-subgroup" aria-disabled={!settings.notificationsEnabled}>
             <ToggleRow
-              label="New announcements"
+              label={t("New announcements")}
               checked={settings.notifyAnnouncements}
               disabled={!settings.notificationsEnabled}
               onChange={(checked) => onUpdate({ notifyAnnouncements: checked })}
             />
             <ToggleRow
-              label="Server status changes"
+              label={t("Server status changes")}
               checked={settings.notifyStatus}
               disabled={!settings.notificationsEnabled}
               onChange={(checked) => onUpdate({ notifyStatus: checked })}
             />
             <ToggleRow
-              label="New patch notes"
+              label={t("New patch notes")}
               checked={settings.notifyPatchNotes}
               disabled={!settings.notificationsEnabled}
               onChange={(checked) => onUpdate({ notifyPatchNotes: checked })}
             />
             <ToggleRow
-              label="New RSI news"
+              label={t("New RSI news")}
               checked={settings.notifyNews}
               disabled={!settings.notificationsEnabled}
               onChange={(checked) => onUpdate({ notifyNews: checked })}
             />
             <ToggleRow
-              label="SC Companion updates"
+              label={t("SC Companion updates")}
               checked={settings.notifyAppUpdates}
               disabled={!settings.notificationsEnabled || import.meta.env.VITE_STORE_BUILD === 'true'}
               onChange={(checked) => onUpdate({ notifyAppUpdates: checked })}
@@ -113,24 +126,22 @@ export function SettingsDialog({
             disabled={!settings.notificationsEnabled}
             onClick={() => void onTestNotification()}
           >
-            <Bell size={15} aria-hidden="true" />
-            Send test notification
-          </button>
+            <Bell size={15} aria-hidden="true" /> {t("Send test notification")} </button>
           {notificationPermission === 'denied' && (
-            <p className="settings-message settings-message--error">Notification permission is blocked by the operating system.</p>
+            <p className="settings-message settings-message--error">{t("Notification permission is blocked by the operating system.")}</p>
           )}
         </div>
 
         <div className="settings-group">
-          <h3><Clock3 size={17} aria-hidden="true" /> Refresh intervals</h3>
+          <h3><Clock3 size={17} aria-hidden="true" /> {t("Refresh intervals")}</h3>
           <SelectRow
-            label="Server status"
+            label={t("Server status")}
             value={settings.statusRefreshMinutes}
             options={[2, 5, 10, 15]}
             onChange={(value) => onUpdate({ statusRefreshMinutes: value })}
           />
           <SelectRow
-            label="Announcements, patch notes, and news"
+            label={t("Announcements, patch notes, and news")}
             value={settings.contentRefreshMinutes}
             options={[5, 10, 15, 30]}
             onChange={(value) => onUpdate({ contentRefreshMinutes: value })}
@@ -138,17 +149,17 @@ export function SettingsDialog({
         </div>
 
         <div className="settings-group">
-          <h3><Download size={17} aria-hidden="true" /> Application updates</h3>
-          {import.meta.env.VITE_STORE_BUILD === 'true' && <p className="settings-message">Updates are managed by Microsoft Store.</p>}
+          <h3><Download size={17} aria-hidden="true" /> {t("Application updates")}</h3>
+          {import.meta.env.VITE_STORE_BUILD === 'true' && <p className="settings-message">{t("Updates are managed by Microsoft Store.")}</p>}
           <div className="update-version-row">
-            <span>Installed version</span>
+            <span>{t("Installed version")}</span>
             <strong>{updater.currentVersion}</strong>
           </div>
           {updater.status === 'available' && (
-            <p className="settings-message">Version {updater.availableVersion} is ready to install.</p>
+            <p className="settings-message">Version {updater.availableVersion} {t("is ready to install.")}</p>
           )}
           {updater.status === 'up-to-date' && (
-            <p className="settings-message">SC Companion is up to date.</p>
+            <p className="settings-message">{t("SC Companion is up to date.")}</p>
           )}
           {updater.status === 'error' && updater.error && (
             <p className="settings-message settings-message--error">{updater.error}</p>
@@ -166,14 +177,14 @@ export function SettingsDialog({
                 ? <Download size={15} aria-hidden="true" />
                 : <RefreshCw size={15} aria-hidden="true" />}
             {updater.status === 'available'
-              ? 'Install update'
+              ? t("Install update")
               : updater.status === 'checking'
-                ? 'Checking...'
+                ? t("Checking...")
                 : updater.status === 'downloading'
-                  ? `Downloading${updater.progress === null ? '...' : ` ${updater.progress}%`}`
+                  ? t("Downloading{{v0}}", { v0: updater.progress === null ? '...' : ` ${updater.progress}%` })
                   : updater.status === 'installing'
-                    ? 'Installing...'
-                    : 'Check for updates'}
+                    ? t("Installing...")
+                    : t("Check for updates")}
           </button>
         </div>
 
@@ -223,7 +234,7 @@ function SelectRow({
     <label className="setting-row setting-row--select">
       <span>{label}</span>
       <select value={value} onChange={(event) => onChange(Number(event.currentTarget.value))}>
-        {options.map((minutes) => <option value={minutes} key={minutes}>{minutes} minutes</option>)}
+        {options.map((minutes) => <option value={minutes} key={minutes}>{minutes} {t("minutes")}</option>)}
       </select>
     </label>
   );

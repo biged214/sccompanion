@@ -11,6 +11,25 @@ struct DesktopState {
     close_to_tray: AtomicBool,
 }
 
+struct TrayLabels {
+    open: MenuItem<tauri::Wry>,
+    refresh: MenuItem<tauri::Wry>,
+    quit: MenuItem<tauri::Wry>,
+}
+
+#[tauri::command]
+fn set_language(state: State<'_, TrayLabels>, language: String) -> Result<(), String> {
+    let labels = match language.as_str() {
+        "fr" => ["Ouvrir SC Companion", "Actualiser maintenant", "Quitter"],
+        "en" => ["Open SC Companion", "Refresh now", "Quit"],
+        _ => return Err("Unsupported language".into()),
+    };
+    state.open.set_text(labels[0]).map_err(|e| e.to_string())?;
+    state.refresh.set_text(labels[1]).map_err(|e| e.to_string())?;
+    state.quit.set_text(labels[2]).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 #[tauri::command]
 fn set_close_to_tray(state: State<'_, DesktopState>, enabled: bool) {
     state.close_to_tray.store(enabled, Ordering::Relaxed);
@@ -46,6 +65,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_process::init())
         .invoke_handler(tauri::generate_handler![
+            set_language,
             set_close_to_tray,
             gameplay::get_gameplay_snapshot,
             gameplay::get_gameplay_status,
@@ -61,6 +81,7 @@ pub fn run() {
             let refresh = MenuItem::with_id(app, "refresh", "Refresh now", true, None::<&str>)?;
             let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&open, &refresh, &quit])?;
+            app.manage(TrayLabels { open, refresh, quit });
 
             let mut tray = TrayIconBuilder::with_id("main-tray")
                 .tooltip("SC Companion")

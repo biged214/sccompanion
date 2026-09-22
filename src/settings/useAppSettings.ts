@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import { invoke } from '@tauri-apps/api/core';
 import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart';
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification';
@@ -44,10 +45,10 @@ export function useAppSettings() {
       const granted = await ensureNotificationPermission();
       setNotificationPermission(granted ? 'granted' : 'denied');
       updateSettings({ notificationsEnabled: granted });
-      if (!granted) setError('Windows or Linux did not grant notification permission.');
+      if (!granted) setError(t("Windows or Linux did not grant notification permission."));
     } catch (permissionError) {
       updateSettings({ notificationsEnabled: false });
-      setError(permissionError instanceof Error ? permissionError.message : 'Could not enable notifications.');
+      setError(permissionError instanceof Error ? permissionError.message : t("Could not enable notifications."));
     }
   }, [updateSettings]);
 
@@ -63,7 +64,7 @@ export function useAppSettings() {
       else await disable();
       updateSettings({ launchAtStartup: enabled });
     } catch (autostartError) {
-      setError(autostartError instanceof Error ? autostartError.message : 'Could not update startup behavior.');
+      setError(autostartError instanceof Error ? autostartError.message : t("Could not update startup behavior."));
     }
   }, [updateSettings]);
 
@@ -73,16 +74,16 @@ export function useAppSettings() {
       const granted = await ensureNotificationPermission();
       setNotificationPermission(granted ? 'granted' : 'denied');
       if (!granted) {
-        setError('Windows or Linux did not grant notification permission.');
+        setError(t("Windows or Linux did not grant notification permission."));
         return;
       }
       sendNotification({
         title: 'SC Companion',
-        body: 'System notifications are working.'
+        body: t("System notifications are working.")
       });
       setError(null);
     } catch (notificationError) {
-      setError(notificationError instanceof Error ? notificationError.message : 'Could not send the test notification.');
+      setError(notificationError instanceof Error ? notificationError.message : t("Could not send the test notification."));
     }
   }, []);
 
@@ -97,7 +98,7 @@ export function useAppSettings() {
 
     if (import.meta.env.VITE_STORE_BUILD !== 'true') void isEnabled()
       .then((enabled) => updateSettings({ launchAtStartup: enabled }))
-      .catch(() => setError('Could not read the launch-at-startup setting.'));
+      .catch(() => setError(t("Could not read the launch-at-startup setting.")));
 
     if (settings.notificationsEnabled) {
       void ensureNotificationPermission()

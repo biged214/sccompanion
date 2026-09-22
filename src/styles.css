@@ -246,6 +246,7 @@ select {
 .status-hero {
   min-height: 220px;
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
@@ -258,6 +259,11 @@ select {
   background-position: center;
   background-size: cover;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+}
+
+.status-hero > div:first-child {
+  min-width: 0;
+  flex: 1 1 400px;
 }
 
 .eyebrow {
@@ -305,10 +311,14 @@ h1 {
   background: rgba(8, 13, 17, 0.72);
   color: #eef8fb;
   font-weight: 700;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .hero-actions {
   display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   align-items: center;
   gap: 10px;
 }
@@ -3967,6 +3977,10 @@ button.gameplay-drilldown__group:focus-visible {
   .status-hero {
     min-height: 260px;
     padding: 24px;
+  }
+
+  .status-hero > div:first-child {
+    flex: 0 1 auto;
   }
 
   .hero-actions {
