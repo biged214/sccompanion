@@ -23,6 +23,12 @@ for (const [key, value] of Object.entries(i18n.getResourceBundle('fr', 'translat
 }
 setLanguage('en');
 assert.equal(t('Size {{v0}}', { v0: 3 }), 'Size 3');
+setLanguage('es');
+assert.equal(t('Settings'), 'Configuración');
+assert.equal(document.documentElement.lang, 'es');
+assert.equal(localStorage.getItem(LANGUAGE_KEY), 'es');
+assert.equal(locale(), 'es-ES');
+assert.equal(t('Size {{v0}}', { v0: 3 }), 'Size 3');
 localStorage.setItem(LANGUAGE_KEY, 'unsupported');
 assert.equal((await import(url+'#invalid')).locale(), 'en-US');
 console.log('French catalog, interpolation, persistence, fallback, document language and number formatting passed.');

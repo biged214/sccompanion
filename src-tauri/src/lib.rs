@@ -21,6 +21,7 @@ struct TrayLabels {
 fn set_language(state: State<'_, TrayLabels>, language: String) -> Result<(), String> {
     let labels = match language.as_str() {
         "fr" => ["Ouvrir SC Companion", "Actualiser maintenant", "Quitter"],
+        "es" => ["Abrir SC Companion", "Actualizar ahora", "Salir"],
         "en" => ["Open SC Companion", "Refresh now", "Quit"],
         _ => return Err("Unsupported language".into()),
     };

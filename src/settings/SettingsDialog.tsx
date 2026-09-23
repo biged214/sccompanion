@@ -62,6 +62,7 @@ export function SettingsDialog({
             <select id="app-language" aria-labelledby="app-language-label" value={language} onChange={(event) => setLanguage(event.currentTarget.value as Language)}>
               <option value="en" lang="en">English</option>
               <option value="fr" lang="fr">Français</option>
+              <option value="es" lang="es">Español</option>
             </select>
           </label>
         </div>

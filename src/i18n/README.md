@@ -1,6 +1,6 @@
 # Interface Languages
 
-English is the default. Select Settings > Language > Francais to use French.
+English is the default. Select Settings > Language to use Français or Español.
 The choice is stored locally under `sc-companion:language` and applied on startup,
 including the native tray menu. Changing language does not remount screens or
 change saved filters, selections, article read state, or cached source data.

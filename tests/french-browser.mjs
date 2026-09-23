@@ -21,7 +21,16 @@ try {
  await page.getByRole('button',{name:'Fermer les paramètres',exact:true}).click();
  const expected=['Guides de démarrage','Vaisseaux','Composants de vaisseau','Organisations','Plans de fabrication'];
  assert.deepEqual(await page.locator('section[aria-labelledby="category-reference"] .category-card').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('aria-label'))),expected);
+ await page.getByRole('button',{name:'Ouvrir les paramètres',exact:true}).click();
+ await page.getByLabel('Langue',{exact:true}).selectOption('es');
+ assert.equal(await page.locator('html').getAttribute('lang'),'es');
+ assert.ok(await page.getByRole('heading',{name:'Configuración',exact:true}).isVisible());
+ await page.getByRole('button',{name:'Cerrar configuración',exact:true}).click();
+ assert.ok(await page.getByRole('button',{name:'Naves',exact:true}).isVisible());
  await page.screenshot({path:'output/french-qa/home.png',fullPage:true});
+ await page.getByRole('button',{name:'Abrir configuración',exact:true}).click();
+ await page.getByLabel('Idioma',{exact:true}).selectOption('fr');
+ await page.getByRole('button',{name:'Fermer les paramètres',exact:true}).click();
  await page.getByRole('button',{name:'Vaisseaux',exact:true}).click();
  await page.locator('.ship-search input').fill('Corsair');
  await page.getByRole('button',{name:'Ouvrir les paramètres',exact:true}).click();

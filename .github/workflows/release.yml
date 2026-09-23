@@ -57,10 +57,10 @@ jobs:
           tagName: v__VERSION__
           releaseName: SC Companion v__VERSION__
           releaseBody: |
-            ## French Language Support
+            ## Spanish Language Support
 
-            - Choose English or French in Settings > Language. Your choice is remembered on restart.
-            - French interface labels across categories, filters, settings, notification headings, and the system tray.
+            - Choose English, French, or Spanish in Settings > Language. Your choice is remembered on restart.
+            - Spanish interface labels across categories, filters, settings, notification headings, and the system tray.
             - Localized dates and numbers, with English fallback for untranslated text.
             - Switching languages preserves saved filters and selections. Source articles, game names, and raw logs remain in their original language.
             - Improved header wrapping for longer labels and smaller windows.
