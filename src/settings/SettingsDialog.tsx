@@ -157,7 +157,7 @@ export function SettingsDialog({
             <strong>{updater.currentVersion}</strong>
           </div>
           {updater.status === 'available' && (
-            <p className="settings-message">Version {updater.availableVersion} {t("is ready to install.")}</p>
+            <p className="settings-message">{t('Version {{v0}} is ready to install.', { v0: updater.availableVersion ?? '' })}</p>
           )}
           {updater.status === 'up-to-date' && (
             <p className="settings-message">{t("SC Companion is up to date.")}</p>

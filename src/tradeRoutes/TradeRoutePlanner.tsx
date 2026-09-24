@@ -251,11 +251,11 @@ function TradeRouteRow({ route, rank, cargoProfileLabel }: { route: TradeRoute; 
     <article className={`trade-route ${expanded ? 'trade-route--expanded' : ''}`}>
       <button type="button" className="trade-route__summary" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)}>
         <span className="trade-route__identity"><small>#{rank}</small><strong>{route.commodityName}</strong><span>{route.origin.name} <b aria-hidden="true">→</b> {route.destination.name}</span></span>
-        <span data-label="Est. time"><strong>{formatDuration(totalRouteSeconds)}</strong><small>{estimateLabel}</small></span>
-        <span data-label="Cargo"><strong>{formatNumber(route.cargoScu)} SCU</strong><small>{formatBoxSizes(route.compatibleContainerSizes)}</small></span>
-        <span data-label="Investment"><strong>{formatCurrency(route.investment)}</strong></span>
-        <span data-label="Profit" className="trade-route__profit"><strong>+{formatCurrency(route.profit)}</strong></span>
-        <span data-label="ROI"><strong>{route.roi.toFixed(1)}%</strong></span>
+        <span data-label={t("Est. time")}><strong>{formatDuration(totalRouteSeconds)}</strong><small>{t(estimateLabel)}</small></span>
+        <span data-label={t("Cargo")}><strong>{formatNumber(route.cargoScu)} SCU</strong><small>{formatBoxSizes(route.compatibleContainerSizes)}</small></span>
+        <span data-label={t("Investment")}><strong>{formatCurrency(route.investment)}</strong></span>
+        <span data-label={t("Profit")} className="trade-route__profit"><strong>+{formatCurrency(route.profit)}</strong></span>
+        <span data-label="ROI"><strong>{route.roi.toLocaleString(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%</strong></span>
         <ChevronDown className="trade-route__chevron" size={19} aria-hidden="true" />
       </button>
       {expanded && (
@@ -268,8 +268,8 @@ function TradeRouteRow({ route, rank, cargoProfileLabel }: { route: TradeRoute; 
           <div><span>{t("Oldest report")}</span><strong>{formatRelativeTime(route.updatedAt)}</strong><small>{t("Market values are community reported")}</small></div>
           <div><span>{t("Ship access")}</span><strong>{cargoProfileLabel}</strong><small>{formatCargoAccess(route.origin)} → {formatCargoAccess(route.destination)}</small></div>
           <div><span>{t("Compatible boxes")}</span><strong>{formatBoxSizes(route.compatibleContainerSizes)}</strong><small>{t("Every listed size is reported at both the purchase and drop-off terminals.")}</small></div>
-          <div><span>{t("Cargo handling")}</span><strong>{route.usesAutoload ? t("{{v0}} estimated fees", { v0: formatCurrency(route.handlingCost) }) : t("Manual solo estimate")}</strong><small>{t("Load:")} {formatDuration(route.loadingSeconds)}{route.usesAutoload ? ` · ${formatCurrency(route.loadingCost)}` : ''}</small><small>{t("Unload:")} {formatDuration(route.unloadingSeconds)}{route.usesAutoload ? ` · ${formatCurrency(route.unloadingCost)}` : ''}</small><small>{t("Total handling:")} {formatDuration(route.handlingSeconds)}</small><small>{t("Estimated from")} {formatBoxManifest(route.boxManifest)}{route.usesAutoload ? '; verify at the in-game terminal.' : ' at 30 seconds per container.'}</small></div>
-          <div><span>{t("Estimated route time")}</span><strong>{formatDuration(totalRouteSeconds)}</strong><small>{formatDistance(effectiveDistanceGm)} · {formatDuration(travelSeconds)} {t("estimated travel")}{distanceGm === null ? ' · approximate distance' : ''}</small><small>{formatDuration(route.handlingSeconds)} {t("cargo handling")}</small><small>{t("Excludes walking, elevators, ship retrieval, refueling, and unexpected delays.")}</small></div>
+          <div><span>{t("Cargo handling")}</span><strong>{route.usesAutoload ? t("{{v0}} estimated fees", { v0: formatCurrency(route.handlingCost) }) : t("Manual solo estimate")}</strong><small>{t("Load:")} {formatDuration(route.loadingSeconds)}{route.usesAutoload ? ` · ${formatCurrency(route.loadingCost)}` : ''}</small><small>{t("Unload:")} {formatDuration(route.unloadingSeconds)}{route.usesAutoload ? ` · ${formatCurrency(route.unloadingCost)}` : ''}</small><small>{t("Total handling:")} {formatDuration(route.handlingSeconds)}</small><small>{t("Estimated from")} {formatBoxManifest(route.boxManifest)}{route.usesAutoload ? t('; verify at the in-game terminal.') : t(' at 30 seconds per container.')}</small></div>
+          <div><span>{t("Estimated route time")}</span><strong>{formatDuration(totalRouteSeconds)}</strong><small>{formatDistance(effectiveDistanceGm)} · {formatDuration(travelSeconds)} {t("estimated travel")}{distanceGm === null ? t(' · approximate distance') : ''}</small><small>{formatDuration(route.handlingSeconds)} {t("cargo handling")}</small><small>{t("Excludes walking, elevators, ship retrieval, refueling, and unexpected delays.")}</small></div>
         </div>
       )}
     </article>
@@ -362,9 +362,9 @@ function formatUnitPrice(value: number): string {
 
 function formatRelativeTime(value: string): string {
   const milliseconds = Date.now() - Date.parse(value);
-  if (!Number.isFinite(milliseconds) || milliseconds < 0) return 'just now';
+  if (!Number.isFinite(milliseconds) || milliseconds < 0) return t('Just now');
   const minutes = Math.floor(milliseconds / 60_000);
-  if (minutes < 1) return 'just now';
+  if (minutes < 1) return t('Just now');
   if (minutes < 60) return t("{{v0}}m ago", { v0: minutes });
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return t("{{v0}}h ago", { v0: hours });

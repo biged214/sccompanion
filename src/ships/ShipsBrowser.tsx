@@ -429,9 +429,9 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
                   <Spec icon={<Shield size={18} />} label={t("Countermeasures")} value={formatMetric(detail.countermeasureCount)} />
                 </div>
               </DetailSection>
-              <EquipmentSection title={t("Equipped weapons")} items={detail.weapons} emptyText="No equipped gun details are listed for this vehicle." showControl />
+              <EquipmentSection title={t("Equipped weapons")} items={detail.weapons} emptyText={t("No equipped gun details are listed for this vehicle.")} showControl />
               <TurretSection turrets={detail.turrets} />
-              <EquipmentSection title={t("Missiles and racks")} items={detail.missiles} emptyText="No equipped missile details are listed for this vehicle." showControl />
+              <EquipmentSection title={t("Missiles and racks")} items={detail.missiles} emptyText={t("No equipped missile details are listed for this vehicle.")} showControl />
             </>
           )}
 
@@ -450,7 +450,7 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
               <EquipmentSection
                 title={t("Installed systems and avionics")}
                 items={detail.components.filter((item) => !isPropulsionComponent(item) && !isWeaponComponent(item))}
-                emptyText="No installed system details are listed for this vehicle."
+                emptyText={t("No installed system details are listed for this vehicle.")}
               />
             </>
           )}
@@ -473,15 +473,15 @@ function ShipDetailDialog({ ship, onClose }: { ship: ShipSummary; onClose: () =>
               <EquipmentSection
                 title={t("Installed propulsion systems")}
                 items={detail.components.filter(isPropulsionComponent)}
-                emptyText="No installed propulsion component details are listed for this vehicle."
+                emptyText={t("No installed propulsion component details are listed for this vehicle.")}
               />
             </>
           )}
 
           {activeTab === 'availability' && (
             <>
-              <PriceSection title={t("Buy in game")} entries={ship.purchaseLocations} emptyText="This vehicle is not currently listed for in-game purchase." />
-              <PriceSection title={t("Rent in game")} entries={ship.rentalLocations} emptyText="This vehicle is not currently listed for rental." rental />
+              <PriceSection title={t("Buy in game")} entries={ship.purchaseLocations} emptyText={t("This vehicle is not currently listed for in-game purchase.")} />
+              <PriceSection title={t("Rent in game")} entries={ship.rentalLocations} emptyText={t("This vehicle is not currently listed for rental.")} rental />
             </>
           )}
 
@@ -543,9 +543,9 @@ function EquipmentSection({
         <thead><tr><th>{t("Component")}</th><th>{t("Type")}</th>{showControl && <th>{t("Control")}</th>}<th>{t("Size")}</th><th>{t("Qty")}</th><th>{t("Details")}</th></tr></thead>
         <tbody>{items.map((item) => <tr key={`${item.type}-${item.name}-${item.size}-${item.control ?? ''}`}>
           <td><strong>{item.name}</strong>{item.manufacturer && <small>{item.manufacturer}</small>}</td>
-          <td>{item.type}</td>
+          <td>{t(item.type)}</td>
           {showControl && <td><span className="ship-control-badge">{item.control ? t(item.control) : t("Not listed")}</span></td>}
-          <td>{item.size ? `S${item.size}` : 'N/A'}</td>
+          <td>{item.size ? `S${item.size}` : t("N/A")}</td>
           <td>{item.quantity}</td>
           <td>{item.details.length ? item.details.map((entry) => `${t(entry.label)}: ${entry.value}`).join(' · ') : t("Standard loadout")}</td>
         </tr>)}</tbody>
@@ -562,7 +562,7 @@ function TurretSection({ turrets }: { turrets: ShipTurret[] }) {
         <tbody>{turrets.map((turret, index) => <tr key={`${turret.control}-${turret.name}-${index}`}>
           <td><strong>{turret.name}</strong><small>{turret.size ? t("Size {{v0}}", { v0: turret.size }) : t("Size not listed")}</small></td>
           <td>{t(turret.control)}{turret.pilotSlaveable ? ` · ${t('Pilot slaveable')}` : ''}</td>
-          <td>{turret.mountCount || turret.weaponSizes.length || 'N/A'}{turret.weaponSizes.length ? ` · ${turret.weaponSizes.map((size) => `S${size}`).join(', ')}` : ''}</td>
+          <td>{turret.mountCount || turret.weaponSizes.length || t('N/A')}{turret.weaponSizes.length ? ` · ${turret.weaponSizes.map((size) => `S${size}`).join(', ')}` : ''}</td>
           <td>{turret.weapons.join(', ') || t("Not equipped")}</td>
           <td>{formatMetric(turret.dps)}{turret.sustainedDps ? t(" · {{v0}} sustained", { v0: formatNumber(turret.sustainedDps) }) : ''}</td>
         </tr>)}</tbody>

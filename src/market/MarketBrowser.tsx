@@ -217,14 +217,14 @@ function MarketRow({ listing }: { listing: MarketListing }) {
   return (
     <article className={`market-row${expanded ? ' market-row--expanded' : ''}`} role="rowgroup">
       <button type="button" className="market-row__summary" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)} role="row">
-        <span data-label="Commodity" role="cell"><strong>{price.commodityName}</strong><small>ID {price.commodityId}</small></span>
-        <span data-label="Terminal" role="cell"><strong>{terminal.name}</strong><small>{terminal.location}</small></span>
-        <span data-label="System" role="cell"><strong>{terminal.systemName}</strong></span>
-        <span data-label="Buy price" role="cell" className="market-price market-price--buy"><strong>{formatPrice(price.buyPrice)}</strong><small>{price.buyPrice > 0 ? t("per SCU") : t("Not sold here")}</small></span>
-        <span data-label="Sell price" role="cell" className="market-price market-price--sell"><strong>{formatPrice(price.sellPrice)}</strong><small>{price.sellPrice > 0 ? t("per SCU") : t("Not accepted")}</small></span>
-        <span data-label="Supply" role="cell"><strong>{formatAvailability(price.supply)}</strong><small>SCU</small></span>
-        <span data-label="Demand" role="cell"><strong>{formatAvailability(price.demand)}</strong><small>SCU</small></span>
-        <span data-label="Updated" role="cell"><strong>{formatRelativeTime(price.updatedAt)}</strong><small>{formatDate(price.updatedAt)}</small></span>
+        <span data-label={t("Commodity")} role="cell"><strong>{price.commodityName}</strong><small>ID {price.commodityId}</small></span>
+        <span data-label={t("Terminal")} role="cell"><strong>{terminal.name}</strong><small>{terminal.location}</small></span>
+        <span data-label={t("System")} role="cell"><strong>{terminal.systemName}</strong></span>
+        <span data-label={t("Buy price")} role="cell" className="market-price market-price--buy"><strong>{formatPrice(price.buyPrice)}</strong><small>{price.buyPrice > 0 ? t("per SCU") : t("Not sold here")}</small></span>
+        <span data-label={t("Sell price")} role="cell" className="market-price market-price--sell"><strong>{formatPrice(price.sellPrice)}</strong><small>{price.sellPrice > 0 ? t("per SCU") : t("Not accepted")}</small></span>
+        <span data-label={t("Supply")} role="cell"><strong>{formatAvailability(price.supply)}</strong><small>SCU</small></span>
+        <span data-label={t("Demand")} role="cell"><strong>{formatAvailability(price.demand)}</strong><small>SCU</small></span>
+        <span data-label={t("Updated")} role="cell"><strong>{formatRelativeTime(price.updatedAt)}</strong><small>{formatDate(price.updatedAt)}</small></span>
         <ChevronDown className="market-row__chevron" size={18} aria-hidden="true" />
       </button>
       {expanded && (
@@ -234,7 +234,7 @@ function MarketRow({ listing }: { listing: MarketListing }) {
           <MarketDetail label={t("Container sizes")} value={formatContainerSizes(price.containerSizes)} detail={terminal.maxContainerSize > 0 ? t("Terminal maximum: {{v0}} SCU", { v0: terminal.maxContainerSize }) : t("Terminal maximum not reported")} />
           <MarketDetail label={t("Cargo services")} value={terminal.supportsAutoload ? t("Autoload available") : t("Manual handling")} detail={formatCargoServices(terminal)} />
           <MarketDetail label={t("Location")} value={terminal.name} detail={`${terminal.location}, ${terminal.systemName}`} />
-          <MarketDetail label={t("Report timestamp")} value={formatDate(price.updatedAt)} detail="Community-maintained UEX market report" />
+          <MarketDetail label={t("Report timestamp")} value={formatDate(price.updatedAt)} detail={t("Community-maintained UEX market report")} />
         </div>
       )}
     </article>

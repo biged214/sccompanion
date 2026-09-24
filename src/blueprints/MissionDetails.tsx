@@ -58,7 +58,7 @@ function MissionContent({ id, version }: { id: string; version: string }) {
   const source = `https://api.star-citizen.wiki/missions/${id}?version=${encodeURIComponent(version)}`;
   return <div className="bp-mission">
     {loading && <p role="status">{t("Loading mission requirements...")}</p>}
-    {error && <p role="alert">{error}{mission ? ' Showing cached mission data.' : ''} <button onClick={() => setRetry(n => n + 1)}>{t("Retry")}</button></p>}
+    {error && <p role="alert">{error}{mission ? t(" Showing cached mission data.") : ''} <button onClick={() => setRetry(n => n + 1)}>{t("Retry")}</button></p>}
     {mission && <>
       <dl><dt>{t("Faction")}</dt><dd>{mission.faction?.name || t("Not supplied")}</dd><dt>{t("Mission giver")}</dt><dd>{mission.mission_giver || t("Not supplied")}</dd><dt>{t("Legality")}</dt><dd>{mission.legality_label || t("Not supplied")}</dd>
       <dt>{t("Required reputation")}</dt><dd>{mission.reputation_prerequisite ? <>{mission.reputation_prerequisite.faction || mission.faction?.name || t("Faction not supplied")}<br />{t("Minimum standing:")} {standingText(mission.reputation_prerequisite.min_standing)}{mission.reputation_prerequisite.max_standing && <><br />{t("Highest eligible standing:")} {standingText(mission.reputation_prerequisite.max_standing)}</>}</> : t("Not supplied; this does not establish that no reputation is required.")}</dd>

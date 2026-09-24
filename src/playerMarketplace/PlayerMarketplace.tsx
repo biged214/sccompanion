@@ -103,22 +103,22 @@ export function PlayerMarketplace() {
     </form>
     <div className="player-market-filters">
       <label>{t("Search listings")}<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Item or player")} /></label>
-      <label>{t("Transaction")}<select value={transaction} onChange={(event) => setTransaction(event.target.value)}><option value="">{t("All transactions")}</option>{[...new Set(['sell', 'buy', ...rows.map((row) => row.transaction), ...(transaction ? [transaction] : [])])].map((operation) => <option key={operation} value={operation}>{transactionLabel(operation)}</option>)}</select></label>
+      <label>{t("Transaction")}<select value={transaction} onChange={(event) => setTransaction(event.target.value)}><option value="">{t("All transactions")}</option>{[...new Set(['sell', 'buy', ...rows.map((row) => row.transaction), ...(transaction ? [transaction] : [])])].map((operation) => <option key={operation} value={operation}>{t(transactionLabel(operation))}</option>)}</select></label>
       {([['System', system, setSystem, 'system'], ['Location', location, setLocation, 'location'], ['Currency', currency, setCurrency, 'currency']] as const).map(([label, value, setter, field]) =>
-        <label key={label}>{label}<select value={value} onChange={(event) => setter(event.target.value)}><option value="">{t("All")}</option>{[...new Set([...rows.map((row) => row[field]), ...(value ? [value] : [])])].sort().map((option) => <option key={option}>{option}</option>)}</select></label>)}
+        <label key={label}>{t(label)}<select value={value} onChange={(event) => setter(event.target.value)}><option value="">{t("All")}</option>{[...new Set([...rows.map((row) => row[field]), ...(value ? [value] : [])])].sort().map((option) => <option key={option}>{option}</option>)}</select></label>)}
       <label>{t("Sort")}<select value={sort} onChange={(event) => setSort(event.target.value)}><option value="newest">{t("Newest first")}</option><option value="price-low">{t("Price: low to high")}</option><option value="price-high">{t("Price: high to low")}</option></select></label>
     </div>
     <p className="player-market-note">{filtered.length} {t("matching listings from")} {rows.length} {t("loaded listings. Searches expand buy/sell results for item IDs found in matching recent titles. Items absent from the recent feed and unlinked listings may be missing; UEX also caps item results. Prices are advertiser asks or offers, grouped by currency when sorting.")}</p>
     <button className="settings-command" onClick={() => void open(`https://uexcorp.space/marketplace/home/?search=${encodeURIComponent(query.trim())}`)}>{t("Search on UEX")} <ExternalLink size={14} /></button>
-    {(error || linkError) && <p role="alert" className="notice notice--error">{error || linkError}{error && snapshot ? ' Showing cached listings.' : ''}</p>}
+    {(error || linkError) && <p role="alert" className="notice notice--error">{t(error || linkError)}{error && snapshot ? t(" Showing cached listings.") : ''}</p>}
     {(loading || searchQuery !== query.trim().toLowerCase()) && <p role="status">{t("Loading player listings...")}</p>}
     {!loading && !filtered.length && <p>{t("No matching listings. Try another search, player, or transaction type.")}</p>}
     <div className="player-market-list">
       {filtered.slice(0, count).map((row) => <details className="player-listing" key={row.id}>
         <summary>
           {row.photos[0] ? <img loading="lazy" src={row.photos[0]} alt={row.title} onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }} /> : <Package size={36} />}
-          <div><span className="player-transaction" data-operation={row.transaction}>{transactionLabel(row.transaction)}</span><strong>{row.title}</strong><span>{row.seller} · {row.system} · {row.location}</span><small>UEX Corp · {row.added ? new Date(row.added).toLocaleString(locale()) : t("Date unavailable")}</small></div>
-          <div className="player-listing-price"><strong>{row.price === null ? t("Price unspecified") : `${row.price.toLocaleString(locale())} ${row.currency}`}</strong><span>{row.unit ? t("Per {{v0}} · ", { v0: row.unit }) : ''}{row.transaction === 'sell' ? t("Stock: {{v0}}", { v0: row.stock ?? 'Unknown' }) : row.transaction === 'buy' ? t("Buyer offer") : t("Listed price")} <ChevronDown size={14} aria-hidden="true" /></span></div>
+          <div><span className="player-transaction" data-operation={row.transaction}>{t(transactionLabel(row.transaction))}</span><strong>{row.title}</strong><span>{row.seller} · {row.system} · {row.location}</span><small>UEX Corp · {row.added ? new Date(row.added).toLocaleString(locale()) : t("Date unavailable")}</small></div>
+          <div className="player-listing-price"><strong>{row.price === null ? t("Price unspecified") : `${row.price.toLocaleString(locale())} ${row.currency}`}</strong><span>{row.unit ? t("Per {{v0}} · ", { v0: row.unit }) : ''}{row.transaction === 'sell' ? t("Stock: {{v0}}", { v0: row.stock ?? t('Unknown') }) : row.transaction === 'buy' ? t("Buyer offer") : t("Listed price")} <ChevronDown size={14} aria-hidden="true" /></span></div>
         </summary>
         <div className="player-listing-details">
           <p>{t("Availability:")} {row.availability} {t("· Origin:")} {row.origin}</p>

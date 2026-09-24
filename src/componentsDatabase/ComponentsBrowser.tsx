@@ -57,7 +57,7 @@ export function ComponentsBrowser({ snapshot, isLoading }: { snapshot: Component
   const filteredComponents = useMemo(() => {
     const query = search.trim().toLowerCase();
     return components
-      .filter((component) => !query || `${component.name} ${component.manufacturer} ${component.section} ${component.category}`.toLowerCase().includes(query))
+      .filter((component) => !query || `${component.name} ${component.manufacturer} ${t(component.section)} ${component.category}`.toLowerCase().includes(query))
       .filter((component) => manufacturer === 'all' || component.manufacturer === manufacturer)
       .filter((component) => category === 'all' || component.category === category)
       .filter((component) => size === 'all' || component.size === size)
@@ -175,7 +175,7 @@ function ComponentCard({ component, onClick }: { component: ComponentSummary; on
     <button type="button" className="ship-card component-card" onClick={onClick}>
       <ComponentVisual component={component} />
       <span className="ship-card__body">
-        <span className="ship-card__badges"><span>{component.section}</span><span>{component.category}</span></span>
+        <span className="ship-card__badges"><span>{t(component.section)}</span><span>{component.category}</span></span>
         <strong className="ship-card__name">{component.name}</strong>
         <span className="ship-card__maker">{component.manufacturer}</span>
         <span className="ship-card__stats">
@@ -251,7 +251,7 @@ function ComponentDetailDialog({ component, onClose }: { component: ComponentSum
         <div className="ship-dialog__hero">
           <ComponentVisual component={component} imageUrl={detail?.imageUrl} />
           <div>
-            <div className="ship-detail-badges"><span>{component.section}</span><span>{detail?.type || component.category}</span><span>{t("Size")} {detail?.size || component.size}</span></div>
+            <div className="ship-detail-badges"><span>{t(component.section)}</span><span>{detail?.type || component.category}</span><span>{t("Size")} {detail?.size || component.size}</span></div>
             {detail?.description && <p>{detail.description}</p>}
             {!detail && !error && <div className="inline-loading"><RefreshCw size={18} className="spin" aria-hidden="true" /> {t("Loading specifications...")}</div>}
             {error && <p className="inline-error">{error} {t("Basic UEX information is still shown below.")}</p>}
@@ -295,7 +295,7 @@ function DetailSection({ title, children }: { title: string; children: ReactNode
 }
 
 function Spec({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
-  return <div className="ship-spec"><span>{icon}</span><div><small>{label}</small><strong>{value}</strong></div></div>;
+  return <div className="ship-spec"><span>{icon}</span><div><small>{t(label)}</small><strong>{value}</strong></div></div>;
 }
 
 function PriceSection({ entries }: { entries: ComponentSummary['purchaseLocations'] }) {

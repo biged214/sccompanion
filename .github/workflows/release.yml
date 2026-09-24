@@ -57,13 +57,14 @@ jobs:
           tagName: v__VERSION__
           releaseName: SC Companion v__VERSION__
           releaseBody: |
-            ## Spanish Language Support
+            ## Spanish and French Translation Fixes
 
-            - Choose English, French, or Spanish in Settings > Language. Your choice is remembered on restart.
-            - Spanish interface labels across categories, filters, settings, notification headings, and the system tray.
-            - Localized dates and numbers, with English fallback for untranslated text.
-            - Switching languages preserves saved filters and selections. Source articles, game names, and raw logs remain in their original language.
-            - Improved header wrapping for longer labels and smaller windows.
+            - Completed missing Spanish interface translations across all sections, including trade routes, ships, components, organizations, blueprints, markets, live sessions, guides, and settings.
+            - Translated route criteria, loading controls, sorting options, estimated-time descriptions, and mobile table labels; localized ROI numbers.
+            - Fixed untranslated marketplace transaction filters, ship specification labels, live-session headings, cached-data notices, and expanded article controls.
+            - Filled shared French translation gaps and updated generated guide labels when switching languages.
+            - Added translation-completeness checks for 853 shared messages and browser checks for all sections, saved selections, and smaller-screen layouts.
+            - Source articles, game names, and raw logs remain in their original language.
 
             Existing direct-download Windows and Linux installations can update in the app. No Microsoft Store package is included in this release; the Store edition remains unchanged.
           releaseDraft: false

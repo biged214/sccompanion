@@ -113,7 +113,7 @@ export function ExpandableCard({
               handleExternalLink(event, externalUrl);
             }}
           >
-            {externalLabel} <ExternalLink size={15} aria-hidden="true" />
+            {t(externalLabel)} <ExternalLink size={15} aria-hidden="true" />
           </a>
         )}
       </div>

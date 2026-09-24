@@ -1,4 +1,4 @@
-import { t } from '../i18n';
+import { t, useLanguage } from '../i18n';
 import DOMPurify from 'dompurify';
 import { useMemo, useState } from 'react';
 import { ExternalLink, Play } from 'lucide-react';
@@ -32,7 +32,7 @@ export function prepareGuide(body: string, base: string) {
     if (embed && url) videos.set(embed, url);
     if (node.tagName === 'IFRAME') {
       const link = doc.createElement('a');
-      if (url) { link.href = url; link.textContent = 'Open original media'; node.replaceWith(link); }
+      if (url) { link.href = url; link.textContent = t('Open original media'); node.replaceWith(link); }
       else node.remove();
     }
   });
@@ -54,7 +54,8 @@ export function prepareGuide(body: string, base: string) {
   return { html, videos: [...videos].map(([embed, url]) => ({ embed, url })) };
 }
 export function GuideContent({ body, url, open }: { body: string; url: string; open: (url: string) => void }) {
-  const content = useMemo(() => prepareGuide(body, url), [body, url]);
+  const language = useLanguage();
+  const content = useMemo(() => prepareGuide(body, url), [body, url, language]);
   const [playing, setPlaying] = useState<string[]>([]);
   return <>
     <div className="guide-content" onClick={(event) => {

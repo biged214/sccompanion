@@ -113,7 +113,7 @@ export function App() {
   const isGameplayView = activeView === 'gameplay';
   const activeFeed = isBlueprintsView || isGuidesView || isHomeView || isMyRsiView || isPlayerMarketplace || isGameplayView || isMarketView || isTradeRoutesView || isOrganizationsView ? null : isAnnouncementsView ? announcements : isStatusView ? status : isPatchNotesView ? patchNotes : isShipsView ? ships : isComponentsView ? components : news;
   const sourceUrl = isAnnouncementsView ? RSI_ANNOUNCEMENTS_URL : isStatusView ? RSI_STATUS_FEED_URL : isPatchNotesView ? RSI_PATCH_NOTES_URL : isShipsView ? UEX_VEHICLES_URL : isComponentsView ? UEX_COMPONENTS_URL : RSI_NEWS_URL;
-  const sourceLabel = isAnnouncementsView ? 'Spectrum Announcements' : isStatusView ? 'RSI status RSS' : isPatchNotesView ? 'Spectrum Patch Notes' : isShipsView || isComponentsView ? 'UEX + Star Citizen Wiki' : 'RSI Comm-Link';
+  const sourceLabel = isAnnouncementsView ? t("Spectrum Announcements") : isStatusView ? t("RSI status RSS") : isPatchNotesView ? t("Spectrum Patch Notes") : isShipsView || isComponentsView ? 'UEX + Star Citizen Wiki' : 'RSI Comm-Link';
 
   const refreshAll = useCallback(async () => {
     await Promise.allSettled([announcements.refresh(), status.refresh(), patchNotes.refresh(), news.refresh(), ships.refresh(), components.refresh(), tradeRoutes.refresh(), gameplay.refresh()]);
@@ -386,7 +386,7 @@ export function App() {
       <footer className="community-disclaimer">
         <img
           src="/made-by-community.png"
-          alt="Made by the Community"
+          alt={t("Made by the Community")}
           className="community-disclaimer__logo"
         />
         <div className="community-disclaimer__body">
@@ -966,7 +966,7 @@ function formatRelativeTime(value: string): string {
   const seconds = Math.max(1, Math.round((Date.now() - new Date(value).getTime()) / 1000));
 
   if (seconds < 60) {
-    return 'just now';
+    return t('Just now');
   }
 
   const minutes = Math.round(seconds / 60);

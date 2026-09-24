@@ -220,7 +220,7 @@ export function GameplayBrowser({ overview }: { overview: TrackerStatus | null }
               <span>{t("Category")}</span>
               <select value={category} onChange={(event) => setCategory(event.target.value)}>
                 <option value="all">{t("All event categories")}</option>
-                {(snapshot?.categoryCounts ?? []).map((entry) => <option key={entry.category} value={entry.category}>{entry.category} ({entry.count.toLocaleString(locale())})</option>)}
+                {(snapshot?.categoryCounts ?? []).map((entry) => <option key={entry.category} value={entry.category}>{t(entry.category)} ({entry.count.toLocaleString(locale())})</option>)}
               </select>
             </label>
             <button type="button" className="icon-button" title={t("Refresh events")} aria-label={t("Refresh gameplay events")} onClick={() => void gameplay.refresh()} disabled={gameplay.isLoading}>
@@ -367,8 +367,8 @@ function DrilldownPanel({
       <header>
         <div>
           <p className="eyebrow">{t("Detailed Breakdown")}</p>
-          <h3>{data?.title ?? t("Loading details")}</h3>
-          {data && <p>{data.description}</p>}
+          <h3>{data?.title ? t(data.title) : t("Loading details")}</h3>
+          {data && <p>{t(data.description)}</p>}
         </div>
         <button type="button" className="icon-button" title={t("Close details")} aria-label={t("Close details")} onClick={onClose}><X size={18} /></button>
       </header>
@@ -382,7 +382,7 @@ function DrilldownPanel({
             {['creditsEarned', 'creditsSpent', 'purchases'].includes(data.metric) && data.totalAmount > 0 && <div><span>{t("Recorded value")}</span><strong>{formatCurrency(data.totalAmount)} aUEC</strong></div>}
           </div>
           <div className="gameplay-drilldown__groups">
-            <div className="gameplay-drilldown__group gameplay-drilldown__group--heading"><span>{t("Result")}</span><span>{t("Activity")}</span><span>{data.metric === 'sessions' ? 'Ended / duration' : t("Last seen")}</span></div>
+            <div className="gameplay-drilldown__group gameplay-drilldown__group--heading"><span>{t("Result")}</span><span>{t("Activity")}</span><span>{data.metric === 'sessions' ? t('Ended / duration') : t("Last seen")}</span></div>
             {data.groups.map((group, index) => (
               <button type="button" className={`gameplay-drilldown__group ${selectedGroup?.key === group.key ? 'active' : ''}`} key={`${group.key}-${index}`} onClick={() => onSelectGroup(group)} aria-pressed={selectedGroup?.key === group.key}>
                 <div><strong>{humanizeIdentifier(group.label)}</strong>{group.context && <span>{formatDrilldownContext(group.context)}</span>}</div>
@@ -434,7 +434,7 @@ function EventRow({ event }: { event: GameEvent }) {
       <button type="button" className="gameplay-event__summary" onClick={() => setOpen((value) => !value)} aria-expanded={open}>
         <span className="gameplay-event__icon">{categoryIcon(event.category)}</span>
         <span className="gameplay-event__content">
-          <span className="gameplay-event__meta"><span>{event.category}</span><code>{event.eventType}</code><time dateTime={event.occurredAt}>{formatEventTime(event.occurredAt)}</time></span>
+          <span className="gameplay-event__meta"><span>{t(event.category)}</span><code>{event.eventType}</code><time dateTime={event.occurredAt}>{formatEventTime(event.occurredAt)}</time></span>
           <strong>{event.title}</strong>
           <span>{event.summary}</span>
           <span className="gameplay-event__facts">

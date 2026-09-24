@@ -574,7 +574,7 @@ function titleCase(value: string): string {
 
 function formatRelativeTime(value: string): string {
   const minutes = Math.max(0, Math.round((Date.now() - Date.parse(value)) / 60_000));
-  if (minutes < 1) return 'just now';
+  if (minutes < 1) return t('Just now');
   if (minutes < 60) return t("{{v0}}m ago", { v0: minutes });
   const hours = Math.round(minutes / 60);
   return hours < 24 ? t("{{v0}}h ago", { v0: hours }) : t("{{v0}}d ago", { v0: Math.round(hours / 24) });
