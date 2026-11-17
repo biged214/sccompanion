@@ -1,0 +1,6 @@
+SC Companion 1.0.5
+
+- Fixed Patch Notes and Announcements failing to open when local storage is full.
+- Article and feed caching is now optional: storage errors no longer hide successfully loaded content.
+- Limited article caches by size, evicted older entries when needed, and removed obsolete article-cache versions.
+- Reduced cache space by storing ordered article content once, while preserving images, videos, settings, and history.

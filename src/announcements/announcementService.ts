@@ -1,3 +1,4 @@
+import { loadArticleDetail, saveArticleDetail, saveFeedSnapshot } from '../articles/cache';
 import { spectrumArticleDetail } from '../articles/blocks';
 import type { ArticleContent } from '../articles/types';
 import { parseAnnouncementArticle, parseAnnouncementsForum } from './parser';
@@ -8,13 +9,6 @@ export const RSI_ANNOUNCEMENTS_URL =
 
 const SNAPSHOT_CACHE_KEY = 'sc-companion:announcements-snapshot:v1';
 const DETAILS_CACHE_KEY = 'sc-companion:announcement-details:v3';
-const MAX_CACHED_DETAILS = 30;
-
-interface CachedDetail {
-  content: ArticleContent;
-  fetchedAt: string;
-}
-
 export async function fetchAnnouncementsSnapshot(page = 1): Promise<AnnouncementsSnapshot> {
   const url = page === 1 ? RSI_ANNOUNCEMENTS_URL : `${RSI_ANNOUNCEMENTS_URL}?page=${page}`;
   const html = await fetchSpectrumPage(url);
@@ -24,19 +18,12 @@ export async function fetchAnnouncementsSnapshot(page = 1): Promise<Announcement
 }
 
 export async function fetchAnnouncementDetails(url: string): Promise<ArticleContent> {
-  const cached = readDetailsCache()[url]?.content;
+  const cached = loadArticleDetail(DETAILS_CACHE_KEY, url);
   if (cached) return cached;
 
   const html = await fetchSpectrumPage(url);
   const content = spectrumArticleDetail(html, parseAnnouncementArticle(html), url);
-  const cache = readDetailsCache();
-  cache[url] = { content, fetchedAt: new Date().toISOString() };
-  const trimmed = Object.fromEntries(
-    Object.entries(cache)
-      .sort(([, left], [, right]) => Date.parse(right.fetchedAt) - Date.parse(left.fetchedAt))
-      .slice(0, MAX_CACHED_DETAILS)
-  );
-  window.localStorage.setItem(DETAILS_CACHE_KEY, JSON.stringify(trimmed));
+  saveArticleDetail(DETAILS_CACHE_KEY, url, content);
   return content;
 }
 
@@ -50,7 +37,7 @@ export function getCachedAnnouncementsSnapshot(): AnnouncementsSnapshot | null {
 }
 
 export function saveCachedAnnouncements(snapshot: AnnouncementsSnapshot): void {
-  window.localStorage.setItem(SNAPSHOT_CACHE_KEY, JSON.stringify(snapshot));
+  saveFeedSnapshot(SNAPSHOT_CACHE_KEY, snapshot);
 }
 
 async function fetchSpectrumPage(url: string): Promise<string> {
@@ -65,13 +52,4 @@ async function fetchSpectrumPage(url: string): Promise<string> {
   const response = await window.fetch(`/api/rsi-spectrum${spectrumUrl.pathname}${spectrumUrl.search}`);
   if (!response.ok) throw new Error(`Spectrum returned ${response.status}.`);
   return response.text();
-}
-
-function readDetailsCache(): Record<string, CachedDetail> {
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(DETAILS_CACHE_KEY) ?? '{}') as Record<string, CachedDetail>;
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
 }

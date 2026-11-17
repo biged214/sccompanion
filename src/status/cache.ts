@@ -1,3 +1,4 @@
+import { saveFeedSnapshot } from '../articles/cache';
 import type { StatusSnapshot } from './types';
 
 const CACHE_KEY = 'star-citizen-status:last-snapshot';
@@ -20,5 +21,5 @@ export function loadCachedStatus(): StatusSnapshot | null {
   }
 }
 export function saveCachedStatus(snapshot: StatusSnapshot): void {
-  window.localStorage.setItem(CACHE_KEY, JSON.stringify(snapshot));
+  saveFeedSnapshot(CACHE_KEY, snapshot);
 }

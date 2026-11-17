@@ -248,3 +248,9 @@ RSI component data. Spectrum metadata without placement information appears unde
 Additional article media. Detail cache versions are bumped when this representation
 changes. Run `node tests/article-blocks.mjs` to verify source ordering, including
 media inside paragraphs, structured components, lists, and Spectrum fallbacks.
+
+Article detail caches are optional, limited to 512 KiB per feed and 20 entries,
+with oldest-entry eviction on quota pressure. Ordered blocks are stored without
+duplicating derived text/media. Only obsolete article-cache versions are removed;
+settings and history are preserved. Run `node tests/article-cache.mjs` for quota,
+eviction, migration, disabled storage, and browser/native service regressions.

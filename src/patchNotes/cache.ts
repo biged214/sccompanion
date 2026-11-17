@@ -1,3 +1,4 @@
+import { saveFeedSnapshot } from '../articles/cache';
 import type { PatchNotesSnapshot } from './types';
 
 const CACHE_KEY = 'star-citizen-status:patch-notes-snapshot';
@@ -21,5 +22,5 @@ export function loadCachedPatchNotes(): PatchNotesSnapshot | null {
 }
 
 export function saveCachedPatchNotes(snapshot: PatchNotesSnapshot): void {
-  window.localStorage.setItem(CACHE_KEY, JSON.stringify(snapshot));
+  saveFeedSnapshot(CACHE_KEY, snapshot);
 }

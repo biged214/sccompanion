@@ -48,7 +48,7 @@ jobs:
         run: npm ci
 
       - name: Verify article parsing
-        run: node tests/news-parser.mjs && node tests/news-service.mjs && node tests/article-media.mjs && node tests/article-blocks.mjs
+        run: node tests/news-parser.mjs && node tests/news-service.mjs && node tests/article-media.mjs && node tests/article-blocks.mjs && node tests/article-cache.mjs
 
       - name: Build installers and prepare release
         uses: tauri-apps/tauri-action@v1
@@ -60,13 +60,12 @@ jobs:
           tagName: v__VERSION__
           releaseName: SC Companion v__VERSION__
           releaseBody: |
-            ## Article Loading and Inline Media
+            ## Article Cache Hotfix
 
-            - Fixed RSI news loading for current Comm-Link pages, including weekly posts, announcements, and videos.
-            - Added images and click-to-play videos inside expanded News, Announcements, and Patch Notes articles.
-            - Preserved the source order of text, images, and videos instead of grouping media at the bottom.
-            - Added summary and original-link fallbacks when content or embedded playback is unavailable.
-            - Refreshed article caches and retained Spanish and French interface translations.
+            - Fixed Patch Notes and Announcements failing to open when local storage is full.
+            - Article and feed caching is now optional: storage errors no longer hide successfully loaded content.
+            - Limited article caches by size, evicted older entries when needed, and removed obsolete article-cache versions.
+            - Reduced cache space by storing ordered article content once, while preserving images, videos, settings, and history.
 
             Microsoft Store updates are distributed separately after publisher submission and Microsoft certification.
           releaseDraft: true
