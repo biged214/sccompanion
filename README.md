@@ -217,3 +217,34 @@ Reference > Blueprints browses Star Citizen Wiki recipes for a selected game ver
 Search, filters, expanded entries, and Owned/Wanted checklists persist locally. The complete last successful catalog and up to 20 opened recipe details are cached for offline use. Owned/Wanted are manual, not synced from RSI. Refresh downloads every catalog page and keeps the previous cache if a request fails; detail requests are made only when expanded.
 
 Verification: `node tests/blueprints.mjs` and `node tests/blueprints-browser.mjs` (Chrome installed, port 1433 free; browser test uses live Wiki data).
+
+## RSI news extraction checks
+
+News uses the same parser and loading service in the web and Tauri editions.
+RSI's Alexandria SPA shell exposes `routerParams.props.content.htmlUrl` in
+`data-platform-client-props`; the loader follows only same-origin Alexandria
+addresses. Inline content and legacy `s3Url` pages are also supported. Introduction
+components use `:info.contents`, including arrays of HTML strings. Expanded News, Announcements, and Patch Notes cards include media supplied by the
+article source. Images load lazily; native videos have controls and no autoplay;
+YouTube/Vimeo embeds load only after Play is pressed. Original-media links remain
+available when a provider blocks embedding. Spectrum exposes limited media in its
+public metadata, so some attachments may still require opening the original post.
+Unavailable content displays the listing summary and an explicit fallback notice;
+fallback responses are not saved in the persistent article cache.
+
+Run `node tests/news-parser.mjs` and `node tests/news-service.mjs` for offline
+regressions, including both HTTP transport paths. `node tests/news-live.mjs`
+checks the ten latest public RSI posts and needs internet access.
+Build the web edition with `npm run build:web`. For Store compilation, set
+`VITE_STORE_BUILD=true` and run `npm run tauri:build -- --no-bundle --features store --config src-tauri/tauri.store.conf.json`.
+These checks do not publish the website or submit a Microsoft Store update.
+The hosted web app must retain its `/api/rsi-comm-link` proxy to RSI, including
+`/alexandria/` paths (as configured locally in `vite.config.ts`).
+
+Media regression checks: `node tests/article-media.mjs`, `node tests/article-media-browser.mjs`, and `node tests/guides.mjs`.
+
+The article reader preserves an ordered sequence of text and media from HTML and
+RSI component data. Spectrum metadata without placement information appears under
+Additional article media. Detail cache versions are bumped when this representation
+changes. Run `node tests/article-blocks.mjs` to verify source ordering, including
+media inside paragraphs, structured components, lists, and Spectrum fallbacks.

@@ -1,3 +1,4 @@
+import { articleDetail, extractArticleBlocks } from '../articles/blocks';
 import type { NewsArticle, NewsCategory, NewsSnapshot } from './types';
 
 const RSI_ORIGIN = 'https://robertsspaceindustries.com';
@@ -19,125 +20,19 @@ export function parseNewsListing(
 }
 
 export function parseNewsArticle(html: string): string {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const root = doc.querySelector('#layout-system') ?? doc.querySelector('.alexandria-content-body') ?? doc.body;
-  if (!root) {
-    throw new Error('The RSI Comm-Link article did not include a readable article body.');
-  }
-
-  const embeddedRoots = Array.from(root.querySelectorAll<HTMLElement>('[body], [content-body]'))
-    .flatMap((element) => ['body', 'content-body'].map((name) => element.getAttribute(name)))
-    .filter((value): value is string => Boolean(value && /<(?:h[1-6]|p|li|blockquote)\b/i.test(value)))
-    .map((value) => new DOMParser().parseFromString(value, 'text/html').body);
-  const textBlocks = [root, ...embeddedRoots].flatMap((contentRoot) =>
-    Array.from(contentRoot.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6, p, li, blockquote'))
-  );
-  const elementLines = textBlocks
-    .filter((element) => !element.closest('.g-author, nav, footer'))
-    .filter((element) => !element.parentElement?.closest('li, blockquote'))
-    .map(elementToLine);
-  const structuredLines = extractStructuredContent(root);
-  const lines = [...elementLines, ...structuredLines]
-    .filter((line) => Boolean(line))
-    .filter((line, index, values) => line !== values[index - 1]);
-
-  if (lines.length === 0) {
-    throw new Error('The RSI Comm-Link article did not include readable text.');
-  }
-
-  return lines.join('\n\n');
-}
-
-const STRUCTURED_ATTRIBUTES = new Set([':properties', ':content', ':question-list', ':items', ':cards', ':sections', ':copy']);
-const STRUCTURED_TEXT_FIELDS = new Set(['overline', 'title', 'subtitle', 'heading', 'paragraph', 'introduction', 'body', 'content', 'description', 'text']);
-const STRUCTURED_SKIP_FIELDS = new Set([
-  'media',
-  'background',
-  'background-options',
-  'semanticTag',
-  'logo',
-  'overlay',
-  'callToAction',
-  '__typename',
-  'sku', 'skus', 'skuList', 'pictures', 'image', 'video', 'imageAction',
-  'backgroundOptions', 'animations', 'globalAnimations', 'dispositions'
-]);
-
-function extractStructuredContent(root: Element): string[] {
-  return Array.from(root.querySelectorAll<HTMLElement>('*')).flatMap((element) =>
-    element.getAttributeNames()
-      .filter((name) => STRUCTURED_ATTRIBUTES.has(name))
-      .flatMap((name) => {
-        const value = element.getAttribute(name);
-        if (!value) return [];
-        try {
-          const parsed = JSON.parse(value);
-          return collectStructuredLines(name === ':properties' ? parsed?.componentProps : parsed);
-        } catch {
-          return [];
-        }
-      })
-  );
-}
-
-function collectStructuredLines(value: unknown, field = ''): string[] {
-  if (typeof value === 'string') {
-    if (!STRUCTURED_TEXT_FIELDS.has(field)) return [];
-    return parseStructuredText(value, field);
-  }
-  if (Array.isArray(value)) {
-    return value.flatMap((entry) => collectStructuredLines(entry));
-  }
-  if (!value || typeof value !== 'object') return [];
-
-  const record = value as Record<string, unknown>;
-  if (record.displayed === false || record.isDisplayed === false) return [];
-  const dispositions = record.dispositions as { large?: { display?: boolean } } | undefined;
-  if (dispositions?.large?.display === false) return [];
-  return Object.entries(record).flatMap(([key, entry]) =>
-    STRUCTURED_SKIP_FIELDS.has(key) || (record.isHeaderDeclared === false && ['title', 'overline', 'subtitle', 'introduction'].includes(key)) ? [] : collectStructuredLines(entry, key)
-  );
-}
-
-function parseStructuredText(value: string, field: string): string[] {
-  const fragment = new DOMParser().parseFromString(value, 'text/html');
-  const blocks = Array.from(fragment.body.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6, p, li, blockquote'));
-  if (blocks.length > 0) {
-    return blocks
-      .filter((element) => !element.parentElement?.closest('li, blockquote'))
-      .map(elementToLine)
-      .filter(Boolean);
-  }
-
-  const text = normalizeText(fragment.body.textContent ?? value);
-  if (!text) return [];
-  return ['overline', 'title', 'subtitle', 'heading'].includes(field) ? [`## ${text}`] : [text];
-}
-
-function elementToLine(element: HTMLElement): string {
-  const text = readableElementText(element);
-  if (!text) return '';
-  if (/^H[1-6]$/.test(element.tagName)) return `## ${text}`;
-  if (element.tagName === 'LI') return `• ${text}`;
-  return text;
-}
-
-function readableElementText(element: HTMLElement): string {
-  const pieces: string[] = [];
-  const visit = (node: Node) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      pieces.push(node.textContent ?? '');
-      return;
-    }
-    node.childNodes.forEach(visit);
-    pieces.push(' ');
-  };
-  element.childNodes.forEach(visit);
-  return normalizeText(pieces.join(' ')).replace(/\s+([,.;:!?])/g, '$1');
+  const content = articleDetail(extractArticleBlocks(html));
+  if (!content.text) throw new Error('The RSI Comm-Link article did not include readable text.');
+  return content.text;
 }
 
 export function findNewsArticleSource(html: string): string | null {
-  return html.match(/const\s+s3Url\s*=\s*['"]([^'"]+)/i)?.[1] ?? null;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const candidate = platformContent(doc)?.htmlUrl ?? html.match(/(?:const|let|var)\s+s3Url\s*=\s*['"]([^'"]+)/i)?.[1];
+  if (typeof candidate !== 'string') return null;
+  try {
+    const url = new URL(candidate, RSI_ORIGIN);
+    return url.origin === RSI_ORIGIN && !url.username && !url.password && url.pathname.startsWith('/alexandria/') ? url.href : null;
+  } catch { return null; }
 }
 
 function parseNewsEntry(entry: HTMLAnchorElement, fetchedAt: string): NewsArticle | null {
@@ -203,4 +98,28 @@ function inferCategory(title: string, type: string, url: string): NewsCategory {
 
 function normalizeText(value: string): string {
   return value.replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+// RSI now ships an empty SPA shell; the article is in Alexandria content,
+// referenced by JSON on the platform client script. Never execute that script.
+function platformContent(doc: Document): { html?: unknown; htmlUrl?: unknown } | undefined {
+  for (const element of doc.querySelectorAll('[data-platform-client-props]')) {
+    try {
+      const props = JSON.parse(element.getAttribute('data-platform-client-props') ?? '');
+      if (props.routerParams?.component === 'AlexandriaPage') return props.routerParams.props?.content;
+    } catch { /* A malformed component must not prevent legacy extraction. */ }
+  }
+}
+
+export function newsFallback(html: string, summary = '', isVideo = false): string {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const metadata = doc.querySelector('meta[property="og:description"]')?.getAttribute('content') ?? '';
+  const description = summary || (/Roberts Space Industries is the official go-to/i.test(metadata) ? '' : metadata);
+  const clean = new DOMParser().parseFromString(description, 'text/html');
+  clean.querySelectorAll('script, style').forEach((element) => element.remove());
+  const text = normalizeText(clean.body.textContent ?? '');
+  const hasVideo = isVideo || Boolean(doc.querySelector('video, iframe[src*="youtube"], iframe[src*="vimeo"]'));
+  return [text, hasVideo
+    ? 'This post includes video. Open the original RSI article to watch it and read any additional content.'
+    : 'Full article text is currently unavailable here. Open the original RSI article for the complete update.'].filter(Boolean).join('\n\n');
 }

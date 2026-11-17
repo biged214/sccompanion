@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {JSDOM} from 'jsdom';
+const dom=new JSDOM('');globalThis.DOMParser=dom.window.DOMParser;
+const result=await build({entryPoints:['src/articles/media.ts'],bundle:true,write:false,format:'esm'});
+const {extractArticleMedia}=await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString('base64')}`);
+const base='https://robertsspaceindustries.com/comm-link/test';
+const component=dom.window.document.createElement('g-slideshow');
+component.setAttribute(':pictures',JSON.stringify([{originalFormat:{desktop:'/image.jpg',mobile:'/small.jpg'},webp:{desktop:'/image.webp'},alt:'Ship'}]));
+let media=extractArticleMedia(component.outerHTML+'<img src="/image.jpg"><video><source src="https://media.robertsspaceindustries.com/test.mp4"></video><g-trailer video-id="dQw4w9WgXcQ"></g-trailer>',base);
+assert.equal(media.length,3);assert.equal(media[0].url,'https://robertsspaceindustries.com/image.jpg');assert.equal(media[0].alt,'Ship');assert.equal(media[2].embed,'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+assert.equal(extractArticleMedia('<img src="javascript:evil()"><iframe src="https://evil.example/"></iframe><img src="data:image/svg+xml,evil"><nav><img src="/menu.jpg"></nav><img src="https://user:pass@example.org/x">',base).length,0);
+const spectrum='<script type="application/ld+json">'+JSON.stringify({'@type':'DiscussionForumPosting',articleBody:'<img src="/inline.jpg">',image:'https://theverse.robertsspaceindustries.com/banner.jpg',video:{'@type':'VideoObject',embedUrl:'https://vimeo.com/123456'}})+'</script><img src="/reply.jpg">';
+media=extractArticleMedia(spectrum,base);assert.equal(media.length,3);assert.ok(!media.some(x=>x.url.endsWith('reply.jpg')));
+component.setAttribute(':pictures',JSON.stringify([{displayed:false,originalFormat:{desktop:'/hidden.jpg'}}]));assert.equal(extractArticleMedia(component.outerHTML,base).length,0);
+console.log('Article media: RSI components, Spectrum metadata, URL validation, deduplication, hidden content and video providers passed.');

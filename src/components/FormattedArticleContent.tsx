@@ -1,5 +1,8 @@
+import { t } from '../i18n';
+import type { ArticleBlock, ArticleContent } from '../articles/types';
+import { ArticleMediaGallery } from '../articles/ArticleMediaGallery';
 interface FormattedArticleContentProps {
-  content: string;
+  content: ArticleContent;
 }
 
 const SECTION_HEADING = /^(important build info|audience(?: & server details)?|server info|testing\/feedback focus|known issues|feature updates|features and gameplay|gameplay|ships? & vehicles?|weapons? & items?|core tech & audio|bug fixes(?: & technical(?: updates)?)?|technical details|technical)$/i;
@@ -10,17 +13,21 @@ const DETAIL_ROW = /^(Patch should now show|Audience|Server Info|Long Term Persi
 const LIST_SECTION_HEADING = /^(testing\/feedback focus|known issues|feature updates|features and gameplay|gameplay|locations|ships? & vehicles?|weapons? & items?|core tech & audio|bug fixes(?: & technical(?: updates)?)?|technical details|technical)$/i;
 
 export function FormattedArticleContent({ content }: FormattedArticleContentProps) {
-  const lines = content
-    .replace(/\r\n/g, '\n')
-    .split('\n')
-    .map((line) => line.replace(/\s+$/g, ''))
-    .filter((line, index, values) => line.trim() || values[index - 1]?.trim());
+  const blocks = typeof content === 'string' ? [{kind: 'text' as const, text: content}]
+    : content.blocks ?? [{kind: 'text' as const, text: content.text}, ...content.media.map(media => ({kind: 'media' as const, media}))];
+  const lines = blocks.flatMap<ArticleBlock>(block => block.kind === 'media' ? [block] : block.text
+    .replace(/\r\n/g, '\n').split('\n')
+    .map(line => line.replace(/\s+$/g, ''))
+    .filter((line, index, values) => line.trim() || values[index - 1]?.trim())
+    .map(text => ({kind: 'text' as const, text})));
 
   let listSection = false;
 
   return (
     <div className="article-content">
-      {lines.map((rawLine, index) => {
+      {lines.map((block, index) => {
+        if (block.kind === 'media') return <ArticleMediaGallery key={index} media={[block.media]} />;
+        const rawLine = block.text;
         const line = rawLine.trim();
         if (!line) {
           return <div className="article-content__space" key={`space-${index}`} aria-hidden="true" />;
@@ -67,6 +74,7 @@ export function FormattedArticleContent({ content }: FormattedArticleContentProp
 
         return <p key={index}>{line}</p>;
       })}
+      {typeof content !== 'string' && !!content.unpositionedMedia?.length && <section><h4>{t('Additional article media')}</h4><ArticleMediaGallery media={content.unpositionedMedia} /></section>}
     </div>
   );
 }

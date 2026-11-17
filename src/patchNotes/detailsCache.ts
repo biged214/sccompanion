@@ -1,12 +1,13 @@
+import type { ArticleContent } from '../articles/types';
 interface CachedPatchNoteDetail {
-  content: string;
+  content: ArticleContent;
   fetchedAt: string;
 }
 
-const CACHE_KEY = 'star-citizen-status:patch-note-details:v2';
+const CACHE_KEY = 'star-citizen-status:patch-note-details:v4';
 const MAX_CACHED_DETAILS = 20;
 
-export function loadCachedPatchNoteDetail(url: string): string | null {
+export function loadCachedPatchNoteDetail(url: string): ArticleContent | null {
   try {
     return readCache()[url]?.content ?? null;
   } catch {
@@ -14,7 +15,7 @@ export function loadCachedPatchNoteDetail(url: string): string | null {
   }
 }
 
-export function saveCachedPatchNoteDetail(url: string, content: string): void {
+export function saveCachedPatchNoteDetail(url: string, content: ArticleContent): void {
   const cache = readCache();
   cache[url] = { content, fetchedAt: new Date().toISOString() };
 

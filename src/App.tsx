@@ -721,7 +721,7 @@ function News({
             className="news-card"
             title={article.title}
             preview={article.summary}
-            loadContent={() => fetchNewsDetails(article.url)}
+            loadContent={() => fetchNewsDetails(article.url, article.summary, article.category === 'Video')}
             externalUrl={article.url}
             externalLabel={t("Open on RSI")}
             unread={isUnread(article.id)}

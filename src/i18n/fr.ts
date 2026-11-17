@@ -1,5 +1,11 @@
 // English messages are stable catalog keys and the fallback language.
 export const fr: Record<string, string> = {
+  "Additional article media": "Médias supplémentaires de l’article",
+  "Article image": "Image de l’article",
+  "Article video": "Vidéo de l’article",
+  "Open original image": "Ouvrir l’image originale",
+  "This media could not be loaded. Open the original media to view it.": "Ce média n’a pas pu être chargé. Ouvrez le média original pour le consulter.",
+
   "WTS - Want to sell": "WTS - Souhaite vendre",
   "WTB - Want to buy": "WTB - Souhaite acheter",
   "WTT - Want to trade": "WTT - Souhaite échanger",

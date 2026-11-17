@@ -1,3 +1,5 @@
+import { spectrumArticleDetail } from '../articles/blocks';
+import type { ArticleContent } from '../articles/types';
 import { loadCachedPatchNotes, saveCachedPatchNotes } from './cache';
 import { loadCachedPatchNoteDetail, saveCachedPatchNoteDetail } from './detailsCache';
 import { parsePatchNoteArticle, parsePatchNotesForum } from './parser';
@@ -20,14 +22,14 @@ export function getCachedPatchNotesSnapshot(): PatchNotesSnapshot | null {
   return loadCachedPatchNotes();
 }
 
-export async function fetchPatchNoteDetails(url: string): Promise<string> {
+export async function fetchPatchNoteDetails(url: string): Promise<ArticleContent> {
   const cached = loadCachedPatchNoteDetail(url);
   if (cached) {
     return cached;
   }
 
   const html = await fetchSpectrumPage(url);
-  const content = parsePatchNoteArticle(html);
+  const content = spectrumArticleDetail(html, parsePatchNoteArticle(html), url);
   saveCachedPatchNoteDetail(url, content);
   return content;
 }

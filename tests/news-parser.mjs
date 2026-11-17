@@ -5,7 +5,7 @@ const dom = new JSDOM('');
 globalThis.DOMParser = dom.window.DOMParser;
 globalThis.Node = dom.window.Node;
 const built = await build({ entryPoints: ['src/news/parser.ts'], bundle: true, write: false, format: 'esm' });
-const { parseNewsArticle } = await import(`data:text/javascript;base64,${Buffer.from(built.outputFiles[0].text).toString('base64')}`);
+const { parseNewsArticle, findNewsArticleSource, newsFallback } = await import(`data:text/javascript;base64,${Buffer.from(built.outputFiles[0].text).toString('base64')}`);
 function component(props) {
   const el = dom.window.document.createElement('g-platform-client-component');
   el.setAttribute(':properties', JSON.stringify({ componentId: 'MiniGrid', componentProps: props }));
@@ -31,3 +31,17 @@ if (process.argv.includes('--stdin')) {
   console.log(`Live article: ${article.length} characters; ${article.split('\n\n').length} blocks.`);
   console.log(article.slice(0, 180));
 }
+
+const shell = dom.window.document.createElement('script');
+shell.setAttribute('data-platform-client-props', JSON.stringify({routerParams:{component:'AlexandriaPage',props:{content:{htmlUrl:'/alexandria/html/test?version=2'}}}}));
+assert.equal(findNewsArticleSource(shell.outerHTML), 'https://robertsspaceindustries.com/alexandria/html/test?version=2');
+assert.equal(findNewsArticleSource(`<script>const s3Url = 'https://evil.example/alexandria/test'</script>`), null);
+assert.equal(findNewsArticleSource('<script data-platform-client-props="bad"></script>'), null);
+assert.equal(findNewsArticleSource(`<script>const s3Url = '/alexandria/html/legacy'</script>`), 'https://robertsspaceindustries.com/alexandria/html/legacy');
+const intro = dom.window.document.createElement('g-introduction');
+intro.setAttribute(':info', JSON.stringify({title:'Announcement',contents:['<p>First paragraph.</p>','<p>Second paragraph.</p>']}));
+assert.equal(parseNewsArticle(intro.outerHTML), '## Announcement\n\nFirst paragraph.\n\nSecond paragraph.');
+assert.match(parseNewsArticle(intro.outerHTML+'<g-trailer video-id="123"></g-trailer>'), /First paragraph/);
+assert.equal(parseNewsArticle('<nav><p>Menu</p></nav><p>Body<script>danger()</script></p>'), 'Body');
+assert.ok(!newsFallback('', '<script>danger()</script>Safe summary').includes('danger'));
+console.log('SPA, introduction, video, malformed data, and safety regressions passed.');

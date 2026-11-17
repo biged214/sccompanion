@@ -47,7 +47,10 @@ jobs:
       - name: Install JavaScript dependencies
         run: npm ci
 
-      - name: Build installers and publish release
+      - name: Verify article parsing
+        run: node tests/news-parser.mjs && node tests/news-service.mjs && node tests/article-media.mjs && node tests/article-blocks.mjs
+
+      - name: Build installers and prepare release
         uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,17 +60,16 @@ jobs:
           tagName: v__VERSION__
           releaseName: SC Companion v__VERSION__
           releaseBody: |
-            ## Spanish and French Translation Fixes
+            ## Article Loading and Inline Media
 
-            - Completed missing Spanish interface translations across all sections, including trade routes, ships, components, organizations, blueprints, markets, live sessions, guides, and settings.
-            - Translated route criteria, loading controls, sorting options, estimated-time descriptions, and mobile table labels; localized ROI numbers.
-            - Fixed untranslated marketplace transaction filters, ship specification labels, live-session headings, cached-data notices, and expanded article controls.
-            - Filled shared French translation gaps and updated generated guide labels when switching languages.
-            - Added translation-completeness checks for 853 shared messages and browser checks for all sections, saved selections, and smaller-screen layouts.
-            - Source articles, game names, and raw logs remain in their original language.
+            - Fixed RSI news loading for current Comm-Link pages, including weekly posts, announcements, and videos.
+            - Added images and click-to-play videos inside expanded News, Announcements, and Patch Notes articles.
+            - Preserved the source order of text, images, and videos instead of grouping media at the bottom.
+            - Added summary and original-link fallbacks when content or embedded playback is unavailable.
+            - Refreshed article caches and retained Spanish and French interface translations.
 
-            Existing direct-download Windows and Linux installations can update in the app. No Microsoft Store package is included in this release; the Store edition remains unchanged.
-          releaseDraft: false
+            Microsoft Store updates are distributed separately after publisher submission and Microsoft certification.
+          releaseDraft: true
           prerelease: false
           generateReleaseNotes: true
           updaterJsonPreferNsis: true

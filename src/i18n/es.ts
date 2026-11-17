@@ -1,6 +1,12 @@
 // Spanish UI messages. English remains the fallback for source-provided content
 // and any app text that has not yet been translated.
 export const es: Record<string, string> = {
+  "Additional article media": "Contenido multimedia adicional del artículo",
+  "Article image": "Imagen del artículo",
+  "Article video": "Vídeo del artículo",
+  "Open original image": "Abrir imagen original",
+  "This media could not be loaded. Open the original media to view it.": "No se pudo cargar este contenido multimedia. Abre el original para verlo.",
+
   "WTS - Want to sell": "WTS - Quiero vender",
   "WTB - Want to buy": "WTB - Quiero comprar",
   "WTT - Want to trade": "WTT - Quiero intercambiar",

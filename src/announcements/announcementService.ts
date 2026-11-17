@@ -1,3 +1,5 @@
+import { spectrumArticleDetail } from '../articles/blocks';
+import type { ArticleContent } from '../articles/types';
 import { parseAnnouncementArticle, parseAnnouncementsForum } from './parser';
 import type { AnnouncementsSnapshot } from './types';
 
@@ -5,11 +7,11 @@ export const RSI_ANNOUNCEMENTS_URL =
   'https://robertsspaceindustries.com/spectrum/community/SC/forum/1';
 
 const SNAPSHOT_CACHE_KEY = 'sc-companion:announcements-snapshot:v1';
-const DETAILS_CACHE_KEY = 'sc-companion:announcement-details:v1';
+const DETAILS_CACHE_KEY = 'sc-companion:announcement-details:v3';
 const MAX_CACHED_DETAILS = 30;
 
 interface CachedDetail {
-  content: string;
+  content: ArticleContent;
   fetchedAt: string;
 }
 
@@ -21,11 +23,12 @@ export async function fetchAnnouncementsSnapshot(page = 1): Promise<Announcement
   return snapshot;
 }
 
-export async function fetchAnnouncementDetails(url: string): Promise<string> {
+export async function fetchAnnouncementDetails(url: string): Promise<ArticleContent> {
   const cached = readDetailsCache()[url]?.content;
   if (cached) return cached;
 
-  const content = parseAnnouncementArticle(await fetchSpectrumPage(url));
+  const html = await fetchSpectrumPage(url);
+  const content = spectrumArticleDetail(html, parseAnnouncementArticle(html), url);
   const cache = readDetailsCache();
   cache[url] = { content, fetchedAt: new Date().toISOString() };
   const trimmed = Object.fromEntries(

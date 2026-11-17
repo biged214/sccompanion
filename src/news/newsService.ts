@@ -1,6 +1,8 @@
+import { articleDetail, extractArticleBlocks } from '../articles/blocks';
+import type { ArticleContent } from '../articles/types';
 import { loadCachedNews, saveCachedNews } from './cache';
 import { loadCachedNewsDetail, saveCachedNewsDetail } from './detailsCache';
-import { findNewsArticleSource, parseNewsArticle, parseNewsListing } from './parser';
+import { findNewsArticleSource, newsFallback, parseNewsListing } from './parser';
 import type { NewsSnapshot } from './types';
 
 export const RSI_NEWS_URL = 'https://robertsspaceindustries.com/en/comm-link/rss';
@@ -18,19 +20,38 @@ export function getCachedNewsSnapshot(): NewsSnapshot | null {
   return loadCachedNews();
 }
 
-export async function fetchNewsDetails(url: string): Promise<string> {
+export async function fetchNewsDetails(url: string, summary = '', isVideo = false): Promise<ArticleContent> {
+  const parsedUrl = new URL(url);
+  if (parsedUrl.origin !== 'https://robertsspaceindustries.com' || !/^\/(?:en\/)?comm-link\//.test(parsedUrl.pathname)) {
+    throw new Error('Invalid RSI article URL.');
+  }
   const cached = loadCachedNewsDetail(url);
   if (cached) return cached;
-  const parsedUrl = new URL(url);
   const articlePath = parsedUrl.pathname.startsWith('/en/') ? parsedUrl.pathname : `/en${parsedUrl.pathname}`;
-  const html = await fetchRsiPage(url, `/api/rsi-comm-link${articlePath}`);
-  const sourceUrl = findNewsArticleSource(html);
-  const contentHtml = sourceUrl
-    ? await fetchRsiPage(sourceUrl, `/api/rsi-comm-link${new URL(sourceUrl).pathname}`)
-    : html;
-  const content = parseNewsArticle(contentHtml);
-  saveCachedNewsDetail(url, content);
-  return content;
+  let html = '';
+  try {
+    html = await fetchRsiPage(`https://robertsspaceindustries.com${articlePath}`, `/api/rsi-comm-link${articlePath}`);
+    const sourceUrl = findNewsArticleSource(html);
+    if (sourceUrl) {
+      try {
+        const source = new URL(sourceUrl);
+        const contentHtml = await fetchRsiPage(sourceUrl, `/api/rsi-comm-link${source.pathname}${source.search}`);
+        const blocks = extractArticleBlocks(contentHtml, sourceUrl);
+        if (!blocks.length) throw new Error('No article content');
+        const content = articleDetail(blocks, summary);
+        saveCachedNewsDetail(url, content);
+        return content;
+      } catch { /* Retain the wrapper's content or summary if Alexandria fails. */ }
+    }
+    const blocks = extractArticleBlocks(html, url);
+    if (!blocks.length) throw new Error('No article content');
+    const content = articleDetail(blocks, summary);
+    saveCachedNewsDetail(url, content);
+    return content;
+  } catch {
+    // Do not persist fallbacks: a later open can retry a temporary failure.
+    return newsFallback(html, summary, isVideo);
+  }
 }
 
 async function fetchRsiPage(url: string, browserUrl: string): Promise<string> {

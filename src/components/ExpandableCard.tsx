@@ -1,3 +1,4 @@
+import type { ArticleContent } from '../articles/types';
 import { t } from '../i18n';
 import { ChevronDown, ChevronUp, ExternalLink, RefreshCw } from 'lucide-react';
 import { useEffect, useId, useState, type MouseEvent, type ReactNode } from 'react';
@@ -8,8 +9,8 @@ interface ExpandableCardProps {
   title: string;
   meta: ReactNode;
   preview: string;
-  content?: string;
-  loadContent?: () => Promise<string>;
+  content?: ArticleContent;
+  loadContent?: () => Promise<ArticleContent>;
   footer?: ReactNode;
   externalUrl?: string;
   externalLabel?: string;
@@ -32,7 +33,7 @@ export function ExpandableCard({
   onRead
 }: ExpandableCardProps) {
   const [expanded, setExpanded] = useState(false);
-  const [loadedContent, setLoadedContent] = useState<string | null>(content ?? null);
+  const [loadedContent, setLoadedContent] = useState<ArticleContent | null>(content ?? null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const contentId = useId();
