@@ -43,7 +43,7 @@ export function extractArticleMedia(html: string, base = 'https://robertsspacein
         if (props.routerParams?.component === 'AlexandriaPage' && typeof inline === 'string') scan(inline, depth + 1);
       } catch { /* Legacy pages have no platform props. */ }
     }
-    doc.querySelectorAll('nav, footer, header, script, style, noscript, [hidden], [aria-hidden="true"], .g-author').forEach(node => node.remove());
+    doc.querySelectorAll('nav, footer, header, script, component[is="script"], rsi-store-component, style, noscript, [hidden], [aria-hidden="true"], .g-author').forEach(node => node.remove());
     const root = doc.querySelector('#layout-system, .alexandria-content-body, article') || doc.body;
     for (const node of root.querySelectorAll('*')) {
       const alt = node.getAttribute('alt') || '';
@@ -86,7 +86,7 @@ export function extractArticleMedia(html: string, base = 'https://robertsspacein
     if (record['@type'] === 'ImageObject') { add(record.contentUrl || record.url, 'image', record.caption || ''); return; }
     if (record['@type'] === 'VideoObject') { add(record.embedUrl, 'embed'); add(record.contentUrl, 'video'); return; }
     for (const [key, entry] of Object.entries(record)) {
-      if (['logo', 'placeholder', 'thumbnail', 'sku', 'skus', 'skuList', 'backgroundOptions', 'background-options'].includes(key)) continue;
+      if (['logo', 'placeholder', 'thumbnail', 'mask', 'overlay', 'sku', 'skus', 'skuList', 'backgroundOptions', 'background-options'].includes(key)) continue;
       walk(entry, key, depth + 1);
     }
   };

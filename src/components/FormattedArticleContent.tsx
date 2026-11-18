@@ -1,3 +1,4 @@
+import { ArticlePromotion } from '../articles/ArticlePromotion';
 import { t } from '../i18n';
 import type { ArticleBlock, ArticleContent } from '../articles/types';
 import { ArticleMediaGallery } from '../articles/ArticleMediaGallery';
@@ -15,7 +16,7 @@ const LIST_SECTION_HEADING = /^(testing\/feedback focus|known issues|feature upd
 export function FormattedArticleContent({ content }: FormattedArticleContentProps) {
   const blocks = typeof content === 'string' ? [{kind: 'text' as const, text: content}]
     : content.blocks ?? [{kind: 'text' as const, text: content.text}, ...content.media.map(media => ({kind: 'media' as const, media}))];
-  const lines = blocks.flatMap<ArticleBlock>(block => block.kind === 'media' ? [block] : block.text
+  const lines = blocks.flatMap<ArticleBlock>(block => block.kind !== 'text' ? [block] : block.text
     .replace(/\r\n/g, '\n').split('\n')
     .map(line => line.replace(/\s+$/g, ''))
     .filter((line, index, values) => line.trim() || values[index - 1]?.trim())
@@ -27,6 +28,7 @@ export function FormattedArticleContent({ content }: FormattedArticleContentProp
     <div className="article-content">
       {lines.map((block, index) => {
         if (block.kind === 'media') return <ArticleMediaGallery key={index} media={[block.media]} />;
+        if (block.kind === 'promotion') return <ArticlePromotion key={index} promotion={block} />;
         const rawLine = block.text;
         const line = rawLine.trim();
         if (!line) {

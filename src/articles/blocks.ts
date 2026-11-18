@@ -1,10 +1,10 @@
-import { extractArticleMedia } from './media';
+import { extractArticleMedia, safeMediaUrl } from './media';
 import type { ArticleBlock, ArticleDetail, ArticleMedia } from './types';
 
 const TEXT_FIELDS = new Set(['overline', 'title', 'subtitle', 'heading', 'paragraph', 'introduction', 'body', 'content', 'contents', 'description', 'text']);
 const HEADINGS = new Set(['overline', 'title', 'subtitle', 'heading']);
 const ATTRIBUTES = new Set([':info', ':properties', ':content', ':question-list', ':items', ':cards', ':sections', ':copy', ':picture', ':pictures', ':media']);
-const SKIP = new Set(['logo', 'placeholder', 'thumbnail', 'sku', 'skus', 'skuList', 'semanticTag', 'backgroundOptions', 'background-options', 'animations', 'globalAnimations', 'dispositions', 'callToAction', 'imageAction', '__typename']);
+const SKIP = new Set(['logo', 'placeholder', 'thumbnail', 'mask', 'overlay', 'sku', 'skus', 'skuList', 'semanticTag', 'backgroundOptions', 'background-options', 'animations', 'globalAnimations', 'dispositions', 'callToAction', 'imageAction', '__typename']);
 
 /** Walk content once: media stays at its source position, including inside paragraphs. */
 export function extractArticleBlocks(html: string, base = 'https://robertsspaceindustries.com'): ArticleBlock[] {
@@ -60,7 +60,13 @@ export function extractArticleBlocks(html: string, base = 'https://robertsspacei
         if (props.routerParams?.component === 'AlexandriaPage' && typeof inline === 'string') { scan(inline, depth + 1); return; }
       } catch { /* Keep reading legacy content. */ }
     }
-    doc.querySelectorAll('script, style, nav, footer, header, noscript, [hidden], [aria-hidden="true"], .g-author').forEach(node => node.remove());
+    // RSI store inventory requires their live storefront; retain a readable fallback.
+    doc.querySelectorAll('rsi-store-component').forEach(node => {
+      const fallback = doc.createElement('p');
+      fallback.textContent = 'View featured offers on the original RSI article.';
+      node.replaceWith(fallback);
+    });
+    doc.querySelectorAll('script, component[is="script"], rsi-store-component, style, nav, footer, header, noscript, [hidden], [aria-hidden="true"], .g-author').forEach(node => node.remove());
     const root = doc.querySelector('#layout-system, .alexandria-content-body, article') || doc.body;
     let buffer = '';
     let currentPrefix = prefix;
@@ -91,7 +97,16 @@ export function extractArticleBlocks(html: string, base = 'https://robertsspacei
           else {
             try {
               const parsed = JSON.parse(value);
-              structured(name === ':properties' ? (parsed?.componentProps ?? parsed) : parsed, name.slice(1), depth + 1, [':media', ':picture', ':pictures'].includes(name));
+              const props = name === ':properties' ? (parsed?.componentProps ?? parsed) : parsed;
+              const shop = parsed?.componentId === 'MiniGrid' ? merchandiseAction(props, base) : null;
+              const start = blocks.length;
+              structured(props, name.slice(1), depth + 1, [':media', ':picture', ':pictures'].includes(name));
+              if (shop) {
+                const section = blocks.splice(start);
+                blocks.push({kind: 'promotion', ...shop,
+                  text: section.filter(b => b.kind === 'text').filter(b => b.text !== shop.label).map(b => b.text).join('\n\n'),
+                  media: section.filter(b => b.kind === 'media').map(b => b.media)});
+              }
             } catch { /* Ignore malformed props without losing neighboring content. */ }
           }
         }
@@ -113,11 +128,11 @@ export function extractArticleBlocks(html: string, base = 'https://robertsspacei
 }
 
 export function articleDetail(blocks: ArticleBlock[], fallbackText = ''): ArticleDetail {
-  if (!blocks.some(block => block.kind === 'text') && fallbackText) blocks = [{kind: 'text', text: fallbackText}, ...blocks];
+  if (!blocks.some(block => block.kind === 'text' || block.kind === 'promotion') && fallbackText) blocks = [{kind: 'text', text: fallbackText}, ...blocks];
   return {
     blocks,
-    text: blocks.filter(block => block.kind === 'text').map(block => block.text).join('\n\n'),
-    media: blocks.filter(block => block.kind === 'media').map(block => block.media)
+    text: blocks.filter(block => block.kind === 'text' || block.kind === 'promotion').map(block => block.text).join('\n\n'),
+    media: blocks.flatMap(block => block.kind === 'media' ? [block.media] : block.kind === 'promotion' ? block.media : [])
   };
 }
 
@@ -137,4 +152,21 @@ export function spectrumArticleDetail(html: string, text: string, base: string):
     } catch { /* The caller already validated the article text. */ }
   }
   return articleDetail([{kind: 'text', text}]);
+}
+
+/** Group only source sections with an explicit merchandise action, never a guessed URL. */
+function merchandiseAction(value: unknown, base: string, depth = 0): {url: string; label: string} | null {
+  if (!value || typeof value !== 'object' || depth > 24) return null;
+  const record = value as Record<string, any>;
+  if (record.displayed === false || record.isDisplayed === false || record.dispositions?.large?.display === false) return null;
+  if (record.action?.actionType === 'link' && typeof record.action.href === 'string' && typeof record.text === 'string') {
+    const url = safeMediaUrl(record.action.href, base);
+    if (url && /(?:merchandise|merch)(?:[/?#&]|$)/i.test(new URL(url).pathname + new URL(url).hash) && record.text.trim()) return {url, label: record.text.trim()};
+  }
+  for (const [key, child] of Object.entries(record)) {
+    if (SKIP.has(key)) continue;
+    const result = merchandiseAction(child, base, depth + 1);
+    if (result) return result;
+  }
+  return null;
 }

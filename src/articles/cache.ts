@@ -4,7 +4,7 @@ import type { ArticleContent, ArticleDetail } from './types';
 const MAX_CACHE_BYTES = 512 * 1024;
 const MAX_ENTRIES = 20;
 const CURRENT_DETAIL_VERSIONS: Record<string, number> = {
-  'star-citizen-status:news-details': 6,
+  'star-citizen-status:news-details': 8,
   'star-citizen-status:patch-note-details': 4,
   'sc-companion:announcement-details': 3
 };

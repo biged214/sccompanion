@@ -18,3 +18,20 @@ assert.deepEqual(kinds(detail.blocks),['First','image','Last']);assert.equal(det
 const plain=spectrumArticleDetail(ld('First\n\nLast'),'First\n\nLast',base);
 assert.equal(plain.blocks[0].text,'First\n\nLast');assert.equal(plain.unpositionedMedia.length,1);
 console.log('Ordered article blocks: paragraphs, inline images, videos, structured sections, lists and Spectrum fallbacks passed.');
+
+const widget = '<p>Offer introduction</p><component style="display:none" is="script">RSIStore.load(origin).then(function(d) {d.default.StoreWidget.initialize("widget")})</component><p>After offers</p>';
+assert.deepEqual(kinds(extractArticleBlocks(widget)), ['Offer introduction', 'After offers']);
+const masks = component(':properties', {componentProps:{image:{originalFormat:{desktop:'/ship.jpg'}},mask:{originalFormat:{desktop:'/mask.png'}},overlay:{originalFormat:{desktop:'/overlay.png'}}}});
+assert.deepEqual(extractArticleBlocks(masks).map(b=>b.media.url), [base+'ship.jpg']);
+assert.deepEqual(kinds(extractArticleBlocks('<h3>Featured offers</h3><rsi-store-component></rsi-store-component>')), ['## Featured offers', 'View featured offers on the original RSI article.']);
+
+const shopProps = {componentId:'MiniGrid',componentProps:{items:[{text:'<h3>Gear up</h3><p>Official merchandise</p>'},{image:{originalFormat:{desktop:'/merch.png'}}},{button:{text:'SHOP NOW',action:{actionType:'link',href:'/iae2956#/Merchandise'}}}]}};
+const promo = extractArticleBlocks(component(':properties',shopProps));
+assert.equal(promo.length,1);assert.equal(promo[0].kind,'promotion');
+assert.equal(promo[0].url,base+'iae2956#/Merchandise');assert.equal(promo[0].label,'SHOP NOW');
+assert.equal(promo[0].media.length,1);assert.ok(!promo[0].text.includes('SHOP NOW'));
+shopProps.componentProps.items[2].button.action.href='javascript:alert(1)#/Merchandise';
+assert.ok(!extractArticleBlocks(component(':properties',shopProps)).some(b=>b.kind==='promotion'));
+shopProps.componentProps.items[2].button.action.href='/iae2956#/Merchandise';
+shopProps.componentProps.items[2].displayed=false;
+assert.ok(!extractArticleBlocks(component(':properties',shopProps)).some(b=>b.kind==='promotion'));

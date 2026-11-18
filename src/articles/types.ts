@@ -5,7 +5,7 @@ export interface ArticleMedia {
   alt: string;
 }
 
-export type ArticleBlock = { kind: 'text'; text: string } | { kind: 'media'; media: ArticleMedia };
+export type ArticleBlock = { kind: 'text'; text: string } | { kind: 'media'; media: ArticleMedia } | { kind: 'promotion'; text: string; media: ArticleMedia[]; url: string; label: string };
 
 export interface ArticleDetail {
   blocks?: ArticleBlock[];

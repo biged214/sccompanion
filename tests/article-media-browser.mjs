@@ -34,7 +34,8 @@ try {
  await page.setViewportSize({width:390,height:844});
  assert.ok(await card.locator('.article-media').evaluateAll(elements=>elements.every(el=>el.scrollWidth<=el.clientWidth+1)));
  await card.locator('img').evaluate(el=>el.dispatchEvent(new Event('error')));
- assert.ok(await card.getByText('This media could not be loaded. Open the original media to view it.').isVisible());
+ await page.waitForFunction(() => !document.querySelector('.article-media img'));
+ assert.equal(await card.getByRole('link',{name:'Open original image',exact:true}).count(),0);
  await card.getByRole('button',{name:'Close',exact:true}).click();
  assert.equal(await card.locator('iframe').count(),0);
  console.log('Browser media: article rendering, click-to-play, controls, no autoplay, narrow layout, error fallback and unmount passed.');

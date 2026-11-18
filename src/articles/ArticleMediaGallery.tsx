@@ -14,7 +14,7 @@ function MediaItem({ item }: { item: ArticleMedia }) {
   const [failed, setFailed] = useState(false);
   // Revalidate persisted data before using it as a browser resource.
   const url = safeMediaUrl(item.url, 'https://robertsspaceindustries.com');
-  if (!url) return null;
+  if (!url || (failed && item.kind === 'image')) return null;
   const embed = item.kind === 'embed' ? videoEmbed(url) : null;
   return <figure className="article-media__item">
     {!failed && item.kind === 'image' && <img src={url} alt={item.alt || t('Article image')} loading="lazy" decoding="async" onError={() => setFailed(true)} />}
@@ -23,8 +23,8 @@ function MediaItem({ item }: { item: ArticleMedia }) {
       ? <iframe title={item.alt || t('Article video')} src={embed} referrerPolicy="strict-origin-when-cross-origin" allow="fullscreen; encrypted-media; picture-in-picture" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" onError={() => setFailed(true)} />
       : <button type="button" className="refresh-button" onClick={() => setPlaying(true)}>{t('Play video')}</button>)}
     {failed && <p>{t('This media could not be loaded. Open the original media to view it.')}</p>}
-    <figcaption><a className="details-link" href={url} target="_blank" rel="noreferrer" onClick={(event) => {
+    {item.kind !== 'image' && <figcaption><a className="details-link" href={url} target="_blank" rel="noreferrer" onClick={(event) => {
       if (window.__TAURI_INTERNALS__) { event.preventDefault(); void openExternalUrl(url).catch(() => setFailed(true)); }
-    }}>{t(item.kind === 'image' ? 'Open original image' : 'Open original video')}</a></figcaption>
+    }}>{t('Open original video')}</a></figcaption>}
   </figure>;
 }

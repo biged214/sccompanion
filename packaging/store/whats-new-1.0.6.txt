@@ -1,0 +1,6 @@
+SC Companion 1.0.6
+
+- Removed hidden RSI store-widget code from news articles and added a readable offers fallback.
+- Filtered decorative masks and failed images, and removed original-image links.
+- Grouped merchandise artwork into compact panels with the original Shop Now link.
+- Refreshed cached news articles while preserving inline media and existing cache protections.
